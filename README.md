@@ -40,6 +40,30 @@ the price fly into their new positions while everything else cross-fades:
 All three paths (View Transitions, FLIP, reduced motion) are exercised the same
 way: open, close, cycle, restore focus, leave nothing stuck.
 
+## The anatomy scroll
+
+`#anatomy` pins a burger to the viewport for three screens of scroll and pulls
+it apart layer by layer — sesame crown, lettuce, cheddar, patty, base — with a
+label pinned to each layer and a step list that lights up as its layer lifts
+away.
+
+Scroll position drives a single custom property, `--p` (0 = assembled,
+1 = fully apart), set on the section inside a `requestAnimationFrame`; every
+layer transform, the label fades, the plate shadow and the progress rail are
+all `calc()`s off that one value. Label positions are *measured* from each
+layer's real box on every frame rather than predicted, so the artwork can be
+redrawn without the labels drifting out of alignment.
+
+Under `prefers-reduced-motion: reduce` the pinning is dropped entirely and the
+burger renders already apart, with every step expanded.
+
+**Worth knowing if you edit the artwork:** CSS cannot reach inside a `<use>`
+shadow tree, so individual layers cannot be animated where the symbol is drawn
+with `<use>` (that is how the menu cards draw theirs — only the whole artwork
+animates there). Wherever layers need to move independently, `inlineArt()` /
+`fillSvg()` in `main.js` clone the symbol into real nodes first. The hero
+burger is cloned for the same reason.
+
 ## Editing the menu
 
 Everything lives in `assets/js/data.js`:
@@ -71,7 +95,7 @@ The dishes are layered inline SVG (`art-burger`, `art-steak`, `art-side`,
 `art-dessert`, `art-drink`). Each symbol is drawn once in neutral shapes and
 tinted per dish through CSS custom properties, with fixed highlight and shadow
 gradients layered on top for depth — which is why one burger symbol serves six
-burgers, and why the layers can lift apart on hover.
+burgers on a single set of paths.
 
 **Swap in real photography when you have it.** Replace the `<svg><use>` in
 `makeCard()` (`assets/js/main.js`) and in `.takeover-stage` (`index.html`) with

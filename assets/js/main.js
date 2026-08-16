@@ -381,6 +381,120 @@
     }, { passive: true });
   }());
 
+  /* ── Inline artwork ─────────────────────────────────────────────── */
+  /**
+   * CSS cannot reach into a <use> shadow tree, so anywhere the individual
+   * layers need to animate, the symbol is cloned into real nodes instead.
+   * `pad` grows the viewBox so layers can travel outside the original box.
+   */
+  /** Replace an existing <svg>'s <use> with real clones of the symbol. */
+  function fillSvg(svg, id) {
+    var symbol = document.getElementById(id);
+    if (!svg || !symbol) return;
+    svg.innerHTML = '';
+    Array.prototype.forEach.call(symbol.children, function (node) {
+      svg.appendChild(node.cloneNode(true));
+    });
+  }
+
+  function inlineArt(host, id, pad) {
+    var symbol = document.getElementById(id);
+    if (!host || !symbol) return null;
+
+    var box = (symbol.getAttribute('viewBox') || '0 0 320 280').split(/\s+/).map(Number);
+    var top = pad || 0;
+
+    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', box[0] + ' ' + box[1] + ' ' + box[2] + ' ' + (box[3] + top * 2));
+    svg.setAttribute('aria-hidden', 'true');
+
+    var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('transform', 'translate(0 ' + top + ')');
+    Array.prototype.forEach.call(symbol.children, function (node) {
+      g.appendChild(node.cloneNode(true));
+    });
+    svg.appendChild(g);
+
+    host.innerHTML = '';
+    host.appendChild(svg);
+    return svg;
+  }
+
+  /* ── Anatomy: the burger comes apart on scroll ──────────────────── */
+  function anatomy() {
+    var section = $('#anatomy');
+    if (!section) return;
+
+    inlineArt($('.anat-burger', section), $('.anat-burger', section).dataset.art, 120);
+
+    fillSvg($('.hero-dish'), 'art-burger');   // so the hero layers drift too
+
+    var track = $('.anat-track', section);
+    var steps = $$('.anat-list li', section);
+    var stage = $('.anat-art', section);
+
+    // Each label is pinned to the layer it names. Reading the layer's real
+    // box beats predicting it — the artwork can be redrawn and the labels
+    // still land in the right place.
+    var tags = $$('.anat-tag', section).map(function (el, i) {
+      return { el: el, layer: $('.' + ['art-bun-top', 'art-veg', 'art-cheese', 'art-patty', 'art-bun-btm'][i], section) };
+    });
+
+    function placeTags() {
+      var base = stage.getBoundingClientRect();
+      tags.forEach(function (tag) {
+        if (!tag.layer) return;
+        var box = tag.layer.getBoundingClientRect();
+        tag.el.style.top = (box.top + box.height / 2 - base.top) + 'px';
+      });
+    }
+
+    if (still()) {
+      section.style.setProperty('--p', '1');
+      steps.forEach(function (li) { li.classList.add('lit'); });
+      requestAnimationFrame(placeTags);
+      window.addEventListener('resize', placeTags);
+      return;
+    }
+
+    var pending = false;
+    function update() {
+      if (pending) return;
+      pending = true;
+      requestAnimationFrame(function () {
+        var box = track.getBoundingClientRect();
+        var travel = box.height - window.innerHeight;
+        var p = travel > 0 ? -box.top / travel : 0;
+        p = Math.min(1, Math.max(0, p));
+
+        section.style.setProperty('--p', p.toFixed(4));
+
+        // light the step whose layer is currently pulling away
+        var active = Math.min(steps.length - 1, Math.floor(p * steps.length * 1.06));
+        steps.forEach(function (li, i) { li.classList.toggle('lit', i === active); });
+
+        placeTags();
+        pending = false;
+      });
+    }
+
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+
+    // "See the full dish" opens the Classic in the takeover
+    var jump = $('[data-open-classic]', section);
+    if (jump) {
+      jump.addEventListener('click', function (e) {
+        var card = cards.filter(function (c) { return c.dataset.id === 'classic'; })[0];
+        if (!card) return;
+        e.preventDefault();
+        card.scrollIntoView({ block: 'center', behavior: 'auto' });
+        openDish('classic', card);
+      });
+    }
+  }
+
   /* ── Opening hours ──────────────────────────────────────────────── */
   function hours() {
     var now = new Date();
@@ -516,6 +630,7 @@
   /* ── Go ─────────────────────────────────────────────────────────── */
   buildMenu();
   buildFilmstrip();
+  anatomy();
   reveal();
   masthead();
   hours();

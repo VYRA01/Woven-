@@ -437,13 +437,9 @@ h1 .line { display: block; }
 }
 .dish:hover .dish-pic { transform: scale(1.05) translateY(-4px); }
 
-/* layered artwork opens up on hover */
-.dish-pic .art-layer { transform-box: fill-box; transform-origin: center; transition: transform .5s var(--back); }
-.dish:hover .dish-pic .art-bun-top { transform: translateY(-14px) rotate(-3deg); }
-.dish:hover .dish-pic .art-veg     { transform: translateY(-7px); }
-.dish:hover .dish-pic .art-cheese  { transform: translateY(-3px); }
-.dish:hover .dish-pic .art-bun-btm { transform: translateY(4px); }
-.dish:hover .dish-pic .art-patty   { transform: translateY(1px) scale(1.02); }
+/* Note: the cards draw their dish with <use>, and CSS cannot reach inside a
+   use shadow tree — so the whole artwork is what animates here. The layers
+   only come apart where the symbol is cloned into real nodes (hero, #anatomy). */
 
 .dish-flag {
   position: absolute; top: 12px; left: 12px;
@@ -467,6 +463,191 @@ h1 .line { display: block; }
   transition: color .25s var(--ease), gap .25s var(--ease);
 }
 .dish:hover .dish-open { color: var(--ox); gap: 10px; }
+
+/* ── Anatomy: scroll-driven exploded burger ─────────────────────────── */
+.anat {
+  --p: 0;                       /* 0 = assembled, 1 = fully apart; set by JS */
+  background: var(--paper-2);
+  border-block: 1.5px solid var(--rule);
+}
+.anat-track { height: 300vh; }  /* the scroll distance the pinned stage consumes */
+
+.anat-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  min-height: 560px;
+  display: grid;
+  align-items: center;
+  overflow: hidden;
+}
+
+.anat-in {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(20px, 4vw, 60px);
+  align-items: center;
+}
+
+.anat-copy > .btn { margin-top: 10px; }
+
+.anat-list {
+  list-style: none;
+  margin: 26px 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+  counter-reset: none;
+}
+.anat-list li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 14px;
+  padding: 11px 14px;
+  border-radius: var(--r-sm);
+  opacity: .34;
+  transition: opacity .4s var(--ease), background .4s var(--ease);
+}
+.anat-list li.lit { opacity: 1; background: var(--card); }
+.anat-n {
+  grid-row: span 2;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--ox);
+  padding-top: 2px;
+}
+.anat-t { font-weight: 800; font-size: 1rem; letter-spacing: -.01em; text-transform: uppercase; }
+.anat-d {
+  font-size: .9rem;
+  color: var(--ink-2);
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height .45s var(--out), opacity .35s var(--ease);
+}
+.anat-list li.lit .anat-d { max-height: 5.5em; opacity: 1; }
+
+/* Stage */
+.anat-art { position: relative; aspect-ratio: 1 / 1.3; max-height: 74vh; margin-inline: auto; width: 100%; }
+.anat-plate {
+  position: absolute;
+  left: 50%;
+  bottom: 2%;
+  width: 74%;
+  aspect-ratio: 1 / .17;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(90, 70, 45, .28), transparent 72%);
+  /* the plate shrinks away as the stack lifts off it */
+  scale: calc(1 - var(--p) * .18);
+  opacity: calc(1 - var(--p) * .35);
+}
+.anat-burger {
+  position: absolute;
+  inset: 0;
+  /* lift the group as it fans out, so it stays optically centred */
+  transform: translateY(calc(var(--p) * -4%));
+}
+/* The svg is pinned to the box rather than left to size itself: given only
+   width, it would take its height from the viewBox aspect and paint the
+   layers well outside this element. */
+.anat-burger svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Each layer travels its own distance, so the stack fans out rather than
+   sliding as a block. Values are SVG user units. */
+.anat-burger .art-layer { transform-box: fill-box; transform-origin: center; }
+.anat-burger .art-bun-top { transform: translateY(calc(var(--p) * -86px)) rotate(calc(var(--p) * -3deg)); }
+.anat-burger .art-veg     { transform: translateY(calc(var(--p) * -44px)); }
+.anat-burger .art-cheese  { transform: translateY(calc(var(--p) * -14px)); }
+.anat-burger .art-patty   { transform: translateY(calc(var(--p) * 22px)); }
+.anat-burger .art-bun-btm { transform: translateY(calc(var(--p) * 72px)); }
+.anat-burger .art-cast    { opacity: calc(1 - var(--p) * .6); }
+
+.anat-tag {
+  position: absolute;
+  right: 0;
+  top: 0;
+  translate: 0 -50%;
+  will-change: top;
+  padding: 7px 14px;
+  background: var(--card);
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  font-size: .82rem;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: var(--lift);
+  opacity: clamp(0, (var(--p) - var(--in)) * 7, 1);
+  pointer-events: none;
+}
+.anat-tag::before {
+  content: '';
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  width: clamp(10px, 3vw, 34px);
+  height: 1.5px;
+  background: var(--ink);
+  opacity: .4;
+}
+
+.anat-rail {
+  position: absolute;
+  left: var(--pad);
+  bottom: 26px;
+  width: min(240px, 34vw);
+  height: 3px;
+  background: var(--rule);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.anat-rail i {
+  display: block;
+  height: 100%;
+  width: calc(var(--p) * 100%);
+  background: var(--ox);
+}
+.anat-hint {
+  position: absolute;
+  left: var(--pad);
+  bottom: 44px;
+  margin: 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: .86rem;
+  color: var(--ink-3);
+  opacity: calc(1 - var(--p) * 4);
+}
+
+@media (max-width: 1000px) {
+  .anat-in { grid-template-columns: 1fr; gap: 10px; }
+  .anat-art { aspect-ratio: 1 / .95; max-height: 44vh; order: -1; }
+  .anat-list { margin: 14px 0; gap: 0; }
+  .anat-list li { padding: 8px 12px; }
+  .anat-d { display: none; }
+  .anat-tag { font-size: .68rem; padding: 4px 9px; }
+  /* nudge the stack left so the leader lines have somewhere to land */
+  .anat-burger { transform: translate(-10%, calc(var(--p) * -4%)); }
+  .anat-copy > .btn { display: none; }
+  .anat-stage { min-height: 0; }
+}
+
+/* Reduced motion: no pinning, no scroll driving — show it already apart. */
+@media (prefers-reduced-motion: reduce) {
+  .anat { --p: 1; }
+  .anat-track { height: auto; }
+  .anat-stage { position: static; height: auto; padding: 60px 0; }
+  .anat-list li { opacity: 1; }
+  .anat-list li .anat-d { max-height: 6em; opacity: 1; }
+  .anat-hint, .anat-rail { display: none; }
+}
 
 /* ── Takeover ───────────────────────────────────────────────────────── */
 .takeover { position: fixed; inset: 0; z-index: 200; }
@@ -1231,6 +1412,68 @@ h1 .line { display: block; }
       <span>Live charcoal</span><b>✦</b><span>Smash burgers</span><b>✦</b><span>Craft beer</span><b>✦</b>
       <span>Black Angus</span><b>✦</b><span>Wagyu A5</span><b>✦</b><span>Dry aged</span><b>✦</b>
       <span>Live charcoal</span><b>✦</b><span>Smash burgers</span><b>✦</b><span>Craft beer</span><b>✦</b>
+    </div>
+  </div>
+</section>
+
+<!-- ════ Anatomy: the burger comes apart as you scroll ════════════════ -->
+<section class="anat" id="anatomy">
+  <div class="anat-track">
+    <div class="anat-stage">
+      <div class="wrap anat-in">
+
+        <div class="anat-copy">
+          <p class="kicker">Anatomy of the Classic</p>
+          <h2>Take it apart</h2>
+          <p class="band-sub">Keep scrolling. Five layers, none of them an afterthought.</p>
+
+          <ol class="anat-list">
+            <li data-step="0">
+              <span class="anat-n">01</span>
+              <span class="anat-t">Sesame crown</span>
+              <span class="anat-d">Baked in our own oven each morning, brushed with butter and toasted on the plancha.</span>
+            </li>
+            <li data-step="1">
+              <span class="anat-n">02</span>
+              <span class="anat-t">Butter lettuce</span>
+              <span class="anat-d">Cold, crisp, and there to cut the fat — not to fill the bun out.</span>
+            </li>
+            <li data-step="2">
+              <span class="anat-n">03</span>
+              <span class="anat-t">Aged cheddar</span>
+              <span class="anat-d">Laid on the patty straight off the grill so it melts over the edges on the way to you.</span>
+            </li>
+            <li data-step="3">
+              <span class="anat-n">04</span>
+              <span class="anat-t">180 g Black Angus</span>
+              <span class="anat-d">Chuck and brisket, coarse-ground this morning, charred hard and left juicy at medium.</span>
+            </li>
+            <li data-step="4">
+              <span class="anat-n">05</span>
+              <span class="anat-t">Sauce &amp; base</span>
+              <span class="anat-d">Roast-garlic sauce on a toasted heel that holds to the last bite.</span>
+            </li>
+          </ol>
+
+          <a class="btn btn-red btn-big" href="#dish-classic" data-open-classic>See the full dish</a>
+        </div>
+
+        <div class="anat-art">
+          <div class="anat-plate" aria-hidden="true"></div>
+          <div class="anat-burger" data-art="art-burger" role="img"
+               aria-label="An illustrated cheeseburger separating into its layers: sesame bun, lettuce, cheese, beef patty and base bun."></div>
+
+          <span class="anat-tag" style="--t0:37.7%; --t1:16.9%; --in:.05">Sesame crown</span>
+          <span class="anat-tag" style="--t0:48.5%; --t1:37.7%; --in:.24">Butter lettuce</span>
+          <span class="anat-tag" style="--t0:53.8%; --t1:50.0%; --in:.44">Aged cheddar</span>
+          <span class="anat-tag" style="--t0:57.1%; --t1:63.3%; --in:.62">180 g Black Angus</span>
+          <span class="anat-tag" style="--t0:64.4%; --t1:84.8%; --in:.80">Toasted base</span>
+        </div>
+
+      </div>
+
+      <div class="anat-rail" aria-hidden="true"><i></i></div>
+      <p class="anat-hint" aria-hidden="true">Scroll</p>
     </div>
   </div>
 </section>
@@ -2078,6 +2321,120 @@ window.MEATOLOGIA_MENU = {
     }, { passive: true });
   }());
 
+  /* ── Inline artwork ─────────────────────────────────────────────── */
+  /**
+   * CSS cannot reach into a <use> shadow tree, so anywhere the individual
+   * layers need to animate, the symbol is cloned into real nodes instead.
+   * `pad` grows the viewBox so layers can travel outside the original box.
+   */
+  /** Replace an existing <svg>'s <use> with real clones of the symbol. */
+  function fillSvg(svg, id) {
+    var symbol = document.getElementById(id);
+    if (!svg || !symbol) return;
+    svg.innerHTML = '';
+    Array.prototype.forEach.call(symbol.children, function (node) {
+      svg.appendChild(node.cloneNode(true));
+    });
+  }
+
+  function inlineArt(host, id, pad) {
+    var symbol = document.getElementById(id);
+    if (!host || !symbol) return null;
+
+    var box = (symbol.getAttribute('viewBox') || '0 0 320 280').split(/\s+/).map(Number);
+    var top = pad || 0;
+
+    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', box[0] + ' ' + box[1] + ' ' + box[2] + ' ' + (box[3] + top * 2));
+    svg.setAttribute('aria-hidden', 'true');
+
+    var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('transform', 'translate(0 ' + top + ')');
+    Array.prototype.forEach.call(symbol.children, function (node) {
+      g.appendChild(node.cloneNode(true));
+    });
+    svg.appendChild(g);
+
+    host.innerHTML = '';
+    host.appendChild(svg);
+    return svg;
+  }
+
+  /* ── Anatomy: the burger comes apart on scroll ──────────────────── */
+  function anatomy() {
+    var section = $('#anatomy');
+    if (!section) return;
+
+    inlineArt($('.anat-burger', section), $('.anat-burger', section).dataset.art, 120);
+
+    fillSvg($('.hero-dish'), 'art-burger');   // so the hero layers drift too
+
+    var track = $('.anat-track', section);
+    var steps = $$('.anat-list li', section);
+    var stage = $('.anat-art', section);
+
+    // Each label is pinned to the layer it names. Reading the layer's real
+    // box beats predicting it — the artwork can be redrawn and the labels
+    // still land in the right place.
+    var tags = $$('.anat-tag', section).map(function (el, i) {
+      return { el: el, layer: $('.' + ['art-bun-top', 'art-veg', 'art-cheese', 'art-patty', 'art-bun-btm'][i], section) };
+    });
+
+    function placeTags() {
+      var base = stage.getBoundingClientRect();
+      tags.forEach(function (tag) {
+        if (!tag.layer) return;
+        var box = tag.layer.getBoundingClientRect();
+        tag.el.style.top = (box.top + box.height / 2 - base.top) + 'px';
+      });
+    }
+
+    if (still()) {
+      section.style.setProperty('--p', '1');
+      steps.forEach(function (li) { li.classList.add('lit'); });
+      requestAnimationFrame(placeTags);
+      window.addEventListener('resize', placeTags);
+      return;
+    }
+
+    var pending = false;
+    function update() {
+      if (pending) return;
+      pending = true;
+      requestAnimationFrame(function () {
+        var box = track.getBoundingClientRect();
+        var travel = box.height - window.innerHeight;
+        var p = travel > 0 ? -box.top / travel : 0;
+        p = Math.min(1, Math.max(0, p));
+
+        section.style.setProperty('--p', p.toFixed(4));
+
+        // light the step whose layer is currently pulling away
+        var active = Math.min(steps.length - 1, Math.floor(p * steps.length * 1.06));
+        steps.forEach(function (li, i) { li.classList.toggle('lit', i === active); });
+
+        placeTags();
+        pending = false;
+      });
+    }
+
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+
+    // "See the full dish" opens the Classic in the takeover
+    var jump = $('[data-open-classic]', section);
+    if (jump) {
+      jump.addEventListener('click', function (e) {
+        var card = cards.filter(function (c) { return c.dataset.id === 'classic'; })[0];
+        if (!card) return;
+        e.preventDefault();
+        card.scrollIntoView({ block: 'center', behavior: 'auto' });
+        openDish('classic', card);
+      });
+    }
+  }
+
   /* ── Opening hours ──────────────────────────────────────────────── */
   function hours() {
     var now = new Date();
@@ -2213,6 +2570,7 @@ window.MEATOLOGIA_MENU = {
   /* ── Go ─────────────────────────────────────────────────────────── */
   buildMenu();
   buildFilmstrip();
+  anatomy();
   reveal();
   masthead();
   hours();

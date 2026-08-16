@@ -1,295 +1,201 @@
 /**
  * Menu data for Meatologia.
  *
- * `art`   — id of an inline <symbol> in index.html
- * `paint` — CSS custom properties applied to that artwork, so every dish
- *           gets its own palette without a separate image asset.
+ * art   — id of an inline <symbol> in index.html
+ * paint — CSS custom properties applied to that artwork. One symbol serves
+ *         many dishes; only the tint changes. Swap the <use> for an <img>
+ *         here and in the takeover markup when real photography arrives.
  */
 window.MEATOLOGIA_MENU = {
-  categories: [
-    { id: 'all',      label: 'Wszystko' },
-    { id: 'burgers',  label: 'Burgery' },
-    { id: 'steaks',   label: 'Steki' },
-    { id: 'sides',    label: 'Dodatki' },
-    { id: 'desserts', label: 'Desery' },
-    { id: 'drinks',   label: 'Napoje' }
+  courses: [
+    { id: 'all',      label: 'Everything' },
+    { id: 'burgers',  label: 'Burgers' },
+    { id: 'steaks',   label: 'Steaks' },
+    { id: 'sides',    label: 'Sides' },
+    { id: 'sweet',    label: 'Dessert' },
+    { id: 'drinks',   label: 'Drinks' }
   ],
 
-  items: [
-    /* ── Burgery ───────────────────────────────────────────────────── */
+  dishes: [
+    /* ── Burgers ───────────────────────────────────────────────────── */
     {
-      id: 'classic',
-      cat: 'burgers',
-      name: 'Classic Burger',
-      tag: 'Klasyk',
-      price: 42,
-      weight: '180 g wołowiny',
-      heat: 'Wysmażenie: medium',
-      short: 'Wołowina, cheddar, sałata, pomidor i sos Meatologia w maślanej bułce.',
-      desc: 'Punkt wyjścia całej karty. Mielona na miejscu łopatka Black Angus, grillowana na węglu do soczystego medium, topiony cheddar i nasz sos na bazie pieczonego czosnku.',
-      ings: ['Wołowina Black Angus', 'Cheddar', 'Sałata masłowa', 'Pomidor', 'Ogórek kiszony', 'Sos Meatologia'],
+      id: 'classic', course: 'burgers', name: 'The Classic', flag: 'Where to start',
+      price: 42, weight: '180 g beef', cook: 'Medium', pair: 'Let\'s Meat IPA',
+      short: 'Black Angus, aged cheddar, butter lettuce and our own sauce.',
+      blurb: 'The dish the rest of the card is built around. Chuck and brisket ground this morning, grilled over charcoal to a juicy medium, melted cheddar, and a roast-garlic sauce we have refused to change in four years.',
+      parts: ['Black Angus beef', 'Aged cheddar', 'Butter lettuce', 'Tomato', 'Pickle', 'Meatologia sauce'],
       art: 'art-burger',
-      paint: { '--art-bun': '#dda153', '--art-bun-bottom': '#c4863a', '--art-patty': '#4a2f22', '--art-cheese': '#f0b429', '--art-veg': '#6ea242' }
+      paint: { '--art-bun': '#e5a94f', '--art-bun-btm': '#cf9445', '--art-patty': '#4a2e1e', '--art-cheese': '#f2b12b', '--art-veg': '#6f9c3c' }
     },
     {
-      id: 'cheese-bacon',
-      cat: 'burgers',
-      name: 'Cheese & Bacon',
-      tag: 'Bestseller',
-      price: 49,
-      weight: '180 g wołowiny',
-      heat: 'Wysmażenie: medium',
-      short: 'Podwójny cheddar, chrupiący bekon i karmelizowana cebula.',
-      desc: 'Dla tych, którzy uważają, że sera nigdy za wiele. Dwa plastry dojrzewającego cheddara, bekon wędzony na bukowym drewnie i cebula duszona w ciemnym piwie.',
-      ings: ['Wołowina Black Angus', 'Podwójny cheddar', 'Bekon wędzony', 'Karmelizowana cebula', 'Majonez chipotle'],
+      id: 'cheese-bacon', course: 'burgers', name: 'Cheese & Bacon', flag: 'Bestseller',
+      price: 49, weight: '180 g beef', cook: 'Medium', pair: 'Let\'s Meat IPA',
+      short: 'Double cheddar, beechwood bacon, onions caramelised in dark beer.',
+      blurb: 'For anyone who holds that there is no such thing as too much cheese. Two slices of matured cheddar, bacon smoked over beechwood, and onions cooked down slowly in porter until they turn to jam.',
+      parts: ['Black Angus beef', 'Double cheddar', 'Smoked bacon', 'Beer onions', 'Chipotle mayo'],
       art: 'art-burger',
-      paint: { '--art-bun': '#d08f45', '--art-bun-bottom': '#b87a34', '--art-patty': '#43291d', '--art-cheese': '#f5a623', '--art-veg': '#8a5a2b' }
+      paint: { '--art-bun': '#d8993f', '--art-bun-btm': '#bd8134', '--art-patty': '#402617', '--art-cheese': '#f5a623', '--art-veg': '#8a5a2b' }
     },
     {
-      id: 'flooded-cheese',
-      cat: 'burgers',
-      name: 'Flooded Cheese',
-      tag: 'Ostry',
-      price: 47,
-      weight: '180 g wołowiny',
-      heat: 'Ostrość: wysoka',
-      short: 'Zalany gorącym sosem serowym, z jalapeño i prażoną cebulką.',
-      desc: 'Nazwa nie kłamie — burger wjeżdża na stół pod strumieniem gorącego sosu cheddarowego. Jalapeño dokłada ostrości, prażona cebulka chrupkości.',
-      ings: ['Wołowina Black Angus', 'Sos cheddarowy', 'Jalapeño', 'Prażona cebulka', 'Sos z papryczek habanero'],
+      id: 'flooded', course: 'burgers', name: 'Flooded Cheese', flag: 'Hot',
+      price: 47, weight: '180 g beef', cook: 'Medium', pair: 'House lemonade',
+      short: 'Buried under hot cheddar sauce, jalapeño and crisp onion.',
+      blurb: 'The name is not a metaphor. It reaches the table under a running pour of hot cheddar sauce, with jalapeño for heat and fried onion for the crunch that survives it. A fork is not optional.',
+      parts: ['Black Angus beef', 'Cheddar sauce', 'Jalapeño', 'Crisp onion', 'Habanero hot sauce'],
       art: 'art-burger',
-      paint: { '--art-bun': '#e0a44f', '--art-bun-bottom': '#c98a3c', '--art-patty': '#4b2d1e', '--art-cheese': '#ffc233', '--art-veg': '#4f8a2f' }
+      paint: { '--art-bun': '#eab35c', '--art-bun-btm': '#d29a4c', '--art-patty': '#472b1c', '--art-cheese': '#ffc233', '--art-veg': '#4f8a2f' }
     },
     {
-      id: 'double-trouble',
-      cat: 'burgers',
-      name: 'Double Trouble',
-      tag: 'Smash ×2',
-      price: 55,
-      weight: '2 × 100 g',
-      heat: 'Wysmażenie: well done',
-      short: 'Dwa smashe, podwójny ser amerykański, pikle i sos burgerowy.',
-      desc: 'Dwa krążki wbite w rozgrzaną płytę na maksa — chrupiąca skorupka, w środku wciąż soczyste. Klasyczny amerykański układ: ser, pikle, sos, koniec dyskusji.',
-      ings: ['2 × smash 100 g', 'Ser amerykański ×2', 'Pikle', 'Cebula', 'Sos burgerowy'],
+      id: 'double', course: 'burgers', name: 'Double Trouble', flag: 'Smash ×2',
+      price: 55, weight: '2 × 100 g', cook: 'Well done, on purpose', pair: 'Let\'s Meat IPA',
+      short: 'Two smashed patties, double American cheese, pickles, burger sauce.',
+      blurb: 'Two balls of beef pressed hard onto a screaming plancha. Lacy brown crust on the outside, still slack in the middle. American cheese, pickles, burger sauce — the argument ends there.',
+      parts: ['2 × 100 g smash', 'American cheese ×2', 'Pickles', 'White onion', 'Burger sauce'],
       art: 'art-burger',
-      paint: { '--art-bun': '#d99b4a', '--art-bun-bottom': '#bd7f36', '--art-patty': '#3d2419', '--art-cheese': '#ffb92e', '--art-veg': '#5f9438' }
+      paint: { '--art-bun': '#e0a44f', '--art-bun-btm': '#c88f3d', '--art-patty': '#3a2214', '--art-cheese': '#ffb92e', '--art-veg': '#5f9438' }
     },
     {
-      id: 'wagyu-smash',
-      cat: 'burgers',
-      name: 'Wagyu Smash',
-      tag: 'Premium',
-      price: 69,
-      weight: '160 g wagyu',
-      heat: 'Wysmażenie: medium rare',
-      short: 'Wołowina wagyu, majonez truflowy, rukola i dojrzewający ser.',
-      desc: 'Marmurkowe wagyu topi się w trakcie smażenia i samo doprawia bułkę. Do tego trufla i rukola — wystarczy, żeby nie zagłuszyć mięsa.',
-      ings: ['Wołowina wagyu', 'Majonez truflowy', 'Rukola', 'Ser dojrzewający', 'Konfitura z czerwonej cebuli'],
+      id: 'wagyu-smash', course: 'burgers', name: 'Wagyu Smash', flag: 'Premium',
+      price: 69, weight: '160 g wagyu', cook: 'Medium rare', pair: 'Rioja, by the glass',
+      short: 'Wagyu beef, truffle mayo, rocket and a matured hard cheese.',
+      blurb: 'Marbled wagyu renders as it cooks and seasons the bun on its way down. Truffle and rocket are the only things we let near it — anything louder would be talking over the beef.',
+      parts: ['Wagyu beef', 'Truffle mayo', 'Rocket', 'Matured cheese', 'Red onion jam'],
       art: 'art-burger',
-      paint: { '--art-bun': '#e8b96b', '--art-bun-bottom': '#cf9c4d', '--art-patty': '#59331f', '--art-cheese': '#e6c463', '--art-veg': '#7fa93f' }
+      paint: { '--art-bun': '#edbc6e', '--art-bun-btm': '#d5a252', '--art-patty': '#563018', '--art-cheese': '#e6c463', '--art-veg': '#7fa93f' }
     },
     {
-      id: 'pastrami',
-      cat: 'burgers',
-      name: 'Pastrami Burger',
-      tag: 'Nowość',
-      price: 52,
-      weight: '180 g + 60 g pastrami',
-      heat: 'Wysmażenie: medium',
-      short: 'Domowe pastrami, musztarda gruboziarnista i kiszony ogórek.',
-      desc: 'Peklowana mostek wołowy wędzimy u siebie przez dwanaście godzin, kroimy w płatki i układamy na kotlecie. Żytnia bułka trzyma to wszystko w ryzach.',
-      ings: ['Wołowina Black Angus', 'Domowe pastrami', 'Musztarda gruboziarnista', 'Ogórek kiszony', 'Bułka żytnia'],
+      id: 'pastrami', course: 'burgers', name: 'Pastrami Burger', flag: 'New',
+      price: 52, weight: '180 g + 60 g pastrami', cook: 'Medium', pair: 'Let\'s Meat IPA',
+      short: 'House pastrami, coarse mustard and dill pickle on rye.',
+      blurb: 'We cure the brisket ourselves and smoke it for twelve hours, then shave it in ribbons over the patty. Rye bun, coarse mustard, dill pickle. It should not work as well as it does.',
+      parts: ['Black Angus beef', 'House pastrami', 'Coarse mustard', 'Dill pickle', 'Rye bun'],
       art: 'art-burger',
-      paint: { '--art-bun': '#b98446', '--art-bun-bottom': '#9d6c34', '--art-patty': '#5a2b23', '--art-cheese': '#e0a63a', '--art-veg': '#66913a' }
+      paint: { '--art-bun': '#c08b48', '--art-bun-btm': '#a67436', '--art-patty': '#552820', '--art-cheese': '#e0a63a', '--art-veg': '#66913a' }
     },
 
-    /* ── Steki ─────────────────────────────────────────────────────── */
+    /* ── Steaks ────────────────────────────────────────────────────── */
     {
-      id: 'arg-newyork',
-      cat: 'steaks',
-      name: 'New York · Argentyna',
-      tag: 'Black Angus',
-      price: 96,
-      weight: '250 g',
-      heat: 'Wysmażenie: do wyboru',
-      short: 'Rostbef Black Angus, sezonowany na mokro min. 5 tygodni.',
-      desc: 'Argentyńska wołowina z hodowli pastwiskowej. Wyrazisty smak, mocna struktura włókien i tłuszczowy brzeg, który na węglu zamienia się w karmel.',
-      ings: ['Sezonowanie na mokro 5 tyg.', 'Masło ziołowe', 'Sól morska', 'Pieprz z młynka'],
+      id: 'arg-ny', course: 'steaks', name: 'New York', flag: 'Argentina',
+      price: 96, weight: '250 g', cook: 'Your call', pair: 'Malbec, Mendoza',
+      short: 'Grass-fed Black Angus sirloin, wet-aged five weeks.',
+      blurb: 'Argentine cattle raised on pasture, which is why it tastes of something. Firm grain, a fat edge that caramelises hard over charcoal, and enough character to stand up to a big red.',
+      parts: ['Five-week wet aged', 'Herb butter', 'Sea salt', 'Cracked pepper'],
       art: 'art-steak',
-      paint: { '--art-patty': '#6b2a26', '--art-crust': '#8d3a2c', '--art-cheese': '#e2cd8b', '--art-veg': '#6ea242' }
+      paint: { '--art-patty': '#77281f', '--art-crust': '#93412c', '--art-cheese': '#f6e6ae', '--art-veg': '#5f7f39' }
     },
     {
-      id: 'arg-ribeye',
-      cat: 'steaks',
-      name: 'Rib Eye · Argentyna',
-      tag: 'Black Angus',
-      price: 119,
-      weight: '250 g',
-      heat: 'Wysmażenie: do wyboru',
-      short: 'Antrykot z marmurkiem, który sam się doprawia.',
-      desc: 'Najbardziej wybaczający ze steków — tłuszcz śródmięśniowy topi się w trakcie grillowania i utrzymuje soczystość nawet przy wyższym wysmażeniu.',
-      ings: ['Sezonowanie na mokro 5 tyg.', 'Masło ziołowe', 'Sól morska', 'Pieprz z młynka'],
+      id: 'arg-ribeye', course: 'steaks', name: 'Rib Eye', flag: 'Argentina',
+      price: 119, weight: '250 g', cook: 'Your call', pair: 'Malbec, Mendoza',
+      short: 'The forgiving one — marbling that seasons itself.',
+      blurb: 'Intramuscular fat melts through the muscle as it cooks, which keeps it juicy even a shade past where you meant to stop. If you are nervous about ordering steak, order this one.',
+      parts: ['Five-week wet aged', 'Herb butter', 'Sea salt', 'Cracked pepper'],
       art: 'art-steak',
-      paint: { '--art-patty': '#742d27', '--art-crust': '#9c4430', '--art-cheese': '#e2cd8b', '--art-veg': '#6ea242' }
+      paint: { '--art-patty': '#802b21', '--art-crust': '#9c4430', '--art-cheese': '#f6e6ae', '--art-veg': '#5f7f39' }
     },
     {
-      id: 'arg-filet',
-      cat: 'steaks',
-      name: 'Filet Mignon · Argentyna',
-      tag: 'Polędwica',
-      price: 176,
-      weight: '300 g',
-      heat: 'Polecane: medium rare',
-      short: 'Najdelikatniejszy kawałek, krojony z serca polędwicy.',
-      desc: 'Zero ścięgien, minimum tłuszczu, maksimum delikatności. Podajemy z masłem ziołowym i solą maldon — nic więcej nie jest mu potrzebne.',
-      ings: ['Serce polędwicy', 'Masło ziołowe', 'Sól maldon', 'Pieprz z młynka'],
+      id: 'arg-filet', course: 'steaks', name: 'Filet Mignon', flag: 'Argentina',
+      price: 176, weight: '300 g', cook: 'Medium rare, please', pair: 'Barolo',
+      short: 'Cut from the heart of the tenderloin. Nothing to chew through.',
+      blurb: 'No sinew, almost no fat, all texture. We finish it with herb butter and maldon and send it out before anything else can be added to it.',
+      parts: ['Heart of tenderloin', 'Herb butter', 'Maldon salt', 'Cracked pepper'],
       art: 'art-steak',
-      paint: { '--art-patty': '#7d322a', '--art-crust': '#a44a33', '--art-cheese': '#e2cd8b', '--art-veg': '#6ea242' }
+      paint: { '--art-patty': '#8a3025', '--art-crust': '#a44a33', '--art-cheese': '#f6e6ae', '--art-veg': '#5f7f39' }
     },
     {
-      id: 'usa-ribeye',
-      cat: 'steaks',
-      name: 'Rib Eye · USA',
-      tag: 'USDA Prime',
-      price: 149,
-      weight: '300 g',
-      heat: 'Wysmażenie: do wyboru',
-      short: 'Black Angus USDA Prime — najwyższa klasa amerykańskiej wołowiny.',
-      desc: 'Bydło karmione kukurydzą daje gęsty marmurek i słodszy, maślany profil. Tylko kilka procent amerykańskiej wołowiny dostaje oznaczenie Prime.',
-      ings: ['USDA Prime', 'Sezonowanie na mokro 5 tyg.', 'Masło ziołowe', 'Sól morska'],
+      id: 'usa-ribeye', course: 'steaks', name: 'Rib Eye', flag: 'USDA Prime',
+      price: 149, weight: '300 g', cook: 'Your call', pair: 'Napa Cabernet',
+      short: 'Black Angus USDA Prime — the top few percent of American beef.',
+      blurb: 'Corn finishing builds a denser marble and a sweeter, buttery profile than the Argentine cuts. Only a small share of American beef ever earns the Prime grade; this is that beef.',
+      parts: ['USDA Prime grade', 'Five-week wet aged', 'Herb butter', 'Sea salt'],
       art: 'art-steak',
-      paint: { '--art-patty': '#803029', '--art-crust': '#ab4c33', '--art-cheese': '#e2cd8b', '--art-veg': '#6ea242' }
+      paint: { '--art-patty': '#8c3327', '--art-crust': '#ab4c33', '--art-cheese': '#f6e6ae', '--art-veg': '#5f7f39' }
     },
     {
-      id: 'wagyu-striploin',
-      cat: 'steaks',
-      name: 'Striploin · Wagyu A5',
-      tag: 'Japonia A5',
-      price: 125,
-      weight: '100 g',
-      heat: 'Wysmażenie: medium rare',
-      short: 'Japońskie wagyu w najwyższej klasie A5, prefektura Kagoshima.',
-      desc: 'Marmurek tak gęsty, że mięso wygląda na różowe. Podajemy w mniejszej porcji, bo więcej po prostu nie trzeba — smakuje raczej jak deser niż jak stek.',
-      ings: ['Wagyu A5 Kagoshima', 'Sól maldon', 'Wasabi', 'Sos ponzu'],
+      id: 'wagyu-striploin', course: 'steaks', name: 'Striploin', flag: 'Japan A5',
+      price: 125, weight: '100 g', cook: 'Medium rare', pair: 'Cold sake',
+      short: 'Japanese wagyu at the top grade, from Kagoshima.',
+      blurb: 'Marbling so dense the meat reads pink rather than red. We serve it small deliberately — past a hundred grams it stops being dinner and starts being a dare.',
+      parts: ['A5 Kagoshima wagyu', 'Maldon salt', 'Fresh wasabi', 'Ponzu'],
       art: 'art-steak',
-      paint: { '--art-patty': '#8e3a30', '--art-crust': '#c06a45', '--art-cheese': '#efe0a8', '--art-veg': '#7fa93f' }
+      paint: { '--art-patty': '#96453a', '--art-crust': '#c06a45', '--art-cheese': '#f7ecc4', '--art-veg': '#6f9142' }
     },
     {
-      id: 'wagyu-tenderloin',
-      cat: 'steaks',
-      name: 'Tenderloin · Wagyu A5',
-      tag: 'Japonia A5',
-      price: 175,
-      weight: '100 g',
-      heat: 'Wysmażenie: medium rare',
-      short: 'Polędwica wagyu — najkrótsza droga do „nigdy tego nie zapomnę”.',
-      desc: 'Najdroższa pozycja w karcie i jedyna, przy której prosimy, żeby zjeść ją bez sosu. Grillujemy krótko, kroimy w plastry, podajemy od razu.',
-      ings: ['Wagyu A5 Kagoshima', 'Sól maldon', 'Wasabi', 'Pieprz sansho'],
+      id: 'wagyu-tenderloin', course: 'steaks', name: 'Tenderloin', flag: 'Japan A5',
+      price: 175, weight: '100 g', cook: 'Medium rare', pair: 'Cold sake',
+      short: 'The shortest route to "I will remember that".',
+      blurb: 'The most expensive line on the card and the only one where we will ask you to skip the sauce. Seared briefly, sliced, on the table within seconds.',
+      parts: ['A5 Kagoshima wagyu', 'Maldon salt', 'Fresh wasabi', 'Sansho pepper'],
       art: 'art-steak',
-      paint: { '--art-patty': '#96413a', '--art-crust': '#c9744c', '--art-cheese': '#efe0a8', '--art-veg': '#7fa93f' }
+      paint: { '--art-patty': '#9d4b3e', '--art-crust': '#c9744c', '--art-cheese': '#f7ecc4', '--art-veg': '#6f9142' }
     },
 
-    /* ── Dodatki ───────────────────────────────────────────────────── */
+    /* ── Sides ─────────────────────────────────────────────────────── */
     {
-      id: 'fries',
-      cat: 'sides',
-      name: 'Frytki belgijskie',
-      tag: 'Klasyk',
-      price: 16,
-      weight: '200 g',
-      heat: '',
-      short: 'Krojone z ziemniaka, smażone dwa razy, solone morską solą.',
-      desc: 'Robimy je tak, jak trzeba: pierwsze smażenie w niższej temperaturze, odpoczynek, drugie na ostro. Środek puszysty, skorupka głośna.',
-      ings: ['Ziemniaki', 'Sól morska', 'Majonez czosnkowy w cenie'],
+      id: 'fries', course: 'sides', name: 'Belgian Fries', flag: 'Classic',
+      price: 16, weight: '200 g', cook: 'Twice fried', pair: 'Garlic mayo, included',
+      short: 'Cut from whole potatoes, fried twice, salted with sea salt.',
+      blurb: 'Done the long way: a first fry at low temperature, a rest, then a hard second fry. Fluffy through the middle, audibly crisp at the edge.',
+      parts: ['Whole potatoes', 'Sea salt', 'Garlic mayo included'],
       art: 'art-side',
-      paint: { '--art-veg': '#e8b23c', '--art-patty': '#8a8f96', '--art-crust': '#b7bcc4' }
+      paint: { '--art-veg': '#eab53f', '--art-basket': '#9aa2ab' }
     },
     {
-      id: 'sweet-fries',
-      cat: 'sides',
-      name: 'Frytki z batata',
-      tag: 'Wege',
-      price: 19,
-      weight: '200 g',
-      heat: '',
-      short: 'Słodkie ziemniaki z papryką wędzoną i majonezem chipotle.',
-      desc: 'Odrobinę słodsze, mocno przyprawione i idealne do wszystkiego, co ostre. Domyślnie z majonezem chipotle, ale sos możesz wymienić.',
-      ings: ['Batat', 'Papryka wędzona', 'Majonez chipotle'],
+      id: 'sweet-fries', course: 'sides', name: 'Sweet Potato Fries', flag: 'Veggie',
+      price: 19, weight: '200 g', cook: 'Twice fried', pair: 'Chipotle mayo',
+      short: 'Smoked paprika, chipotle mayo, a little sweeter than they look.',
+      blurb: 'Sweeter, heavily seasoned, and the right answer to anything spicy on the card. Comes with chipotle mayo, though you can swap the sauce.',
+      parts: ['Sweet potato', 'Smoked paprika', 'Chipotle mayo'],
       art: 'art-side',
-      paint: { '--art-veg': '#e07f34', '--art-patty': '#8a8f96', '--art-crust': '#b7bcc4' }
+      paint: { '--art-veg': '#e08234', '--art-basket': '#9aa2ab' }
     },
     {
-      id: 'tatar',
-      cat: 'sides',
-      name: 'Tatar wołowy',
-      tag: 'Polecane',
-      price: 46,
-      weight: '150 g',
-      heat: '',
-      short: 'Siekany nożem, z ogórkiem kiszonym, cebulą i żółtkiem.',
-      desc: 'Polędwica siekana na zamówienie, nigdy mielona. Podajemy z grzankami z zakwasowego chleba i klasycznym zestawem dodatków obok.',
-      ings: ['Polędwica wołowa', 'Ogórek kiszony', 'Cebula', 'Żółtko', 'Grzanki z zakwasu'],
+      id: 'tartare', course: 'sides', name: 'Beef Tartare', flag: 'Recommended',
+      price: 46, weight: '150 g', cook: 'Raw, hand cut', pair: 'Cold vodka',
+      short: 'Hand-cut tenderloin, pickle, onion and an egg yolk.',
+      blurb: 'Cut to order with a knife, never minced — that is the whole difference. Served with sourdough toast and the classic set of trimmings on the side, so you build it how you like it.',
+      parts: ['Beef tenderloin', 'Dill pickle', 'Onion', 'Egg yolk', 'Sourdough toast'],
       art: 'art-side',
-      paint: { '--art-veg': '#b8433a', '--art-patty': '#3a3f45', '--art-crust': '#6b7178' }
+      paint: { '--art-veg': '#b8433a', '--art-basket': '#8c8f95' }
     },
 
-    /* ── Desery ────────────────────────────────────────────────────── */
+    /* ── Dessert ───────────────────────────────────────────────────── */
     {
-      id: 'creme-brulee',
-      cat: 'desserts',
-      name: 'Crème brûlée',
-      tag: 'Deser',
-      price: 24,
-      weight: '150 g',
-      heat: '',
-      short: 'Wanilia z Madagaskaru pod skorupką palonego cukru.',
-      desc: 'Wypalamy karmel bezpośrednio przed podaniem, więc na stole jeszcze pracuje. Pod spodem chłodny, gęsty krem waniliowy.',
-      ings: ['Śmietanka', 'Wanilia Bourbon', 'Żółtka', 'Palony cukier', 'Maliny'],
+      id: 'brulee', course: 'sweet', name: 'Crème Brûlée', flag: 'Dessert',
+      price: 24, weight: '150 g', cook: 'Torched to order', pair: 'Espresso',
+      short: 'Madagascar vanilla under a lid of burnt sugar.',
+      blurb: 'We fire the sugar the moment it leaves the pass, so it is still working when it reaches you. Underneath: cold, dense, properly vanilla-heavy custard.',
+      parts: ['Cream', 'Bourbon vanilla', 'Egg yolk', 'Burnt sugar', 'Raspberries'],
       art: 'art-dessert',
-      paint: { '--art-patty': '#f2ead6', '--art-cheese': '#d8a13f', '--art-veg': '#b8324a' }
+      paint: { '--art-patty': '#f7f0dd', '--art-cheese': '#c98a2e', '--art-veg': '#b8324a' }
     },
 
-    /* ── Napoje ────────────────────────────────────────────────────── */
+    /* ── Drinks ────────────────────────────────────────────────────── */
     {
-      id: 'harpagan-ipa',
-      cat: 'drinks',
-      name: "Harpagan Let's Meat IPA",
-      tag: 'Nasze piwo',
-      price: 22,
-      weight: '500 ml',
-      heat: 'Styl: American IPA',
-      short: 'Amerykańskie IPA warzone dla nas przez browar Harpagan.',
-      desc: 'Żywiczna goryczka i cytrusowy chmiel, które radzą sobie nawet z najbardziej tłustym burgerem. Warzone w limitowanych partiach, z naszą etykietą.',
-      ings: ['Chmiel Citra', 'Chmiel Simcoe', 'Alk. 6,2%', 'Warzone we Wrocławiu'],
+      id: 'ipa', course: 'drinks', name: "Let's Meat IPA", flag: 'Our own label',
+      price: 22, weight: '500 ml', cook: '6.2% American IPA', pair: 'Everything on this page',
+      short: 'An American IPA brewed for us by Harpagan, in Wrocław.',
+      blurb: 'Resinous bitterness and citrus hop, which is exactly what a fatty burger needs pushing back against it. Brewed in small batches under our own label.',
+      parts: ['Citra hops', 'Simcoe hops', '6.2% ABV', 'Brewed in Wrocław'],
       art: 'art-drink',
-      paint: { '--art-patty': '#c98432', '--art-cheese': '#f6efdd', '--art-veg': '#f7f1e2' }
+      paint: { '--art-patty': '#a8641f', '--art-liquid': '#e0a33c', '--art-label': '#f3ece0', '--art-ink': '#8a1f1c', '--art-cap': '#6f4415' }
     },
     {
-      id: 'lemoniada',
-      cat: 'drinks',
-      name: 'Domowa lemoniada',
-      tag: 'Bez alkoholu',
-      price: 16,
-      weight: '400 ml',
-      heat: '',
-      short: 'Cytryna, mięta i syrop własnej roboty — dolewka gratis.',
-      desc: 'Wyciskana na miejscu, słodzona syropem z trzciny i schłodzona lodem z mrożonych owoców, żeby nie rozwadniała się w połowie szklanki.',
-      ings: ['Cytryna', 'Mięta', 'Syrop trzcinowy', 'Woda gazowana'],
+      id: 'lemonade', course: 'drinks', name: 'House Lemonade', flag: 'No alcohol',
+      price: 16, weight: '400 ml', cook: 'Pressed to order', pair: 'The hot burgers',
+      short: 'Lemon, mint, our own syrup — refills are on us.',
+      blurb: 'Pressed at the bar, sweetened with cane syrup and chilled with frozen fruit instead of ice, so it is still lemonade halfway down the glass.',
+      parts: ['Fresh lemon', 'Mint', 'Cane syrup', 'Sparkling water'],
       art: 'art-drink',
-      paint: { '--art-patty': '#d9c23f', '--art-cheese': '#f6efdd', '--art-veg': '#f2f7d8' }
+      paint: { '--art-patty': '#cbb43c', '--art-liquid': '#e8dc59', '--art-label': '#f6f2e2', '--art-ink': '#5f7f39', '--art-cap': '#8f7d1f' }
     },
     {
-      id: 'espresso',
-      cat: 'drinks',
-      name: 'Espresso',
-      tag: 'Kawa',
-      price: 9,
-      weight: '30 ml',
-      heat: '',
-      short: 'Palona w Polsce mieszanka arabiki z nutą gorzkiej czekolady.',
-      desc: 'Kończymy nim obiad. Mieszanka palona pod nasz ekspres, parzona na krótkim czasie ekstrakcji — gęsta crema i wyraźna czekolada.',
-      ings: ['100% arabica', 'Świeżo mielona', 'Podwójna porcja +4 zł'],
+      id: 'espresso', course: 'drinks', name: 'Espresso', flag: 'Coffee',
+      price: 9, weight: '30 ml', cook: 'Short extraction', pair: 'The brûlée',
+      short: 'Polish-roasted arabica with a dark chocolate finish.',
+      blurb: 'A blend roasted for our machine and pulled short. Thick crema, chocolate rather than fruit. Double shot for four złoty more.',
+      parts: ['100% arabica', 'Ground to order', 'Double shot +4 zł'],
       art: 'art-drink',
-      paint: { '--art-patty': '#4a3126', '--art-cheese': '#c9a273', '--art-veg': '#e6d3b8' }
+      paint: { '--art-patty': '#4a3126', '--art-liquid': '#5b3a24', '--art-label': '#efe4d2', '--art-ink': '#3a2318', '--art-cap': '#2f1d12' }
     }
   ]
 };

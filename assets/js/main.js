@@ -1,126 +1,126 @@
 /* ══════════════════════════════════════════════════════════════════════
    Meatologia — interactions
-   The heart of it is `openProduct()` / `closeProduct()`: the dish artwork
-   morphs from its card into the detail dialog. Browsers with the View
-   Transition API get a native cross-document-style morph; everyone else
-   gets the same motion hand-rolled with FLIP + WAAPI.
+
+   The centrepiece is the dish takeover: a card does not open a modal, it
+   becomes a full page. The artwork, the name and the price are handed to
+   the new view as shared elements, so three things fly into place while
+   everything else cross-fades. Browsers without the View Transition API
+   run the same choreography through FLIP + WAAPI.
    ═════════════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
 
-  var DATA = window.MEATOLOGIA_MENU;
+  var MENU = window.MEATOLOGIA_MENU;
   var $  = function (s, c) { return (c || document).querySelector(s); };
   var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
 
-  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  var supportsVT = typeof document.startViewTransition === 'function';
+  var OPEN_HOUR = 12;
+  var CLOSE_HOUR = 22;
+  var PHONE = '+48666854218';
 
-  function prefersLessMotion() { return reduceMotion.matches; }
+  var hasVT = typeof document.startViewTransition === 'function';
+  var calm = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function still() { return calm.matches; }
 
-  /* ── Menu rendering ─────────────────────────────────────────────── */
-  var grid = $('#menu-grid');
-  var filterBar = $('.filters');
+  /* ── Menu ───────────────────────────────────────────────────────── */
+  var grid = $('#dish-grid');
+  var chipBar = $('.chips');
   var cards = [];
-  var activeFilter = 'all';
+  var course = 'all';
 
-  function paintOf(item) {
-    return Object.keys(item.paint || {}).map(function (k) {
-      return k + ':' + item.paint[k];
-    }).join(';');
+  function tint(dish) {
+    return Object.keys(dish.paint || {}).map(function (k) { return k + ':' + dish.paint[k]; }).join(';');
   }
 
-  function categoryLabel(id) {
-    var cat = DATA.categories.filter(function (c) { return c.id === id; })[0];
-    return cat ? cat.label : '';
+  function courseLabel(id) {
+    var c = MENU.courses.filter(function (x) { return x.id === id; })[0];
+    return c ? c.label : '';
   }
 
-  function buildCard(item, index) {
-    var card = document.createElement('button');
-    card.type = 'button';
-    card.className = 'card reveal';
-    card.dataset.id = item.id;
-    card.dataset.cat = item.cat;
-    card.style.setProperty('--reveal-delay', Math.min(index, 8) * 60 + 'ms');
-    card.setAttribute('aria-label', item.name + ', ' + item.price + ' zł — pokaż szczegóły');
+  function makeCard(dish, i) {
+    var el = document.createElement('button');
+    el.type = 'button';
+    el.className = 'dish rise';
+    el.dataset.id = dish.id;
+    el.dataset.course = dish.course;
+    el.style.setProperty('--delay', Math.min(i, 8) * 55 + 'ms');
+    el.setAttribute('aria-label', dish.name + ', ' + dish.price + ' złoty — open details');
 
-    card.innerHTML =
-      '<span class="card-media" style="' + paintOf(item) + '">' +
-        '<svg class="card-art" viewBox="0 0 220 180" aria-hidden="true"><use href="#' + item.art + '"></use></svg>' +
-        '<span class="card-tag">' + item.tag + '</span>' +
+    el.innerHTML =
+      '<span class="dish-media" style="' + tint(dish) + '">' +
+        '<svg class="dish-pic" viewBox="0 0 320 280" aria-hidden="true"><use href="#' + dish.art + '"></use></svg>' +
+        '<span class="dish-flag">' + dish.flag + '</span>' +
       '</span>' +
-      '<span class="card-body">' +
-        '<span class="card-title">' + item.name + '</span>' +
-        '<span class="card-short">' + item.short + '</span>' +
+      '<span class="dish-body">' +
+        '<span class="dish-name">' + dish.name + '</span>' +
+        '<span class="dish-short">' + dish.short + '</span>' +
       '</span>' +
-      '<span class="card-foot">' +
-        '<span class="card-price">' + item.price + ' <small>zł</small></span>' +
-        '<span class="card-more">Zobacz <span aria-hidden="true">→</span></span>' +
+      '<span class="dish-foot">' +
+        '<span class="dish-cost">' + dish.price + '<small>zł</small></span>' +
+        '<span class="dish-open">Open <span aria-hidden="true">→</span></span>' +
       '</span>';
 
-    card.addEventListener('click', function () { openProduct(item.id, card); });
-    return card;
+    el.addEventListener('click', function () { openDish(dish.id, el); });
+    return el;
   }
 
-  function renderMenu() {
+  function buildMenu() {
     var frag = document.createDocumentFragment();
-    DATA.items.forEach(function (item, i) {
-      var card = buildCard(item, i);
+    MENU.dishes.forEach(function (dish, i) {
+      var card = makeCard(dish, i);
       cards.push(card);
       frag.appendChild(card);
     });
     grid.appendChild(frag);
 
-    DATA.categories.forEach(function (cat) {
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'filter';
-      btn.dataset.cat = cat.id;
-      btn.textContent = cat.label;
-      btn.setAttribute('aria-pressed', cat.id === activeFilter ? 'true' : 'false');
-      btn.addEventListener('click', function () { applyFilter(cat.id); });
-      filterBar.appendChild(btn);
+    MENU.courses.forEach(function (c) {
+      var chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'chip';
+      chip.dataset.course = c.id;
+      chip.textContent = c.label;
+      chip.setAttribute('aria-pressed', c.id === course ? 'true' : 'false');
+      chip.addEventListener('click', function () { filter(c.id); });
+      chipBar.appendChild(chip);
     });
   }
 
-  /* ── Filtering with a FLIP reflow ───────────────────────────────── */
-  function applyFilter(catId) {
-    if (catId === activeFilter) return;
-    activeFilter = catId;
+  /* Course filter, with the grid reflow animated by FLIP */
+  function filter(id) {
+    if (id === course) return;
+    course = id;
 
-    $$('.filter', filterBar).forEach(function (b) {
-      b.setAttribute('aria-pressed', b.dataset.cat === catId ? 'true' : 'false');
+    $$('.chip', chipBar).forEach(function (c) {
+      c.setAttribute('aria-pressed', c.dataset.course === id ? 'true' : 'false');
     });
 
     var before = new Map();
     cards.forEach(function (c) {
-      if (!c.classList.contains('is-hidden')) before.set(c, c.getBoundingClientRect());
+      if (!c.classList.contains('gone')) before.set(c, c.getBoundingClientRect());
     });
 
     cards.forEach(function (c) {
-      var show = catId === 'all' || c.dataset.cat === catId;
-      c.classList.toggle('is-hidden', !show);
+      c.classList.toggle('gone', !(id === 'all' || c.dataset.course === id));
     });
 
-    if (prefersLessMotion()) return;
+    buildFilmstrip();
+    if (still()) return;
 
     cards.forEach(function (c) {
-      if (c.classList.contains('is-hidden')) return;
+      if (c.classList.contains('gone')) return;
       var last = c.getBoundingClientRect();
       var first = before.get(c);
 
       if (!first) {
-        // newly shown — fade and rise into place
         c.animate(
-          [{ opacity: 0, transform: 'translateY(18px) scale(.96)' }, { opacity: 1, transform: 'none' }],
-          { duration: 420, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'both' }
+          [{ opacity: 0, transform: 'translateY(20px) scale(.95)' }, { opacity: 1, transform: 'none' }],
+          { duration: 440, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'both' }
         );
         return;
       }
-
       var dx = first.left - last.left;
       var dy = first.top - last.top;
       if (!dx && !dy) return;
-
       c.animate(
         [{ transform: 'translate(' + dx + 'px,' + dy + 'px)' }, { transform: 'none' }],
         { duration: 520, easing: 'cubic-bezier(.16,1,.3,1)' }
@@ -128,352 +128,373 @@
     });
   }
 
-  /* ── Product overlay ────────────────────────────────────────────── */
-  var overlay      = $('#product-overlay');
-  var dialog       = $('.product-dialog', overlay);
-  var dialogMedia  = $('#product-media');
-  var artUse       = $('#product-art-use');
-  var lastFocused  = null;
-  var currentIndex = -1;
-  var originCard   = null;
-  var isAnimating  = false;
+  /* ── Takeover ───────────────────────────────────────────────────── */
+  var over      = $('#takeover');
+  var sheet     = $('.takeover-sheet', over);
+  var stageDish = $('#dish-art');
+  var stageUse  = $('#dish-art-use');
+  var strip     = $('#filmstrip');
+  var current   = -1;
+  var from      = null;      // card the takeover grew out of
+  var restoreTo = null;
+  var busy      = false;
 
-  function visibleItems() {
-    return DATA.items.filter(function (it) {
-      return activeFilter === 'all' || it.cat === activeFilter;
-    });
+  function shown() {
+    return MENU.dishes.filter(function (d) { return course === 'all' || d.course === course; });
   }
 
-  function fillDialog(item) {
-    artUse.setAttribute('href', '#' + item.art);
-    dialogMedia.setAttribute('style', paintOf(item));
+  function fill(dish) {
+    stageUse.setAttribute('href', '#' + dish.art);
+    $('.takeover-stage').setAttribute('style', tint(dish));
 
-    $('#product-tag').textContent = item.tag;
-    $('#product-cat').textContent = categoryLabel(item.cat);
-    $('#product-title').textContent = item.name;
-    $('#product-desc').textContent = item.desc;
-    $('#product-weight').textContent = item.weight;
-    $('#product-heat').textContent = item.heat || '';
-    $('#product-price').textContent = item.price;
+    $('#dish-course').textContent = courseLabel(dish.course) + ' · ' + dish.flag;
+    $('#dish-name').textContent = dish.name;
+    $('#dish-blurb').textContent = dish.blurb;
+    $('#dish-weight').textContent = dish.weight;
+    $('#dish-cook').textContent = dish.cook;
+    $('#dish-pair').textContent = dish.pair;
+    $('#dish-price').textContent = dish.price;
 
-    var ings = $('#product-ings');
-    ings.innerHTML = '';
-    item.ings.forEach(function (ing, i) {
+    var parts = $('#dish-parts');
+    parts.innerHTML = '';
+    dish.parts.forEach(function (p, i) {
       var li = document.createElement('li');
       li.style.setProperty('--i', i);
-      li.textContent = ing;
-      ings.appendChild(li);
+      li.textContent = p;
+      parts.appendChild(li);
+    });
+
+    $$('.frame', strip).forEach(function (f) {
+      f.setAttribute('aria-selected', f.dataset.id === dish.id ? 'true' : 'false');
+    });
+    var active = $('.frame[aria-selected="true"]', strip);
+    if (active && active.scrollIntoView) {
+      active.scrollIntoView({ inline: 'center', block: 'nearest', behavior: still() ? 'auto' : 'smooth' });
+    }
+  }
+
+  function buildFilmstrip() {
+    strip.innerHTML = '';
+    shown().forEach(function (dish) {
+      var f = document.createElement('button');
+      f.type = 'button';
+      f.className = 'frame';
+      f.dataset.id = dish.id;
+      f.setAttribute('role', 'tab');
+      f.setAttribute('aria-selected', 'false');
+      f.setAttribute('aria-label', dish.name);
+      f.setAttribute('style', tint(dish));
+      f.innerHTML = '<svg viewBox="0 0 320 280" aria-hidden="true"><use href="#' + dish.art + '"></use></svg>';
+      f.addEventListener('click', function () { goTo(dish.id); });
+      strip.appendChild(f);
     });
   }
 
-  function showOverlay() {
-    overlay.hidden = false;
-    overlay.classList.add('is-open');
-    document.body.classList.add('is-locked');
+  /* names used by the View Transition API for the shared elements */
+  function label(card, on) {
+    var pic = card ? $('.dish-pic', card) : null;
+    var name = card ? $('.dish-name', card) : null;
+    var cost = card ? $('.dish-cost', card) : null;
+    if (pic)  pic.style.viewTransitionName  = on ? 'dish-art' : '';
+    if (name) name.style.viewTransitionName = on ? 'dish-title' : '';
+    if (cost) cost.style.viewTransitionName = on ? 'dish-cost' : '';
   }
 
-  function hideOverlay() {
-    overlay.hidden = true;
-    overlay.classList.remove('is-open', 'is-closing');
-    document.body.classList.remove('is-locked');
+  function labelStage(on) {
+    stageDish.style.viewTransitionName = on ? 'dish-art' : '';
+    $('#dish-name').style.viewTransitionName = on ? 'dish-title' : '';
+    $('.dish-price').style.viewTransitionName = on ? 'dish-cost' : '';
   }
 
-  /**
-   * FLIP fallback — grow the dialog out of the card's media box.
-   * `from` is the DOMRect of the element that was clicked.
-   */
-  function flipDialog(from, reverse) {
-    var to = dialog.getBoundingClientRect();
-    var sx = Math.max(from.width / to.width, .05);
-    var sy = Math.max(from.height / to.height, .05);
-    var dx = from.left - to.left;
-    var dy = from.top - to.top;
+  function show() {
+    over.hidden = false;
+    document.body.classList.add('locked');
+  }
 
-    var start = {
-      transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')',
-      opacity: 0,
-      borderRadius: '20px'
-    };
-    var end = { transform: 'none', opacity: 1, borderRadius: '28px' };
+  function hide() {
+    over.hidden = true;
+    over.classList.remove('shutting', 'swapping');
+    document.body.classList.remove('locked');
+  }
 
-    dialog.classList.add('is-flipping');
-    var anim = dialog.animate(
-      reverse ? [end, start] : [start, end],
-      { duration: reverse ? 320 : 520, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'both' }
+  /* FLIP fallback: grow the artwork out of the card it came from */
+  function flip(rect, reverse) {
+    var to = stageDish.getBoundingClientRect();
+    if (!to.width || !rect.width) return Promise.resolve();
+
+    var scale = rect.width / to.width;
+    var dx = (rect.left + rect.width / 2) - (to.left + to.width / 2);
+    var dy = (rect.top + rect.height / 2) - (to.top + to.height / 2);
+    var a = { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + scale + ')' };
+    var b = { transform: 'none' };
+
+    var anim = stageDish.animate(reverse ? [b, a] : [a, b], {
+      duration: reverse ? 330 : 540,
+      easing: 'cubic-bezier(.16,1,.3,1)',
+      fill: 'both'
+    });
+    sheet.animate(
+      reverse ? [{ opacity: 1 }, { opacity: 0 }] : [{ opacity: 0 }, { opacity: 1 }],
+      { duration: reverse ? 300 : 380, easing: 'ease', fill: 'both' }
     );
-    anim.finished.then(function () {
-      dialog.classList.remove('is-flipping');
-      anim.cancel();
-    }).catch(function () {});
-    return anim;
+    return anim.finished.then(function () { anim.cancel(); }).catch(function () {});
   }
 
-  function openProduct(id, card) {
-    if (isAnimating) return;
-    var index = DATA.items.findIndex(function (it) { return it.id === id; });
-    if (index < 0) return;
+  function openDish(id, card) {
+    if (busy) return;
+    var i = MENU.dishes.findIndex(function (d) { return d.id === id; });
+    if (i < 0) return;
 
-    currentIndex = index;
-    originCard = card || null;
-    lastFocused = document.activeElement;
-    fillDialog(DATA.items[index]);
+    current = i;
+    from = card || null;
+    restoreTo = document.activeElement;
+    buildFilmstrip();
+    fill(MENU.dishes[i]);
 
-    var cardMedia = originCard ? $('.card-media', originCard) : null;
-    var fromRect = cardMedia ? cardMedia.getBoundingClientRect() : null;
+    var pic = from ? $('.dish-pic', from) : null;
+    var rect = pic ? pic.getBoundingClientRect() : null;
 
-    if (prefersLessMotion()) {
-      showOverlay();
-      focusDialog();
-      return;
-    }
+    if (still()) { show(); focusSheet(); return; }
 
-    if (supportsVT && cardMedia) {
-      isAnimating = true;
-      cardMedia.style.viewTransitionName = 'product-media';
-
+    if (hasVT && from) {
+      busy = true;
+      label(from, true);
       var vt = document.startViewTransition(function () {
-        cardMedia.style.viewTransitionName = '';
-        dialogMedia.style.viewTransitionName = 'product-media';
-        showOverlay();
+        label(from, false);
+        show();
+        labelStage(true);
       });
-
-      vt.finished.then(function () {
-        dialogMedia.style.viewTransitionName = '';
-        isAnimating = false;
-      }).catch(function () { isAnimating = false; });
-
-      vt.ready.then(focusDialog).catch(focusDialog);
+      vt.finished.then(function () { labelStage(false); busy = false; })
+                 .catch(function () { labelStage(false); busy = false; });
+      vt.ready.then(focusSheet).catch(focusSheet);
       return;
     }
 
-    showOverlay();
-    if (fromRect) flipDialog(fromRect, false);
-    focusDialog();
+    show();
+    if (rect) flip(rect, false);
+    focusSheet();
   }
 
-  function closeProduct() {
-    if (overlay.hidden || isAnimating) return;
+  function closeDish() {
+    if (over.hidden || busy) return;
+    var pic = from ? $('.dish-pic', from) : null;
 
-    var cardMedia = originCard ? $('.card-media', originCard) : null;
-
-    function restoreFocus() {
-      if (lastFocused && document.contains(lastFocused)) lastFocused.focus({ preventScroll: true });
-      lastFocused = null;
-      originCard = null;
+    function back() {
+      if (restoreTo && document.contains(restoreTo)) restoreTo.focus({ preventScroll: true });
+      restoreTo = null;
+      from = null;
     }
 
-    if (prefersLessMotion()) {
-      hideOverlay();
-      restoreFocus();
-      return;
-    }
+    if (still()) { hide(); back(); return; }
 
-    // If the origin card scrolled out of view, bring it back so the morph
-    // has somewhere to land.
-    if (cardMedia && !isInViewport(cardMedia)) {
-      cardMedia.scrollIntoView({ block: 'center', behavior: 'auto' });
-    }
+    // make sure the card is on screen, so the artwork has somewhere to land
+    if (pic && !onScreen(pic)) pic.scrollIntoView({ block: 'center', behavior: 'auto' });
 
-    if (supportsVT && cardMedia && !cardMedia.closest('.is-hidden')) {
-      isAnimating = true;
-      dialogMedia.style.viewTransitionName = 'product-media';
-
+    if (hasVT && pic && !from.classList.contains('gone')) {
+      busy = true;
+      labelStage(true);
       var vt = document.startViewTransition(function () {
-        dialogMedia.style.viewTransitionName = '';
-        hideOverlay();
-        cardMedia.style.viewTransitionName = 'product-media';
+        labelStage(false);
+        hide();
+        label(from, true);
       });
-
-      vt.finished.then(function () {
-        cardMedia.style.viewTransitionName = '';
-        isAnimating = false;
-        restoreFocus();
-      }).catch(function () {
-        cardMedia.style.viewTransitionName = '';
-        isAnimating = false;
-        restoreFocus();
-      });
+      var done = function () { label(from, false); busy = false; back(); };
+      vt.finished.then(done).catch(done);
       return;
     }
 
-    overlay.classList.add('is-closing');
-    if (cardMedia) {
-      isAnimating = true;
-      flipDialog(cardMedia.getBoundingClientRect(), true).finished
-        .then(finish).catch(finish);
-    } else {
-      finish();
-    }
-
-    function finish() {
-      isAnimating = false;
-      hideOverlay();
-      restoreFocus();
-    }
+    over.classList.add('shutting');
+    busy = true;
+    var end = function () { busy = false; hide(); back(); };
+    if (pic) flip(pic.getBoundingClientRect(), true).then(end); else end();
   }
 
-  function stepProduct(dir) {
-    var list = visibleItems();
+  /* Move between dishes without leaving the takeover */
+  function goTo(id) {
+    var i = MENU.dishes.findIndex(function (d) { return d.id === id; });
+    if (i < 0 || i === current) return;
+
+    var dir = i > current ? 1 : -1;
+    current = i;
+    from = cards.filter(function (c) { return c.dataset.id === id; })[0] || null;
+    over.style.setProperty('--swing', (dir > 0 ? -44 : 44) + 'px');
+
+    if (still()) { fill(MENU.dishes[i]); return; }
+
+    over.classList.remove('swapping');
+    void over.offsetWidth;                        // restart the CSS animations
+    over.classList.add('swapping');
+    window.setTimeout(function () { fill(MENU.dishes[i]); }, 215);
+    window.setTimeout(function () { over.classList.remove('swapping'); }, 560);
+  }
+
+  function step(dir) {
+    var list = shown();
     if (!list.length) return;
-
-    var currentId = DATA.items[currentIndex].id;
-    var pos = list.findIndex(function (it) { return it.id === currentId; });
-    if (pos < 0) pos = 0;
-
-    var next = list[(pos + dir + list.length) % list.length];
-    currentIndex = DATA.items.findIndex(function (it) { return it.id === next.id; });
-    originCard = cards.filter(function (c) { return c.dataset.id === next.id; })[0] || null;
-
-    var body = $('.product-body', dialog);
-    dialogMedia.style.setProperty('--swap-x', (dir > 0 ? -30 : 30) + 'px');
-
-    if (prefersLessMotion()) { fillDialog(next); return; }
-
-    dialogMedia.classList.remove('is-swapping');
-    body.classList.remove('is-swapping');
-    void dialogMedia.offsetWidth;                    // restart the CSS animations
-    dialogMedia.classList.add('is-swapping');
-    body.classList.add('is-swapping');
-
-    window.setTimeout(function () { fillDialog(next); }, 210);
-    window.setTimeout(function () {
-      dialogMedia.classList.remove('is-swapping');
-      body.classList.remove('is-swapping');
-    }, 520);
+    var here = list.findIndex(function (d) { return d.id === MENU.dishes[current].id; });
+    if (here < 0) here = 0;
+    goTo(list[(here + dir + list.length) % list.length].id);
   }
 
-  function isInViewport(el) {
+  function onScreen(el) {
     var r = el.getBoundingClientRect();
     return r.bottom > 0 && r.top < window.innerHeight;
   }
 
-  function focusDialog() {
-    var target = $('.product-close', dialog);
-    if (target) target.focus({ preventScroll: true });
+  function focusSheet() {
+    var btn = $('.takeover-close', over);
+    if (btn) btn.focus({ preventScroll: true });
   }
 
-  /* Dialog wiring: close targets, arrows, keyboard, focus trap */
-  $$('[data-close]', overlay).forEach(function (el) {
-    el.addEventListener('click', closeProduct);
-  });
-  $('[data-prev]', overlay).addEventListener('click', function () { stepProduct(-1); });
-  $('[data-next]', overlay).addEventListener('click', function () { stepProduct(1); });
+  $$('[data-close]', over).forEach(function (el) { el.addEventListener('click', closeDish); });
 
   document.addEventListener('keydown', function (e) {
-    if (overlay.hidden) return;
-    if (e.key === 'Escape') { e.preventDefault(); closeProduct(); }
-    else if (e.key === 'ArrowRight') stepProduct(1);
-    else if (e.key === 'ArrowLeft') stepProduct(-1);
-    else if (e.key === 'Tab') trapFocus(e);
+    if (over.hidden) return;
+    if (e.key === 'Escape') { e.preventDefault(); closeDish(); }
+    else if (e.key === 'ArrowRight') step(1);
+    else if (e.key === 'ArrowLeft') step(-1);
+    else if (e.key === 'Tab') keepFocus(e);
   });
 
-  function trapFocus(e) {
-    var focusables = $$('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])', dialog)
+  function keepFocus(e) {
+    var able = $$('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])', sheet)
       .filter(function (el) { return el.offsetParent !== null; });
-    if (!focusables.length) return;
-
-    var first = focusables[0];
-    var last = focusables[focusables.length - 1];
-
+    if (!able.length) return;
+    var first = able[0];
+    var last = able[able.length - 1];
     if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   }
 
-  /* Swipe between dishes on touch devices */
+  /* Swipe through dishes on touch */
   (function () {
     var x0 = null, y0 = null;
-    dialog.addEventListener('touchstart', function (e) {
+    sheet.addEventListener('touchstart', function (e) {
       x0 = e.touches[0].clientX; y0 = e.touches[0].clientY;
     }, { passive: true });
-    dialog.addEventListener('touchend', function (e) {
+    sheet.addEventListener('touchend', function (e) {
       if (x0 === null) return;
       var dx = e.changedTouches[0].clientX - x0;
       var dy = e.changedTouches[0].clientY - y0;
-      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.6) stepProduct(dx < 0 ? 1 : -1);
+      if (Math.abs(dx) > 64 && Math.abs(dx) > Math.abs(dy) * 1.6) step(dx < 0 ? 1 : -1);
       x0 = y0 = null;
     }, { passive: true });
   }());
 
-  /* ── Scroll reveal ──────────────────────────────────────────────── */
-  function initReveal() {
-    var items = $$('.reveal');
-    if (!('IntersectionObserver' in window) || prefersLessMotion()) {
-      items.forEach(function (el) { el.classList.add('is-in'); });
+  /* ── Opening hours ──────────────────────────────────────────────── */
+  function hours() {
+    var now = new Date();
+    var open = now.getHours() >= OPEN_HOUR && now.getHours() < CLOSE_HOUR;
+
+    var chip = $('#status-chip');
+    var text = $('#status-text');
+    if (chip && text) {
+      chip.classList.toggle('shut', !open);
+      text.textContent = open ? 'Open now · until 22:00' : 'Closed · opens 12:00';
+    }
+
+    var row = $('#hours-table tr[data-day="' + now.getDay() + '"]');
+    if (row) row.classList.add('today');
+  }
+
+  /* ── Reservation ────────────────────────────────────────────────── */
+  function reservation() {
+    var form = $('#reserve-form');
+    if (!form) return;
+
+    var guests = $('#r-guests');
+    var msg = $('#form-msg');
+    var count = 2;
+
+    $$('[data-guests]', form).forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        count = Math.min(12, Math.max(1, count + Number(btn.dataset.guests)));
+        guests.textContent = String(count);
+        if (!still()) {
+          guests.animate([{ transform: 'scale(1.25)' }, { transform: 'scale(1)' }],
+            { duration: 280, easing: 'cubic-bezier(.34,1.5,.64,1)' });
+        }
+      });
+    });
+
+    var date = $('#r-date');
+    var today = new Date();
+    date.min = today.toISOString().slice(0, 10);
+    date.value = today.toISOString().slice(0, 10);
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var name = $('#r-name');
+      msg.className = 'form-msg';
+
+      if (!name.value.trim()) {
+        name.setAttribute('aria-invalid', 'true');
+        name.focus();
+        msg.classList.add('bad');
+        msg.textContent = 'We need a name to put the table under.';
+        return;
+      }
+      name.removeAttribute('aria-invalid');
+
+      var when = new Date(date.value + 'T00:00:00');
+      var pretty = isNaN(when) ? date.value : when.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+
+      msg.classList.add('good');
+      msg.innerHTML = 'Ready: <strong>' + escapeHtml(name.value.trim()) + '</strong>, ' + count +
+        (count === 1 ? ' guest' : ' guests') + ', ' + pretty + ' at ' + $('#r-time').value +
+        '. <a href="tel:' + PHONE + '">Tap to call and confirm →</a>';
+    });
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  /* ── Reveal on scroll ───────────────────────────────────────────── */
+  function reveal() {
+    var items = $$('.rise');
+    if (!('IntersectionObserver' in window) || still()) {
+      items.forEach(function (el) { el.classList.add('up'); });
       return;
     }
     var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add('is-in');
-        io.unobserve(entry.target);
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        en.target.classList.add('up');
+        io.unobserve(en.target);
       });
-    }, { rootMargin: '0px 0px -8% 0px', threshold: .12 });
+    }, { rootMargin: '0px 0px -6% 0px', threshold: .1 });
     items.forEach(function (el) { io.observe(el); });
   }
 
-  /* ── Counters ───────────────────────────────────────────────────── */
-  function initCounters() {
-    var nums = $$('.fact-n');
-    if (!('IntersectionObserver' in window) || prefersLessMotion()) {
-      nums.forEach(function (el) { el.textContent = el.dataset.count.replace('.', ','); });
-      return;
-    }
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (!entry.isIntersecting) return;
-        countUp(entry.target);
-        io.unobserve(entry.target);
-      });
-    }, { threshold: .6 });
-    nums.forEach(function (el) { io.observe(el); });
-  }
+  /* ── Masthead ───────────────────────────────────────────────────── */
+  function masthead() {
+    var bar = $('.masthead');
+    var toggle = $('.burger-btn');
+    var drawer = $('#drawer');
+    var links = $$('.nav a');
+    var targets = links.map(function (a) { return $(a.getAttribute('href')); }).filter(Boolean);
 
-  function countUp(el) {
-    var target = parseFloat(el.dataset.count);
-    var decimals = parseInt(el.dataset.decimals || '0', 10);
-    var start = performance.now();
-    var duration = 1300;
-
-    function frame(now) {
-      var t = Math.min((now - start) / duration, 1);
-      var eased = 1 - Math.pow(1 - t, 3);
-      el.textContent = (target * eased).toFixed(decimals).replace('.', ',');
-      if (t < 1) requestAnimationFrame(frame);
-    }
-    requestAnimationFrame(frame);
-  }
-
-  /* ── Header: stuck state, progress, active link, mobile nav ─────── */
-  function initHeader() {
-    var header = $('.site-header');
-    var bar = $('.scroll-progress');
-    var toggle = $('.nav-toggle');
-    var mobileNav = $('#mobile-nav');
-    var links = $$('.site-nav a');
-    var sections = links
-      .map(function (a) { return $(a.getAttribute('href')); })
-      .filter(Boolean);
-
-    var ticking = false;
+    var pending = false;
     function onScroll() {
-      if (ticking) return;
-      ticking = true;
+      if (pending) return;
+      pending = true;
       requestAnimationFrame(function () {
         var y = window.scrollY;
-        header.classList.toggle('is-stuck', y > 8);
+        bar.classList.toggle('stuck', y > 8);
 
-        var max = document.documentElement.scrollHeight - window.innerHeight;
-        bar.style.setProperty('--progress', (max > 0 ? (y / max) * 100 : 0) + '%');
+        var hero = $('.hero-dish');
+        if (hero && !still()) hero.style.setProperty('--drift', Math.min(y, 700) * .07 + 'px');
 
-        var active = null;
-        sections.forEach(function (sec) {
-          if (sec.getBoundingClientRect().top <= window.innerHeight * .38) active = sec.id;
+        var on = null;
+        targets.forEach(function (sec) {
+          if (sec.getBoundingClientRect().top <= window.innerHeight * .36) on = sec.id;
         });
-        links.forEach(function (a) {
-          a.classList.toggle('is-active', a.getAttribute('href') === '#' + active);
-        });
+        links.forEach(function (a) { a.classList.toggle('on', a.getAttribute('href') === '#' + on); });
 
-        ticking = false;
+        pending = false;
       });
     }
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -482,47 +503,31 @@
     toggle.addEventListener('click', function () {
       var open = toggle.getAttribute('aria-expanded') === 'true';
       toggle.setAttribute('aria-expanded', String(!open));
-      mobileNav.hidden = open;
+      drawer.hidden = open;
     });
-    $$('a', mobileNav).forEach(function (a) {
+    $$('a', drawer).forEach(function (a) {
       a.addEventListener('click', function () {
         toggle.setAttribute('aria-expanded', 'false');
-        mobileNav.hidden = true;
+        drawer.hidden = true;
       });
     });
   }
 
-  /* ── Hero parallax ──────────────────────────────────────────────── */
-  function initParallax() {
-    var burger = $('.hero-burger');
-    if (!burger || prefersLessMotion()) return;
+  /* ── Go ─────────────────────────────────────────────────────────── */
+  buildMenu();
+  buildFilmstrip();
+  reveal();
+  masthead();
+  hours();
+  reservation();
 
-    var ticking = false;
-    window.addEventListener('scroll', function () {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(function () {
-        var offset = Math.min(window.scrollY, 700) * .08;
-        burger.style.setProperty('--parallax', offset + 'px');
-        ticking = false;
-      });
-    }, { passive: true });
-  }
+  var year = $('#year');
+  if (year) year.textContent = String(new Date().getFullYear());
 
-  /* ── Init ───────────────────────────────────────────────────────── */
-  renderMenu();
-  initReveal();
-  initCounters();
-  initHeader();
-  initParallax();
-
-  var yearEl = $('#year');
-  if (yearEl) yearEl.textContent = String(new Date().getFullYear());
-
-  // Deep link: #menu-classic opens that dish straight away.
+  // #dish-classic opens that dish on load
   if (/^#dish-/.test(location.hash)) {
-    var id = location.hash.replace('#dish-', '');
+    var id = location.hash.slice(6);
     var card = cards.filter(function (c) { return c.dataset.id === id; })[0];
-    if (card) window.setTimeout(function () { openProduct(id, card); }, 400);
+    if (card) window.setTimeout(function () { openDish(id, card); }, 350);
   }
 }());

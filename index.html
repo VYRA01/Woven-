@@ -1,18 +1,17 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Meatologia — Burgery i steki, Wrocław</title>
-<meta name="description" content="Meatologia — szczera miłość do tego, co prawdziwe. Najwyższej jakości wołowina, soczyste burgery i steki. Zwycięska 45/lok. 3, Wrocław.">
-<meta name="theme-color" content="#12100f">
+<title>Meatologia — Burgers &amp; Steaks, Wrocław</title>
+<meta name="description" content="Meatologia is an honest love of the real thing. Top-grade beef, juicy burgers and charcoal-grilled steaks. Zwycięska 45, Wrocław. Open daily 12:00–22:00.">
+<meta name="theme-color" content="#f2ece1">
 
 <meta property="og:type" content="restaurant">
-<meta property="og:title" content="Meatologia — Burgery i steki, Wrocław">
-<meta property="og:description" content="Najwyższej jakości wołowina, soczyste burgery i steki z rusztu. Zwycięska 45/lok. 3, Wrocław.">
-<meta property="og:locale" content="pl_PL">
+<meta property="og:title" content="Meatologia — Burgers &amp; Steaks, Wrocław">
+<meta property="og:description" content="Top-grade beef, juicy burgers and charcoal-grilled steaks. Zwycięska 45, Wrocław.">
 
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%237a1b18'/%3E%3Cpath d='M22 44c0-13 12-22 28-22s28 9 28 22z' fill='%23e0a44f'/%3E%3Crect x='20' y='48' width='60' height='11' rx='5' fill='%233c2a20'/%3E%3Cpath d='M22 64h56c0 10-11 16-28 16s-28-6-28-16z' fill='%23c98a3c'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%238a1f1c'/%3E%3Cpath d='M20 46c0-14 13-24 30-24s30 10 30 24z' fill='%23eab962'/%3E%3Crect x='18' y='50' width='64' height='12' rx='6' fill='%233a2318'/%3E%3Cpath d='M20 66h60c0 11-12 17-30 17s-30-6-30-17z' fill='%23d29a4c'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="assets/css/styles.css">
 
 <script type="application/ld+json">
@@ -20,7 +19,7 @@
   "@context": "https://schema.org",
   "@type": "Restaurant",
   "name": "Meatologia",
-  "servesCuisine": ["Burgery", "Steki", "Amerykańska"],
+  "servesCuisine": ["Burgers", "Steak", "American"],
   "priceRange": "40–160 zł",
   "telephone": "+48666854218",
   "url": "https://meatologia.pl",
@@ -31,416 +30,611 @@
     "addressLocality": "Wrocław",
     "addressCountry": "PL"
   },
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.5",
-    "reviewCount": "737"
-  },
-  "openingHours": "Mo-Su 12:00-22:00"
+  "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.5", "reviewCount": "737" },
+  "openingHoursSpecification": [{
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+    "opens": "12:00", "closes": "22:00"
+  }]
 }
 </script>
 </head>
 <body>
 
-<a class="skip-link" href="#menu">Przejdź do menu</a>
+<a class="skip-link" href="#menu">Skip to the menu</a>
 
-<!-- ── Shared SVG artwork ─────────────────────────────────────────────── -->
-<svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
+<!-- ════ Shared artwork ═══════════════════════════════════════════════ -->
+<svg width="0" height="0" aria-hidden="true" focusable="false" class="art-defs">
   <defs>
-    <linearGradient id="g-sheen" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#fff" stop-opacity=".22"/>
+    <!-- Reusable shading passes. Fixed colours, so they layer over any tint. -->
+    <linearGradient id="sheen" x1="0" y1="0" x2=".25" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".45"/>
+      <stop offset=".45" stop-color="#fff" stop-opacity=".08"/>
       <stop offset="1" stop-color="#fff" stop-opacity="0"/>
     </linearGradient>
+    <linearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#000" stop-opacity="0"/>
+      <stop offset=".55" stop-color="#000" stop-opacity=".06"/>
+      <stop offset="1" stop-color="#000" stop-opacity=".34"/>
+    </linearGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="1" y2=".3">
+      <stop offset="0" stop-color="#ffd9a0" stop-opacity=".55"/>
+      <stop offset=".5" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="glint" cx=".34" cy=".26" r=".42">
+      <stop offset="0" stop-color="#fff" stop-opacity=".7"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur-lg" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <filter id="blur-sm" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="2.4"/>
+    </filter>
 
-    <!-- Layered burger. Colours come from CSS custom properties. -->
-    <symbol id="art-burger" viewBox="0 0 220 180">
-      <ellipse class="art-shadow" cx="110" cy="160" rx="86" ry="12"/>
+    <!-- ── Burger ──────────────────────────────────────────────────── -->
+    <symbol id="art-burger" viewBox="0 0 320 280">
+      <ellipse class="art-cast" cx="160" cy="250" rx="118" ry="15" filter="url(#blur-lg)"/>
+
+      <g class="art-layer art-bun-btm">
+        <path d="M52 186h216c0 36-44 58-108 58S52 222 52 186z" fill="var(--art-bun-btm, #cf9445)"/>
+        <path d="M52 186h216c0 36-44 58-108 58S52 222 52 186z" fill="url(#shade)"/>
+        <path d="M58 188h204c0 7-2 13-7 19-30 11-64 16-97 16s-67-5-96-16c-4-6-6-12-6-19z" fill="#fff" opacity=".16"/>
+      </g>
+
+      <g class="art-layer art-patty">
+        <rect x="36" y="156" width="248" height="42" rx="21" fill="var(--art-patty, #4a2e1e)"/>
+        <rect x="36" y="156" width="248" height="42" rx="21" fill="url(#shade)"/>
+        <rect x="46" y="160" width="228" height="13" rx="6.5" fill="#fff" opacity=".12"/>
+        <g fill="#2a170e" opacity=".3">
+          <ellipse cx="84" cy="182" rx="10" ry="4"/><ellipse cx="140" cy="188" rx="13" ry="4"/>
+          <ellipse cx="206" cy="180" rx="11" ry="4"/><ellipse cx="248" cy="188" rx="9" ry="3.4"/>
+        </g>
+      </g>
+
+      <g class="art-layer art-cheese">
+        <!-- slab plus rounded drips, drawn as capsules so the melt reads soft -->
+        <g fill="var(--art-cheese, #f2b12b)">
+          <rect x="34" y="140" width="252" height="22" rx="7"/>
+          <rect x="66" y="156" width="24" height="17" rx="12"/>
+          <rect x="112" y="156" width="28" height="25" rx="14"/>
+          <rect x="168" y="156" width="24" height="14" rx="12"/>
+          <rect x="214" y="156" width="28" height="21" rx="14"/>
+          <rect x="252" y="156" width="20" height="13" rx="10"/>
+        </g>
+        <g fill="url(#shade)" opacity=".55">
+          <rect x="34" y="140" width="252" height="22" rx="7"/>
+          <rect x="112" y="156" width="28" height="25" rx="14"/>
+          <rect x="214" y="156" width="28" height="21" rx="14"/>
+        </g>
+        <rect x="44" y="143" width="232" height="7" rx="3.5" fill="#fff" opacity=".38"/>
+      </g>
+
+      <g class="art-layer art-veg">
+        <!-- ruffled leaf: a band finished with overlapping lobes -->
+        <g fill="var(--art-veg, #6f9c3c)">
+          <rect x="30" y="116" width="260" height="21" rx="8"/>
+          <circle cx="54" cy="133" r="11"/><circle cx="84" cy="136" r="13"/>
+          <circle cx="116" cy="132" r="10.5"/><circle cx="148" cy="136" r="13"/>
+          <circle cx="180" cy="132" r="10.5"/><circle cx="210" cy="136" r="12"/>
+          <circle cx="240" cy="132" r="10.5"/><circle cx="266" cy="134" r="11"/>
+        </g>
+        <g fill="#000" opacity=".12">
+          <circle cx="84" cy="139" r="10"/><circle cx="148" cy="139" r="10"/><circle cx="210" cy="139" r="9"/>
+        </g>
+        <path d="M40 122c14-5 24 4 38 0s24-6 38-2 24 4 38 0 24-6 38-2 22 4 34 0"
+              fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" opacity=".38"/>
+      </g>
+
       <g class="art-layer art-bun-top">
-        <path d="M24 78C24 44 62 20 110 20s86 24 86 58z" fill="var(--art-bun, #d99b4a)"/>
-        <path d="M24 78C24 44 62 20 110 20s86 24 86 58z" fill="url(#g-sheen)"/>
-        <g fill="#f6e3c4" opacity=".85">
-          <ellipse cx="72" cy="52" rx="5" ry="3"/><ellipse cx="104" cy="41" rx="5" ry="3"/>
-          <ellipse cx="140" cy="52" rx="5" ry="3"/><ellipse cx="88" cy="66" rx="5" ry="3"/>
-          <ellipse cx="130" cy="68" rx="5" ry="3"/><ellipse cx="160" cy="66" rx="4" ry="2.6"/>
-        </g>
-      </g>
-      <g class="art-layer art-veg">
-        <path d="M18 84c14-8 26 6 40-2s26 8 40 0 26 8 42 0 24 8 42 2v10H18z" fill="var(--art-veg, #6ea242)"/>
-      </g>
-      <g class="art-layer art-cheese">
-        <path d="M28 94h164l-12 22-24-14-22 18-24-14-22 16-24-14-24 14z" fill="var(--art-cheese, #f0b429)"/>
-      </g>
-      <g class="art-layer art-patty">
-        <rect x="24" y="104" width="172" height="26" rx="13" fill="var(--art-patty, #4a2f22)"/>
-        <rect x="24" y="104" width="172" height="10" rx="5" fill="#fff" opacity=".08"/>
-      </g>
-      <g class="art-layer art-bun-bottom">
-        <path d="M30 132h160c0 18-24 28-80 28s-80-10-80-28z" fill="var(--art-bun-bottom, #c98a3c)"/>
-      </g>
-    </symbol>
-
-    <!-- Steak on the board -->
-    <symbol id="art-steak" viewBox="0 0 220 180">
-      <ellipse class="art-shadow" cx="110" cy="158" rx="86" ry="12"/>
-      <g class="art-layer art-bun-bottom">
-        <rect x="22" y="118" width="176" height="26" rx="10" fill="#5c4433"/>
-        <rect x="22" y="118" width="176" height="9" rx="4" fill="#fff" opacity=".07"/>
-      </g>
-      <g class="art-layer art-patty">
-        <path d="M46 62c22-22 62-30 96-18 32 11 40 40 26 60-14 21-56 30-92 20C44 115 28 80 46 62z" fill="var(--art-crust, #8d3a2c)"/>
-        <path d="M58 70c18-17 54-24 82-14 26 9 32 31 21 46-12 16-45 24-73 16-26-7-45-33-30-48z" fill="var(--art-patty, #6b2a26)"/>
-        <g stroke="#2a1512" stroke-width="5" stroke-linecap="round" opacity=".42">
-          <path d="M66 94l34-27"/><path d="M88 105l34-27"/><path d="M112 110l32-26"/>
-        </g>
-        <path d="M58 70c18-17 54-24 82-14-24 2-52 8-82 14z" fill="#fff" opacity=".1"/>
-      </g>
-      <g class="art-layer art-cheese">
-        <path d="M92 58h30c3 0 5 2 5 5v9c0 4-3 7-7 7H92c-3 0-6-3-6-6v-9c0-3 3-6 6-6z" fill="var(--art-cheese, #efdca8)" transform="rotate(-6 106 68)"/>
-        <path d="M96 62h22c2 0 3 1 3 3s-1 3-3 3H96c-2 0-3-1-3-3s1-3 3-3z" fill="#fff" opacity=".35" transform="rotate(-6 106 68)"/>
-      </g>
-      <g class="art-layer art-veg">
-        <g stroke="var(--art-veg, #6ea242)" stroke-width="3" stroke-linecap="round" fill="none">
-          <path d="M36 124c8-6 14-14 17-24"/>
-          <path d="M40 118c-4-2-7-6-8-11M45 110c-4-2-6-7-6-12M50 101c-3-3-4-8-3-12"/>
-          <path d="M42 121c4 0 9-2 12-5M47 113c4 0 8-3 11-6M52 104c4-1 7-4 9-8"/>
+        <path d="M46 128C46 68 97 24 160 24s114 44 114 104z" fill="var(--art-bun, #e5a94f)"/>
+        <path d="M46 128C46 68 97 24 160 24s114 44 114 104z" fill="url(#sheen)"/>
+        <path d="M46 128C46 68 97 24 160 24s114 44 114 104z" fill="url(#glint)"/>
+        <path d="M46 128c0-6 .4-12 1-18h226c.6 6 1 12 1 18z" fill="#000" opacity=".1"/>
+        <g class="art-seeds" fill="#fdf0d4">
+          <ellipse cx="108" cy="76" rx="8" ry="4.6" transform="rotate(-24 108 76)"/>
+          <ellipse cx="160" cy="58" rx="8" ry="4.6" transform="rotate(4 160 58)"/>
+          <ellipse cx="212" cy="76" rx="8" ry="4.6" transform="rotate(24 212 76)"/>
+          <ellipse cx="132" cy="102" rx="7.4" ry="4.2" transform="rotate(-12 132 102)"/>
+          <ellipse cx="190" cy="102" rx="7.4" ry="4.2" transform="rotate(12 190 102)"/>
+          <ellipse cx="82" cy="106" rx="6.6" ry="3.8" transform="rotate(-38 82 106)"/>
+          <ellipse cx="238" cy="106" rx="6.6" ry="3.8" transform="rotate(38 238 106)"/>
         </g>
       </g>
     </symbol>
 
-    <!-- Side / bowl -->
-    <symbol id="art-side" viewBox="0 0 220 180">
-      <ellipse class="art-shadow" cx="110" cy="158" rx="80" ry="11"/>
+    <!-- ── Steak ───────────────────────────────────────────────────── -->
+    <symbol id="art-steak" viewBox="0 0 320 280">
+      <ellipse class="art-cast" cx="160" cy="248" rx="112" ry="14" filter="url(#blur-lg)"/>
+
+      <g class="art-layer art-board">
+        <rect x="26" y="196" width="268" height="34" rx="13" fill="#7b5537"/>
+        <rect x="26" y="196" width="268" height="34" rx="13" fill="url(#shade)" opacity=".8"/>
+        <g stroke="#5f3f26" stroke-width="2" opacity=".45">
+          <path d="M46 206h228M46 216h206M70 224h180"/>
+        </g>
+        <rect x="26" y="196" width="268" height="8" rx="4" fill="#fff" opacity=".16"/>
+      </g>
+
+      <g class="art-layer art-patty">
+        <!-- sear crust -->
+        <path d="M58 96c26-34 82-46 136-32 44 12 62 50 46 84-16 34-74 50-128 38C62 175 34 130 58 96z"
+              fill="var(--art-crust, #93412c)"/>
+        <!-- inner meat -->
+        <path d="M74 102c24-28 76-38 122-26 38 10 52 42 38 70-14 28-64 42-110 32-38-8-60-46-50-76z"
+              fill="var(--art-patty, #77281f)"/>
+        <path d="M74 102c24-28 76-38 122-26 38 10 52 42 38 70-14 28-64 42-110 32-38-8-60-46-50-76z"
+              fill="url(#shade)" opacity=".45"/>
+        <!-- marbling -->
+        <g stroke="#fff" stroke-width="2.6" stroke-linecap="round" opacity=".22" fill="none">
+          <path d="M104 128c10-8 22-6 30 2M140 108c12-4 24 0 30 8M158 152c12-2 22-8 28-16M118 158c8 4 18 4 26 0"/>
+        </g>
+        <!-- grill marks -->
+        <g stroke="#3b160f" stroke-width="7" stroke-linecap="round" opacity=".55" filter="url(#blur-sm)">
+          <path d="M92 140l40-32"/><path d="M118 156l40-32"/><path d="M146 166l40-32"/><path d="M176 168l38-30"/>
+        </g>
+        <!-- fat cap: a pale rim following the outer edge, not a patch on top -->
+        <path d="M196 70c30 13 46 36 44 60-3 4-7 6-11 5 3-22-9-42-33-56-5-3-9-5-12-6 4-3 8-4 12-3z"
+              fill="#efd9a4" opacity=".8"/>
+        <path d="M58 96c26-34 82-46 136-32-40-2-84 6-118 26-8 4-14 8-18 6z" fill="url(#rim)"/>
+      </g>
+
+      <g class="art-layer art-cheese">
+        <path d="M128 92h44c5 0 9 4 9 9v14c0 5-4 9-9 9h-44c-5 0-9-4-9-9v-14c0-5 4-9 9-9z"
+              fill="var(--art-cheese, #f6e6ae)" transform="rotate(-7 150 108)"/>
+        <path d="M134 98h32c3 0 5 2 5 5s-2 5-5 5h-32c-3 0-5-2-5-5s2-5 5-5z"
+              fill="#fff" opacity=".55" transform="rotate(-7 150 108)"/>
+        <path d="M119 116c6 8 16 12 28 12l-6 10c-12-2-22-10-26-20z" fill="var(--art-cheese, #f6e6ae)" opacity=".8"/>
+      </g>
+
       <g class="art-layer art-veg">
-        <g fill="var(--art-veg, #e8b23c)">
-          <rect x="72" y="36" width="14" height="76" rx="6" transform="rotate(-14 79 74)"/>
-          <rect x="100" y="28" width="14" height="82" rx="6"/>
-          <rect x="128" y="36" width="14" height="76" rx="6" transform="rotate(13 135 74)"/>
-          <rect x="86" y="44" width="14" height="70" rx="6" transform="rotate(6 93 79)"/>
-          <rect x="116" y="44" width="14" height="70" rx="6" transform="rotate(-7 123 79)"/>
+        <g stroke="var(--art-veg, #5f7f39)" stroke-width="3.4" stroke-linecap="round" fill="none">
+          <path d="M52 198c14-8 26-22 32-40"/>
+          <path d="M58 188c-6-3-11-9-13-17M66 176c-6-3-9-10-9-18M76 162c-5-4-7-11-6-18"/>
+          <path d="M62 192c6-1 13-4 17-9M70 179c6-1 12-5 15-10M79 165c5-2 9-6 12-11"/>
         </g>
       </g>
-      <g class="art-layer art-patty">
-        <path d="M52 104h116l-12 40c-1 6-6 10-12 10H76c-6 0-11-4-12-10z" fill="var(--art-patty, #8a8f96)"/>
-        <rect x="46" y="96" width="128" height="14" rx="7" fill="var(--art-crust, #b7bcc4)"/>
+
+      <g class="art-steam" aria-hidden="true">
+        <path d="M120 60c-8-12 6-18-2-30" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity=".5"/>
+        <path d="M162 48c-8-12 6-18-2-30" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity=".4"/>
+        <path d="M204 60c-8-12 6-18-2-30" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity=".3"/>
       </g>
     </symbol>
 
-    <!-- Dessert -->
-    <symbol id="art-dessert" viewBox="0 0 220 180">
-      <ellipse class="art-shadow" cx="110" cy="158" rx="72" ry="10"/>
-      <g class="art-layer art-patty">
-        <path d="M62 92h96l-10 46c-1 7-7 12-14 12H86c-7 0-13-5-14-12z" fill="var(--art-patty, #f2ead6)"/>
-      </g>
-      <g class="art-layer art-cheese">
-        <ellipse cx="110" cy="92" rx="50" ry="14" fill="var(--art-cheese, #d8a13f)"/>
-      </g>
+    <!-- ── Side (basket of fries) ───────────────────────────────────── -->
+    <symbol id="art-side" viewBox="0 0 320 280">
+      <ellipse class="art-cast" cx="160" cy="248" rx="100" ry="13" filter="url(#blur-lg)"/>
+
       <g class="art-layer art-veg">
-        <circle cx="110" cy="66" r="13" fill="var(--art-veg, #b8324a)"/>
-        <path d="M110 54c4-8 12-10 18-8-2 8-9 12-18 8z" fill="#5f8f3a"/>
+        <g fill="var(--art-veg, #eab53f)">
+          <rect x="104" y="52" width="21" height="120" rx="9" transform="rotate(-15 114 112)"/>
+          <rect x="140" y="38" width="21" height="132" rx="9" transform="rotate(-3 150 104)"/>
+          <rect x="178" y="50" width="21" height="122" rx="9" transform="rotate(13 188 111)"/>
+          <rect x="120" y="66" width="21" height="112" rx="9" transform="rotate(6 130 122)"/>
+          <rect x="162" y="62" width="21" height="116" rx="9" transform="rotate(-9 172 120)"/>
+          <rect x="196" y="76" width="21" height="100" rx="9" transform="rotate(24 206 126)"/>
+        </g>
+        <g fill="#fff" opacity=".28">
+          <rect x="108" y="56" width="8" height="110" rx="4" transform="rotate(-15 112 111)"/>
+          <rect x="144" y="42" width="8" height="122" rx="4" transform="rotate(-3 148 103)"/>
+          <rect x="182" y="54" width="8" height="112" rx="4" transform="rotate(13 186 110)"/>
+        </g>
+      </g>
+
+      <g class="art-layer art-patty">
+        <path d="M62 168h196l-16 62c-2 9-10 16-19 16H97c-9 0-17-7-19-16z" fill="var(--art-basket, #9aa2ab)"/>
+        <path d="M62 168h196l-16 62c-2 9-10 16-19 16H97c-9 0-17-7-19-16z" fill="url(#shade)"/>
+        <g stroke="#fff" stroke-width="3" opacity=".3" fill="none">
+          <path d="M74 194h172M80 214h160M86 232h148"/>
+          <path d="M104 170l10 76M160 170v76M216 170l-10 76"/>
+        </g>
+        <rect x="54" y="156" width="212" height="18" rx="9" fill="var(--art-basket, #9aa2ab)"/>
+        <rect x="54" y="156" width="212" height="8" rx="4" fill="#fff" opacity=".35"/>
       </g>
     </symbol>
 
-    <!-- Drink -->
-    <symbol id="art-drink" viewBox="0 0 220 180">
-      <ellipse class="art-shadow" cx="110" cy="160" rx="60" ry="10"/>
+    <!-- ── Dessert (crème brûlée) ───────────────────────────────────── -->
+    <symbol id="art-dessert" viewBox="0 0 320 280">
+      <ellipse class="art-cast" cx="160" cy="246" rx="92" ry="12" filter="url(#blur-lg)"/>
+
       <g class="art-layer art-patty">
-        <path d="M78 54h64l-8 92c-1 7-6 12-13 12h-22c-7 0-12-5-13-12z" fill="var(--art-patty, #c98432)"/>
-        <path d="M84 60h16l-7 88h-4z" fill="#fff" opacity=".18"/>
+        <path d="M76 148h168l-16 76c-2 10-11 17-21 17H113c-10 0-19-7-21-17z" fill="var(--art-patty, #f7f0dd)"/>
+        <path d="M76 148h168l-16 76c-2 10-11 17-21 17H113c-10 0-19-7-21-17z" fill="url(#shade)" opacity=".5"/>
+        <path d="M92 160h136l-6 28H98z" fill="#fff" opacity=".4"/>
       </g>
+
       <g class="art-layer art-cheese">
-        <path d="M77 48h66c2 0 3 2 2 4l-2 8H77c-2 0-3-2-3-4l-1-5c0-2 1-3 4-3z" fill="var(--art-cheese, #f6efdd)"/>
+        <ellipse cx="160" cy="148" rx="84" ry="22" fill="var(--art-cheese, #c98a2e)"/>
+        <ellipse cx="160" cy="146" rx="84" ry="22" fill="url(#sheen)"/>
+        <g fill="#7d4c12" opacity=".45">
+          <ellipse cx="126" cy="146" rx="14" ry="5"/><ellipse cx="176" cy="152" rx="18" ry="5"/>
+          <ellipse cx="204" cy="142" rx="10" ry="4"/>
+        </g>
       </g>
+
       <g class="art-layer art-veg">
-        <circle cx="96" cy="40" r="10" fill="var(--art-veg, #f7f1e2)"/>
-        <circle cx="118" cy="34" r="13" fill="var(--art-veg, #f7f1e2)"/>
-        <circle cx="138" cy="42" r="9" fill="var(--art-veg, #f7f1e2)"/>
+        <circle cx="140" cy="116" r="15" fill="var(--art-veg, #b8324a)"/>
+        <circle cx="168" cy="110" r="12" fill="var(--art-veg, #b8324a)"/>
+        <circle cx="136" cy="111" r="5" fill="#fff" opacity=".45"/>
+        <path d="M154 98c5-11 16-14 24-11-3 11-12 16-24 11z" fill="#5f8f3a"/>
+      </g>
+    </symbol>
+
+    <!-- ── Drink (bottle + glass) ───────────────────────────────────── -->
+    <symbol id="art-drink" viewBox="0 0 320 280">
+      <ellipse class="art-cast" cx="160" cy="248" rx="96" ry="13" filter="url(#blur-lg)"/>
+
+      <g class="art-layer art-patty">
+        <path d="M96 74h44l6 26c8 8 12 18 12 30v100c0 8-6 14-14 14h-52c-8 0-14-6-14-14V130c0-12 4-22 12-30z"
+              fill="var(--art-patty, #a8641f)"/>
+        <path d="M96 74h44l6 26c8 8 12 18 12 30v100c0 8-6 14-14 14h-52c-8 0-14-6-14-14V130c0-12 4-22 12-30z"
+              fill="url(#shade)"/>
+        <path d="M104 82h12l-4 24c-6 6-10 14-10 24v106h-8V128c0-12 4-22 10-28z" fill="#fff" opacity=".28"/>
+        <rect x="86" y="140" width="72" height="54" rx="6" fill="var(--art-label, #f3ece0)"/>
+        <g fill="var(--art-ink, #8a1f1c)">
+          <rect x="96" y="152" width="52" height="7" rx="3.5"/>
+          <rect x="96" y="166" width="40" height="6" rx="3"/>
+          <rect x="96" y="178" width="46" height="6" rx="3"/>
+        </g>
+        <rect x="94" y="60" width="48" height="18" rx="5" fill="var(--art-cap, #6f4415)"/>
+      </g>
+
+      <g class="art-layer art-cheese">
+        <path d="M176 118h74l-8 106c-1 10-9 18-19 18h-20c-10 0-18-8-19-18z" fill="var(--art-liquid, #e0a33c)"/>
+        <path d="M176 118h74l-8 106c-1 10-9 18-19 18h-20c-10 0-18-8-19-18z" fill="url(#sheen)"/>
+        <path d="M184 126h10l-6 96h-2z" fill="#fff" opacity=".4"/>
+        <g fill="#fff" opacity=".55">
+          <circle cx="204" cy="176" r="4"/><circle cx="222" cy="196" r="3"/><circle cx="212" cy="212" r="3.5"/>
+        </g>
+      </g>
+
+      <g class="art-layer art-veg">
+        <path d="M172 112h82c3 0 5 3 4 6l-2 10h-86l-2-10c-1-3 1-6 4-6z" fill="var(--art-foam, #fdf6e8)"/>
+        <circle cx="192" cy="106" r="13" fill="var(--art-foam, #fdf6e8)"/>
+        <circle cx="216" cy="100" r="16" fill="var(--art-foam, #fdf6e8)"/>
+        <circle cx="240" cy="107" r="12" fill="var(--art-foam, #fdf6e8)"/>
       </g>
     </symbol>
   </defs>
 </svg>
 
-<!-- ── Header ─────────────────────────────────────────────────────────── -->
-<header class="site-header" id="top">
-  <div class="wrap header-inner">
-    <a class="brand" href="#top" aria-label="Meatologia — strona główna">
-      <span class="brand-mark" aria-hidden="true">M</span>
-      <span class="brand-name">Meatologia</span>
+<!-- ════ Header ═══════════════════════════════════════════════════════ -->
+<header class="masthead" id="top">
+  <div class="wrap masthead-in">
+    <a class="brand" href="#top">
+      <span class="brand-seal" aria-hidden="true">M</span>
+      <span class="brand-text">
+        <span class="brand-name">Meatologia</span>
+        <span class="brand-sub">Wrocław · est. beef</span>
+      </span>
     </a>
 
-    <nav class="site-nav" aria-label="Główna">
+    <nav class="nav" aria-label="Main">
       <a href="#menu">Menu</a>
-      <a href="#story">O nas</a>
-      <a href="#reviews">Opinie</a>
-      <a href="#visit">Kontakt</a>
+      <a href="#craft">Craft</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#reserve">Reserve</a>
+      <a href="#find">Find us</a>
     </nav>
 
-    <div class="header-actions">
-      <a class="btn btn-ghost" href="tel:+48666854218">
-        <svg viewBox="0 0 24 24" class="ico" aria-hidden="true"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.58 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.46.57 3.6a1 1 0 0 1-.25 1z"/></svg>
-        <span>666 854 218</span>
-      </a>
-      <a class="btn btn-solid" href="#visit">Rezerwuj stolik</a>
-      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Menu nawigacji">
-        <span></span><span></span><span></span>
+    <div class="masthead-act">
+      <span class="status" id="status-chip" data-open-hours>
+        <i class="dot" aria-hidden="true"></i><span id="status-text">Open today</span>
+      </span>
+      <a class="btn btn-ink" href="#reserve">Book a table</a>
+      <button class="burger-btn" type="button" aria-expanded="false" aria-controls="drawer" aria-label="Open navigation">
+        <span></span><span></span>
       </button>
     </div>
   </div>
-  <div class="mobile-nav" id="mobile-nav" hidden>
-    <a href="#menu">Menu</a><a href="#story">O nas</a><a href="#reviews">Opinie</a><a href="#visit">Kontakt</a>
-    <a href="tel:+48666854218">666 854 218</a>
+  <div class="drawer" id="drawer" hidden>
+    <a href="#menu">Menu</a><a href="#craft">Craft</a><a href="#reviews">Reviews</a>
+    <a href="#reserve">Reserve</a><a href="#find">Find us</a>
+    <a class="drawer-call" href="tel:+48666854218">666 854 218</a>
   </div>
-  <div class="scroll-progress" aria-hidden="true"><i></i></div>
 </header>
 
 <main>
 
-<!-- ── Hero ───────────────────────────────────────────────────────────── -->
+<!-- ════ Hero ═════════════════════════════════════════════════════════ -->
 <section class="hero">
-  <div class="hero-glow" aria-hidden="true"></div>
-  <div class="wrap hero-inner">
+  <div class="wrap hero-in">
     <div class="hero-copy">
-      <p class="eyebrow reveal">Wrocław · Zwycięska 45</p>
-      <h1 class="reveal">
-        Szczera miłość<br>
-        do tego, co <em>prawdziwe</em>
+      <p class="kicker rise">Charcoal grill · Zwycięska 45</p>
+      <h1 class="rise">
+        <span class="line">An honest</span>
+        <span class="line">love of the</span>
+        <span class="line"><em>real</em> thing</span>
       </h1>
-      <p class="lede reveal">
-        Najwyższej jakości wołowina, soczyste burgery i steki z rusztu.
-        Mielimy codziennie, pieczemy bułki na miejscu, a mięso sezonujemy tak długo,
-        jak trzeba — nie krócej.
+      <p class="hero-lede rise">
+        Top-grade beef, ground every morning. Buns baked in our own oven.
+        Steaks from Argentina, the States and Japan, cooked over live charcoal
+        by people who actually like you.
       </p>
-      <div class="hero-cta reveal">
-        <a class="btn btn-solid btn-lg" href="#menu">Zobacz menu</a>
-        <a class="btn btn-outline btn-lg" href="https://meatologia.pl" target="_blank" rel="noopener">Zamów online</a>
+      <div class="hero-act rise">
+        <a class="btn btn-red btn-big" href="#menu">See the menu</a>
+        <a class="btn btn-line btn-big" href="tel:+48666854218">Call 666 854 218</a>
       </div>
-      <dl class="hero-stats reveal">
-        <div><dt>Ocena gości</dt><dd>4,5 <span class="star" aria-hidden="true">★</span> <small>(737)</small></dd></div>
-        <div><dt>Na osobę</dt><dd>40–160 zł</dd></div>
-        <div><dt>Dziś</dt><dd class="open">Otwarte <small>do 22:00</small></dd></div>
+      <dl class="hero-facts rise">
+        <div><dt>Rated</dt><dd>4.5 <span class="stars-mini" aria-hidden="true">★</span> <small>737 reviews</small></dd></div>
+        <div><dt>Per person</dt><dd>40–160 zł</dd></div>
+        <div><dt>Daily</dt><dd>12:00 – 22:00</dd></div>
       </dl>
     </div>
 
-    <div class="hero-art reveal" aria-hidden="true">
-      <div class="hero-plate"></div>
-      <svg class="hero-burger" viewBox="0 0 220 180"><use href="#art-burger"/></svg>
-      <span class="hero-badge hero-badge-a">100% Black Angus</span>
-      <span class="hero-badge hero-badge-b">Bułki z własnego pieca</span>
+    <div class="hero-art rise" aria-hidden="true">
+      <span class="hero-disc"></span>
+      <svg class="hero-dish" viewBox="0 0 320 280"><use href="#art-burger"/></svg>
+      <span class="hero-note hero-note-1">Ground fresh<br>every morning</span>
+      <span class="hero-note hero-note-2">Buns baked<br>in house</span>
+    </div>
+  </div>
+
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-run">
+      <span>Black Angus</span><b>✦</b><span>Wagyu A5</span><b>✦</b><span>Dry aged</span><b>✦</b>
+      <span>Live charcoal</span><b>✦</b><span>Smash burgers</span><b>✦</b><span>Craft beer</span><b>✦</b>
+      <span>Black Angus</span><b>✦</b><span>Wagyu A5</span><b>✦</b><span>Dry aged</span><b>✦</b>
+      <span>Live charcoal</span><b>✦</b><span>Smash burgers</span><b>✦</b><span>Craft beer</span><b>✦</b>
     </div>
   </div>
 </section>
 
-<!-- ── Marquee ────────────────────────────────────────────────────────── -->
-<div class="marquee" aria-hidden="true">
-  <div class="marquee-track">
-    <span>Black Angus</span><i>·</i><span>Wagyu A5</span><i>·</i><span>Dry aged</span><i>·</i>
-    <span>Ruszt węglowy</span><i>·</i><span>Smash burgers</span><i>·</i><span>Craft beer</span><i>·</i>
-    <span>Black Angus</span><i>·</i><span>Wagyu A5</span><i>·</i><span>Dry aged</span><i>·</i>
-    <span>Ruszt węglowy</span><i>·</i><span>Smash burgers</span><i>·</i><span>Craft beer</span><i>·</i>
-  </div>
-</div>
-
-<!-- ── Menu ───────────────────────────────────────────────────────────── -->
-<section class="section" id="menu">
+<!-- ════ Menu ═════════════════════════════════════════════════════════ -->
+<section class="band" id="menu">
   <div class="wrap">
-    <header class="section-head reveal">
-      <p class="eyebrow">Karta</p>
-      <h2>Co jemy dzisiaj?</h2>
-      <p class="section-sub">Kliknij danie, żeby zobaczyć skład, gramaturę i to, co do niego pijemy.</p>
+    <header class="band-head rise">
+      <p class="kicker">The card</p>
+      <h2>What we cook</h2>
+      <p class="band-sub">Tap any dish — it opens full screen, with the cut, the weight and what to drink alongside it.</p>
     </header>
 
-    <div class="filters reveal" role="group" aria-label="Filtruj menu według kategorii">
-      <!-- injected by JS -->
-    </div>
+    <div class="chips rise" role="group" aria-label="Filter the menu by course"></div>
 
-    <div class="menu-grid" id="menu-grid">
-      <!-- injected by JS -->
-    </div>
+    <div class="dish-grid" id="dish-grid"></div>
 
-    <p class="menu-note reveal">
-      Ceny w złotych. Pełna karta, alergeny i dania sezonowe —
+    <p class="band-note rise">
+      Prices in złoty. Allergens and seasonal specials on
       <a href="https://meatologia.pl" target="_blank" rel="noopener">meatologia.pl</a>.
     </p>
   </div>
 </section>
 
-<!-- ── Story ──────────────────────────────────────────────────────────── -->
-<section class="section section-story" id="story">
-  <div class="wrap story-grid">
-    <div class="story-copy reveal">
-      <p class="eyebrow">O nas</p>
-      <h2>Mięso to rzemiosło, nie dodatek</h2>
-      <p>
-        Meatologia to szczera miłość do tego, co prawdziwe. Zaczęliśmy od jednego pytania:
-        dlaczego tak trudno zjeść burgera, który smakuje mięsem? Odpowiedź okazała się nudna —
-        bo trzeba wybrać dobrą wołowinę, zmielić ją na miejscu i nie przeszkadzać jej w robocie.
-      </p>
-      <p>
-        Dziś na naszym ruszcie leżą steki z Argentyny, USA i Japonii, a obok nich smash burgery,
-        które wychodzą z kuchni w cztery minuty. Bułki wypiekamy sami, sosy robimy sami,
-        frytki kroimy z ziemniaka — nie z worka.
-      </p>
-      <ul class="story-points">
-        <li><strong>Ruszt węglowy</strong> — wysoka temperatura, prawdziwy dym, żadnej ściemy.</li>
-        <li><strong>Sezonowanie</strong> — steki dojrzewają, zanim trafią na talerz.</li>
-        <li><strong>Otwarta kuchnia</strong> — widzisz każdy etap, od mielenia po ostatni sos.</li>
-      </ul>
-    </div>
-
-    <ul class="story-facts reveal">
-      <li><span class="fact-n" data-count="737">0</span><span class="fact-l">opinii w Google</span></li>
-      <li><span class="fact-n" data-count="4.5" data-decimals="1">0</span><span class="fact-l">średnia ocena</span></li>
-      <li><span class="fact-n" data-count="3">0</span><span class="fact-l">kraje pochodzenia steków</span></li>
-      <li><span class="fact-n" data-count="4">0</span><span class="fact-l">minuty do smash burgera</span></li>
-    </ul>
-  </div>
-</section>
-
-<!-- ── Reviews ────────────────────────────────────────────────────────── -->
-<section class="section" id="reviews">
+<!-- ════ Craft ════════════════════════════════════════════════════════ -->
+<section class="band band-dark" id="craft">
   <div class="wrap">
-    <header class="section-head reveal">
-      <p class="eyebrow">Opinie</p>
-      <h2>4,5 ★ z 737 opinii</h2>
-      <p class="section-sub">Warto wiedzieć, zanim przyjdziesz.</p>
+    <header class="band-head rise">
+      <p class="kicker">Craft</p>
+      <h2>Three things we refuse to rush</h2>
     </header>
 
-    <ul class="know-list reveal">
-      <li>Goście chwalą idealnie wysmażone steki argentyńskie — koniecznie spróbuj.</li>
-      <li>Porcje są solidne, więc zaplanuj miejsce na deser albo zabierz resztę do domu.</li>
-      <li>W piątkowe wieczory bywa pełno — stolik lepiej zarezerwować telefonicznie.</li>
+    <ol class="steps">
+      <li class="step rise">
+        <span class="step-n">01</span>
+        <h3>The grind</h3>
+        <p>Chuck and brisket, minced on site every morning at a coarse setting. Never pre-packed, never yesterday's. It is the whole reason a burger can taste of beef.</p>
+      </li>
+      <li class="step rise">
+        <span class="step-n">02</span>
+        <h3>The ageing</h3>
+        <p>Steaks rest for a minimum of five weeks before they are allowed near the grill. Argentina, USDA Prime and Japanese A5 — three countries, one standard.</p>
+      </li>
+      <li class="step rise">
+        <span class="step-n">03</span>
+        <h3>The fire</h3>
+        <p>Live charcoal, run hot enough to build a crust in seconds. Real smoke, no gas, no shortcuts. You can watch all of it from the open pass.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ════ Reviews ══════════════════════════════════════════════════════ -->
+<section class="band" id="reviews">
+  <div class="wrap">
+    <header class="band-head rise">
+      <p class="kicker">Reviews</p>
+      <h2>4.5 out of 737</h2>
+      <p class="band-sub">What people tell each other before they come.</p>
+    </header>
+
+    <ul class="tips rise">
+      <li>Guests single out the Argentine steaks — order one cooked exactly how you like it.</li>
+      <li>Portions run generous, so leave room for dessert or plan on taking some home.</li>
+      <li>Friday evenings fill up. Call ahead and the table will be waiting.</li>
     </ul>
 
-    <div class="reviews-rail" tabindex="0" aria-label="Opinie gości, przewijane poziomo">
-      <figure class="review reveal">
-        <div class="stars" aria-label="5 na 5">★★★★★</div>
-        <blockquote>Obsługa jest tu naprawdę przyjazna i serdeczna. Kiedy przyszliśmy pierwszy raz, lokal był pełen, a i tak znaleźli dla nas miejsce i zadbali o wszystko.</blockquote>
-        <figcaption>Broodjeworstman <span>· rok temu</span></figcaption>
+    <div class="quotes" tabindex="0" aria-label="Guest reviews, scroll horizontally">
+      <figure class="quote rise">
+        <div class="rate" aria-label="5 out of 5">★★★★★</div>
+        <blockquote>The service here is genuinely friendly and welcoming. When we first arrived the place was packed, and they still found us a table and looked after everything.</blockquote>
+        <figcaption>Broodjeworstman <span>· a year ago</span></figcaption>
       </figure>
-      <figure class="review reveal">
-        <div class="stars" aria-label="5 na 5">★★★★★</div>
-        <blockquote>Świetne miejsce z mięsem. Polecam tatar i burgery — mięso soczyste, dodatki dobrane z głową, a bułka trzyma do ostatniego kęsa.</blockquote>
-        <figcaption>Filip Staniul <span>· rok temu</span></figcaption>
+      <figure class="quote rise">
+        <div class="rate" aria-label="5 out of 5">★★★★★</div>
+        <blockquote>Great place with meat. I recommend the tartare and the burgers — juicy beef, toppings chosen with a bit of thought, and a bun that holds to the last bite.</blockquote>
+        <figcaption>Filip Staniul <span>· a year ago</span></figcaption>
       </figure>
-      <figure class="review reveal">
-        <div class="stars" aria-label="5 na 5">★★★★★</div>
-        <blockquote>Stek z Argentyny wyszedł dokładnie taki, jak prosiłem. Do tego lokalne piwo kraftowe z ich własną etykietą — trudno o lepszy zestaw.</blockquote>
-        <figcaption>Gość Meatologii <span>· 3 miesiące temu</span></figcaption>
+      <figure class="quote rise">
+        <div class="rate" aria-label="5 out of 5">★★★★★</div>
+        <blockquote>The Argentine steak came out exactly as I asked. Paired it with their own-label craft IPA — hard to beat that combination anywhere in the city.</blockquote>
+        <figcaption>A Meatologia guest <span>· 3 months ago</span></figcaption>
       </figure>
-      <figure class="review reveal">
-        <div class="stars" aria-label="4 na 5">★★★★☆</div>
-        <blockquote>Porcje ogromne, ceny uczciwe jak na jakość mięsa. Wracamy regularnie, zwykle na double trouble i frytki z batata.</blockquote>
-        <figcaption>Kasia W. <span>· pół roku temu</span></figcaption>
+      <figure class="quote rise">
+        <div class="rate" aria-label="4 out of 5">★★★★☆</div>
+        <blockquote>Huge portions, fair prices for this quality of beef. We're back regularly, usually for the Double Trouble and a basket of sweet potato fries.</blockquote>
+        <figcaption>Kasia W. <span>· 6 months ago</span></figcaption>
       </figure>
     </div>
   </div>
 </section>
 
-<!-- ── Visit ──────────────────────────────────────────────────────────── -->
-<section class="section section-visit" id="visit">
-  <div class="wrap visit-grid">
-    <div class="reveal">
-      <p class="eyebrow">Odwiedź nas</p>
-      <h2>Zwycięska 45, Wrocław</h2>
-      <p class="section-sub">Award Business Park, lokal 3. Parking przed budynkiem, wejście od strony dziedzińca.</p>
-
-      <dl class="visit-info">
-        <div><dt>Adres</dt><dd>Zwycięska 45/lok. 3<br>53-033 Wrocław</dd></div>
-        <div><dt>Telefon</dt><dd><a href="tel:+48666854218">666 854 218</a></dd></div>
-        <div><dt>Strona</dt><dd><a href="https://meatologia.pl" target="_blank" rel="noopener">meatologia.pl</a></dd></div>
-        <div><dt>Godziny</dt><dd>Pon.–niedz. 12:00–22:00</dd></div>
-      </dl>
-
-      <div class="visit-cta">
-        <a class="btn btn-solid btn-lg" href="tel:+48666854218">Zadzwoń i zarezerwuj</a>
-        <a class="btn btn-outline btn-lg" href="https://maps.google.com/?q=Meatologia+Zwycięska+45+Wrocław" target="_blank" rel="noopener">Wyznacz trasę</a>
-      </div>
-
-      <ul class="badges">
-        <li>Dostępne dla wózków</li><li>LGBTQ+ friendly</li><li>Płatność kartą</li><li>Dania na wynos</li>
+<!-- ════ Reserve ══════════════════════════════════════════════════════ -->
+<section class="band band-red" id="reserve">
+  <div class="wrap reserve-grid">
+    <div class="rise">
+      <p class="kicker">Reserve</p>
+      <h2>Save yourself a table</h2>
+      <p class="band-sub">
+        Fill this in and we'll put the details straight into a call — the kitchen
+        takes bookings by phone, so you'll be talking to whoever is on the pass tonight.
+      </p>
+      <ul class="reserve-points">
+        <li>Groups over 8 — call us, we'll rearrange the room</li>
+        <li>Last kitchen order at 21:15</li>
+        <li>Parking in front of the building, entrance from the courtyard</li>
       </ul>
     </div>
 
-    <div class="visit-card reveal">
-      <div class="visit-map" aria-hidden="true">
-        <span class="pin"><i></i></span>
-        <svg viewBox="0 0 400 320" preserveAspectRatio="xMidYMid slice">
-          <rect width="400" height="320" fill="#1a1614"/>
-          <g stroke="#2c2521" stroke-width="12" fill="none">
-            <path d="M-20 90h440M-20 210h440M90 -20v360M280 -20v360"/>
-          </g>
-          <g stroke="#221d1a" stroke-width="4" fill="none">
-            <path d="M-20 40h440M-20 150h440M-20 270h440M180 -20v360M350 -20v360"/>
-          </g>
-          <rect x="120" y="120" width="130" height="70" rx="6" fill="#2a201c"/>
-          <rect x="300" y="30" width="70" height="50" rx="6" fill="#241e1b"/>
-          <rect x="20" y="230" width="60" height="60" rx="6" fill="#241e1b"/>
-        </svg>
+    <form class="reserve-card rise" id="reserve-form" novalidate>
+      <div class="field">
+        <label for="r-name">Name</label>
+        <input id="r-name" name="name" type="text" autocomplete="name" required placeholder="Anna Kowalska">
       </div>
-      <div class="visit-card-body">
-        <p class="visit-card-title">Meatologia</p>
-        <p class="visit-card-sub">Restauracja · 40–160 zł · <span class="open">Otwarte do 22:00</span></p>
+      <div class="field-row">
+        <div class="field">
+          <label for="r-date">Date</label>
+          <input id="r-date" name="date" type="date" required>
+        </div>
+        <div class="field">
+          <label for="r-time">Time</label>
+          <select id="r-time" name="time" required>
+            <option value="12:00">12:00</option><option value="13:00">13:00</option>
+            <option value="14:00">14:00</option><option value="15:00">15:00</option>
+            <option value="16:00">16:00</option><option value="17:00">17:00</option>
+            <option value="18:00" selected>18:00</option><option value="19:00">19:00</option>
+            <option value="20:00">20:00</option><option value="21:00">21:00</option>
+          </select>
+        </div>
       </div>
+      <div class="field">
+        <label for="r-guests">Guests</label>
+        <div class="stepper">
+          <button type="button" data-guests="-1" aria-label="One guest fewer">−</button>
+          <output id="r-guests" for="r-guests">2</output>
+          <button type="button" data-guests="1" aria-label="One guest more">+</button>
+        </div>
+      </div>
+      <button class="btn btn-ink btn-big btn-block" type="submit">Prepare the booking</button>
+      <p class="form-msg" id="form-msg" role="status"></p>
+    </form>
+  </div>
+</section>
+
+<!-- ════ Find us ══════════════════════════════════════════════════════ -->
+<section class="band" id="find">
+  <div class="wrap find-grid">
+    <div class="rise">
+      <p class="kicker">Find us</p>
+      <h2>Zwycięska 45, Wrocław</h2>
+      <p class="band-sub">Award Business Park, unit 3. Ten minutes from the ring road, parking out front.</p>
+
+      <dl class="find-info">
+        <div><dt>Address</dt><dd>Zwycięska 45/lok. 3<br>53-033 Wrocław</dd></div>
+        <div><dt>Phone</dt><dd><a href="tel:+48666854218">666 854 218</a></dd></div>
+        <div><dt>Online</dt><dd><a href="https://meatologia.pl" target="_blank" rel="noopener">meatologia.pl</a></dd></div>
+      </dl>
+
+      <table class="hours" id="hours-table">
+        <caption class="sr-only">Opening hours</caption>
+        <tbody>
+          <tr data-day="1"><th scope="row">Monday</th><td>12:00 – 22:00</td></tr>
+          <tr data-day="2"><th scope="row">Tuesday</th><td>12:00 – 22:00</td></tr>
+          <tr data-day="3"><th scope="row">Wednesday</th><td>12:00 – 22:00</td></tr>
+          <tr data-day="4"><th scope="row">Thursday</th><td>12:00 – 22:00</td></tr>
+          <tr data-day="5"><th scope="row">Friday</th><td>12:00 – 22:00</td></tr>
+          <tr data-day="6"><th scope="row">Saturday</th><td>12:00 – 22:00</td></tr>
+          <tr data-day="0"><th scope="row">Sunday</th><td>12:00 – 22:00</td></tr>
+        </tbody>
+      </table>
+
+      <ul class="tags">
+        <li>Wheelchair accessible</li><li>LGBTQ+ friendly</li><li>Card payments</li><li>Takeaway</li>
+      </ul>
     </div>
+
+    <a class="map-card rise" href="https://maps.google.com/?q=Meatologia+Zwycięska+45+Wrocław" target="_blank" rel="noopener">
+      <span class="map-plot" aria-hidden="true">
+        <svg viewBox="0 0 400 340" preserveAspectRatio="xMidYMid slice">
+          <rect width="400" height="340" fill="#e6dcc9"/>
+          <g stroke="#d6c9b1" stroke-width="16" fill="none">
+            <path d="M-20 96h440M-20 232h440M104 -20v380M296 -20v380"/>
+          </g>
+          <g stroke="#dfd4bf" stroke-width="6" fill="none">
+            <path d="M-20 40h440M-20 164h440M-20 296h440M196 -20v380M356 -20v380"/>
+          </g>
+          <g fill="#dbcfb8">
+            <rect x="124" y="120" width="150" height="88" rx="7"/>
+            <rect x="316" y="44" width="70" height="52" rx="7"/>
+            <rect x="20" y="248" width="66" height="66" rx="7"/>
+            <rect x="220" y="252" width="60" height="44" rx="7"/>
+          </g>
+          <path d="M-20 96 L440 232" stroke="#cbbda2" stroke-width="10" fill="none" opacity=".7"/>
+        </svg>
+        <span class="map-pin"><i></i></span>
+      </span>
+      <span class="map-foot">
+        <span class="map-title">Meatologia</span>
+        <span class="map-sub">Restaurant · 40–160 zł · open until 22:00</span>
+        <span class="map-go">Open in Maps →</span>
+      </span>
+    </a>
   </div>
 </section>
 
 </main>
 
-<!-- ── Footer ─────────────────────────────────────────────────────────── -->
-<footer class="site-footer">
-  <div class="wrap footer-inner">
-    <div>
-      <a class="brand" href="#top">
-        <span class="brand-mark" aria-hidden="true">M</span>
-        <span class="brand-name">Meatologia</span>
-      </a>
-      <p class="footer-tag">Szczera miłość do tego, co prawdziwe.</p>
+<!-- ════ Footer ═══════════════════════════════════════════════════════ -->
+<footer class="foot">
+  <div class="wrap foot-in">
+    <div class="foot-brand">
+      <span class="brand-seal" aria-hidden="true">M</span>
+      <p>An honest love of the real thing.</p>
     </div>
-    <nav aria-label="Stopka">
-      <a href="#menu">Menu</a><a href="#story">O nas</a><a href="#reviews">Opinie</a><a href="#visit">Kontakt</a>
+    <nav aria-label="Footer">
+      <a href="#menu">Menu</a><a href="#craft">Craft</a><a href="#reviews">Reviews</a>
+      <a href="#reserve">Reserve</a><a href="#find">Find us</a>
     </nav>
-    <p class="footer-legal">© <span id="year">2026</span> Meatologia · Zwycięska 45/lok. 3, Wrocław · 666 854 218</p>
+    <p class="foot-legal">© <span id="year">2026</span> Meatologia · Zwycięska 45/lok. 3, 53-033 Wrocław · 666 854 218</p>
   </div>
 </footer>
 
-<!-- ── Product detail overlay ─────────────────────────────────────────── -->
-<div class="product-overlay" id="product-overlay" hidden>
-  <div class="product-scrim" data-close></div>
-  <div class="product-dialog" role="dialog" aria-modal="true" aria-labelledby="product-title">
-    <button class="product-close" type="button" data-close aria-label="Zamknij">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg>
+<!-- ════ Dish takeover ════════════════════════════════════════════════ -->
+<div class="takeover" id="takeover" hidden>
+  <div class="takeover-sheet" role="dialog" aria-modal="true" aria-labelledby="dish-name">
+
+    <button class="takeover-close" type="button" data-close aria-label="Back to the menu">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+      <span>Back</span>
     </button>
 
-    <div class="product-media" id="product-media">
-      <svg class="product-art" viewBox="0 0 220 180" aria-hidden="true"><use id="product-art-use" href="#art-burger"/></svg>
-      <span class="product-tag" id="product-tag"></span>
-    </div>
-
-    <div class="product-body">
-      <p class="product-cat" id="product-cat"></p>
-      <h3 id="product-title"></h3>
-      <p class="product-desc" id="product-desc"></p>
-
-      <ul class="product-ings" id="product-ings"></ul>
-
-      <div class="product-meta">
-        <span id="product-weight"></span>
-        <span id="product-heat"></span>
+    <div class="takeover-body">
+      <div class="takeover-stage">
+        <span class="stage-disc" aria-hidden="true"></span>
+        <svg class="stage-dish" id="dish-art" viewBox="0 0 320 280" aria-hidden="true"><use id="dish-art-use" href="#art-burger"/></svg>
       </div>
 
-      <div class="product-foot">
-        <p class="product-price"><span id="product-price"></span> <small>zł</small></p>
-        <div class="product-actions">
-          <button class="product-step" type="button" data-prev aria-label="Poprzednie danie">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5 8 12l6.5 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <button class="product-step" type="button" data-next aria-label="Następne danie">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 5 16 12l-6.5 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <a class="btn btn-solid" href="tel:+48666854218">Zamów telefonicznie</a>
+      <div class="takeover-text">
+        <p class="kicker" id="dish-course"></p>
+        <h2 id="dish-name"></h2>
+        <p class="dish-blurb" id="dish-blurb"></p>
+
+        <div class="dish-specs">
+          <div><dt>Weight</dt><dd id="dish-weight"></dd></div>
+          <div><dt>Cooked</dt><dd id="dish-cook"></dd></div>
+          <div><dt>Drink it with</dt><dd id="dish-pair"></dd></div>
+        </div>
+
+        <ul class="dish-parts" id="dish-parts"></ul>
+
+        <div class="dish-buy">
+          <p class="dish-price"><span id="dish-price"></span><small>zł</small></p>
+          <a class="btn btn-red btn-big" href="tel:+48666854218">Order by phone</a>
         </div>
       </div>
     </div>
+
+    <div class="filmstrip" id="filmstrip" role="tablist" aria-label="Other dishes"></div>
   </div>
 </div>
 

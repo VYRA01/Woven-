@@ -1,0 +1,18 @@
+# One-click deploy on Render: New > Blueprint > point at this repo.
+services:
+  - type: web
+    name: meatologia
+    runtime: node
+    plan: starter          # a paid plan is required for the disk below
+    buildCommand: ''       # nothing to build — no dependencies
+    startCommand: node server/server.js
+    healthCheckPath: /
+    envVars:
+      - key: BOOKINGS_FILE
+        value: /data/bookings.json
+      - key: STAFF_TOKEN
+        generateValue: true   # Render makes one; read it in the dashboard
+    disk:
+      name: bookings
+      mountPath: /data
+      sizeGB: 1

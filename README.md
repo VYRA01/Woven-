@@ -173,6 +173,41 @@ when it isn't.
 credentials), and no card holds or deposits. The email field is collected and
 stored for whoever picks up the diary.
 
+## Putting it online
+
+Bookings need the Node process running. Static hosting (GitHub Pages, Netlify,
+the single-file `dist/index.html`) serves the site fine but cannot take a real
+reservation — see the fallback described above.
+
+**Anywhere that runs a container**
+
+```bash
+docker build -t meatologia .
+docker run -p 3000:3000 -v meatologia-data:/data \
+  -e STAFF_TOKEN=pick-something-long meatologia
+```
+
+The diary is written to `/data`, so mount a volume there — without one, every
+redeploy starts the book empty.
+
+**Render** — `New > Blueprint`, point it at this repo, and `render.yaml` sets up
+the service, the 1 GB disk at `/data` and a generated `STAFF_TOKEN` (read it in
+the dashboard). The disk needs a paid plan; on the free tier the filesystem is
+wiped on each deploy.
+
+**Railway / Fly / a VPS** — same shape: run `node server/server.js`, set
+`BOOKINGS_FILE` to a path on persistent storage, set `STAFF_TOKEN`, point the
+domain at it.
+
+**Before it takes real bookings**
+
+- Put it behind HTTPS — guests are typing names and phone numbers.
+- Set `STAFF_TOKEN` to something long; without it `/staff` stays shut.
+- Check `CONFIG` in `booking-core.js` matches the real room: `seats` is the
+  covers available at once and `turnMinutes` how long a table is held.
+- Decide who watches the diary. There are no notifications yet, so someone has
+  to open `/staff` — or wire the `POST /api/bookings` handler to a mail service.
+
 ## Business data
 
 Address, phone, hours and rating appear in three places: the JSON-LD block in

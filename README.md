@@ -129,6 +129,7 @@ will accept:
 | Party size | 1–12; bigger groups are asked to call |
 | Notice | 45 minutes minimum |
 | Horizon | 60 days |
+| Clock | `Europe/Warsaw`, whatever timezone the server or the guest is in |
 
 Change any of these in one place — `CONFIG` — and the page, the server and the
 tests all follow.
@@ -205,6 +206,8 @@ domain at it.
 - Set `STAFF_TOKEN` to something long; without it `/staff` stays shut.
 - Check `CONFIG` in `booking-core.js` matches the real room: `seats` is the
   covers available at once and `turnMinutes` how long a table is held.
+  `timeZone` is what "has that seating passed?" is measured against — change it
+  only if the restaurant moves.
 - Decide who watches the diary. There are no notifications yet, so someone has
   to open `/staff` — or wire the `POST /api/bookings` handler to a mail service.
 

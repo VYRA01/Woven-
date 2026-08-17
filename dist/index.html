@@ -2136,12 +2136,39 @@ window.MEATOLOGIA_MENU = {
     minParty: 1,
     maxParty: 12,          // above this we ask people to call
     leadMinutes: 45,       // no bookings for the next 45 minutes
-    maxDaysAhead: 60
+    maxDaysAhead: 60,
+    timeZone: 'Europe/Warsaw'   // the restaurant's clock, not the viewer's
   };
 
-  /* ── Small date helpers (local time, no library) ─────────────────── */
+  /* ── Small date helpers ──────────────────────────────────────────── */
 
   function pad(n) { return n < 10 ? '0' + n : String(n); }
+
+  /**
+   * The restaurant's wall clock as a Date whose *local* fields hold it.
+   *
+   * Everything else in here reasons about wall-clock times ("18:00 in
+   * Wrocław"), so the moment "now" has to be expressed the same way —
+   * otherwise a server running in UTC, or a guest booking from another
+   * country, disagrees with the restaurant about which seatings have gone.
+   */
+  function wallClock(now) {
+    var at = now || new Date();
+    try {
+      var parts = {};
+      new Intl.DateTimeFormat('en-CA', {
+        timeZone: CONFIG.timeZone, hour12: false,
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
+      }).formatToParts(at).forEach(function (p) { parts[p.type] = p.value; });
+
+      var hour = Number(parts.hour) % 24;          // some engines say 24 for midnight
+      return new Date(Number(parts.year), Number(parts.month) - 1, Number(parts.day),
+                      hour, Number(parts.minute), Number(parts.second));
+    } catch (err) {
+      return at;                                   // no tz database — use local time
+    }
+  }
 
   function toISODate(d) {
     return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
@@ -2196,7 +2223,7 @@ window.MEATOLOGIA_MENU = {
    */
   function availability(bookings, dateStr, now, guests) {
     var party = Number(guests) || 1;
-    var cutoff = new Date((now || new Date()).getTime() + CONFIG.leadMinutes * 60000);
+    var cutoff = new Date(wallClock(now).getTime() + CONFIG.leadMinutes * 60000);
 
     return slots().map(function (time) {
       var when = toDate(dateStr, time);
@@ -2222,7 +2249,7 @@ window.MEATOLOGIA_MENU = {
    */
   function validate(input, bookings, now) {
     input = input || {};
-    now = now || new Date();
+    now = wallClock(now);
 
     var errors = {};
     var name = String(input.name || '').trim().replace(/\s+/g, ' ');
@@ -2333,6 +2360,7 @@ window.MEATOLOGIA_MENU = {
 
   return {
     CONFIG: CONFIG,
+    wallClock: wallClock,
     slots: slots,
     seatsTaken: seatsTaken,
     availability: availability,

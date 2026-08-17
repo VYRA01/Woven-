@@ -12,8 +12,12 @@ const path = require('node:path');
 
 const R = require('../assets/js/booking-core');
 
-/** A fixed "now" so the tests do not drift with the wall clock. */
-const NOW = new Date(2026, 7, 17, 10, 0, 0);          // Mon 17 Aug 2026, 10:00
+/**
+ * Fixed instants, written in UTC so the suite passes on any machine. The
+ * comment gives the Warsaw wall-clock time the restaurant actually works in
+ * (August is CEST, UTC+2).
+ */
+const NOW = new Date('2026-08-17T08:00:00Z');         // Mon 17 Aug 2026, 10:00 in Wrocław
 const TODAY = '2026-08-17';
 const SOON = '2026-08-18';
 
@@ -75,20 +79,41 @@ test('seatings that have gone, or are inside the lead time, are closed off', () 
   assert.equal(at(NOW, '21:00'), 'open');
 
   // mid-service at 13:10
-  const midday = new Date(2026, 7, 17, 13, 10);
+  const midday = new Date('2026-08-17T11:10:00Z');      // 13:10 in Wrocław
   assert.equal(at(midday, '12:00'), 'past', 'gone');
   assert.equal(at(midday, '13:00'), 'past', 'gone');
   assert.equal(at(midday, '13:30'), 'past', 'only 20 minutes away — inside the lead time');
   assert.equal(at(midday, '14:00'), 'open', '50 minutes away — bookable');
 
   // exactly on the 45 minute boundary
-  const sharp = new Date(2026, 7, 17, 17, 15);
+  const sharp = new Date('2026-08-17T15:15:00Z');       // 17:15 in Wrocław
   assert.equal(at(sharp, '18:00'), 'open', '45 minutes ahead is still open');
-  assert.equal(at(new Date(2026, 7, 17, 17, 16), '18:00'), 'past', 'a minute inside it is not');
+  assert.equal(at(new Date('2026-08-17T15:16:00Z'), '18:00'), 'past', 'a minute inside it is not');
 
   // times we never offer are simply absent
   assert.equal(R.availability([], TODAY, NOW).find((s) => s.time === '10:30'), undefined);
   assert.equal(R.availability([], TODAY, NOW).find((s) => s.time === '22:00'), undefined);
+});
+
+test('the clock is the restaurant\'s, not the machine\'s or the guest\'s', () => {
+  // 10:00 UTC is 12:00 in Wrocław in August (CEST, UTC+2)
+  const summer = R.wallClock(new Date('2026-08-17T10:00:00Z'));
+  assert.equal(summer.getHours(), 12, 'summer time');
+  assert.equal(summer.getDate(), 17);
+
+  // and 11:00 in January (CET, UTC+1) — the offset is not hardcoded
+  const winter = R.wallClock(new Date('2026-01-17T10:00:00Z'));
+  assert.equal(winter.getHours(), 11, 'winter time');
+
+  // crossing midnight in Warsaw while it is still "yesterday" in UTC
+  const late = R.wallClock(new Date('2026-08-17T22:30:00Z'));
+  assert.equal(late.getDate(), 18, 'already tomorrow in Wrocław');
+
+  // a guest whose own clock says otherwise still sees the restaurant's day:
+  // 21:00 UTC = 23:00 in Wrocław, so nothing is left today
+  const open = R.availability([], '2026-08-17', new Date('2026-08-17T21:00:00Z'), 2)
+    .filter((s) => s.status === 'open');
+  assert.equal(open.length, 0, 'service is over in Wrocław');
 });
 
 /* ── Validation ───────────────────────────────────────────────────── */

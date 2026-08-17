@@ -6,6 +6,8 @@ WORKDIR /app
 COPY . .
 
 # The diary lives on a mounted volume so redeploys do not wipe the bookings.
+# The booking rules pin themselves to Europe/Warsaw, but logs read better too.
+ENV TZ=Europe/Warsaw
 ENV BOOKINGS_FILE=/data/bookings.json
 ENV PORT=3000
 VOLUME ["/data"]

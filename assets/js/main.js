@@ -511,60 +511,7 @@
     if (row) row.classList.add('today');
   }
 
-  /* ── Reservation ────────────────────────────────────────────────── */
-  function reservation() {
-    var form = $('#reserve-form');
-    if (!form) return;
-
-    var guests = $('#r-guests');
-    var msg = $('#form-msg');
-    var count = 2;
-
-    $$('[data-guests]', form).forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        count = Math.min(12, Math.max(1, count + Number(btn.dataset.guests)));
-        guests.textContent = String(count);
-        if (!still()) {
-          guests.animate([{ transform: 'scale(1.25)' }, { transform: 'scale(1)' }],
-            { duration: 280, easing: 'cubic-bezier(.34,1.5,.64,1)' });
-        }
-      });
-    });
-
-    var date = $('#r-date');
-    var today = new Date();
-    date.min = today.toISOString().slice(0, 10);
-    date.value = today.toISOString().slice(0, 10);
-
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var name = $('#r-name');
-      msg.className = 'form-msg';
-
-      if (!name.value.trim()) {
-        name.setAttribute('aria-invalid', 'true');
-        name.focus();
-        msg.classList.add('bad');
-        msg.textContent = 'We need a name to put the table under.';
-        return;
-      }
-      name.removeAttribute('aria-invalid');
-
-      var when = new Date(date.value + 'T00:00:00');
-      var pretty = isNaN(when) ? date.value : when.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
-
-      msg.classList.add('good');
-      msg.innerHTML = 'Ready: <strong>' + escapeHtml(name.value.trim()) + '</strong>, ' + count +
-        (count === 1 ? ' guest' : ' guests') + ', ' + pretty + ' at ' + $('#r-time').value +
-        '. <a href="tel:' + PHONE + '">Tap to call and confirm →</a>';
-    });
-  }
-
-  function escapeHtml(s) {
-    return s.replace(/[&<>"']/g, function (c) {
-      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
-    });
-  }
+  /* The reservation flow lives in booking.js, alongside the shared rules. */
 
   /* ── Reveal on scroll ───────────────────────────────────────────── */
   function reveal() {
@@ -634,7 +581,6 @@
   reveal();
   masthead();
   hours();
-  reservation();
 
   var year = $('#year');
   if (year) year.textContent = String(new Date().getFullYear());

@@ -1,0 +1,14 @@
+{
+  "name": "meatologia",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Website and booking system for Meatologia, a burger and steak restaurant in Wrocław",
+  "scripts": {
+    "start": "node server/server.js",
+    "test": "node --test test/booking.test.js",
+    "build": "node build.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

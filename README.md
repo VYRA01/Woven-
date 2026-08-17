@@ -1,22 +1,33 @@
 # Meatologia — restaurant site
 
-A static site for **Meatologia**, a burger and steak restaurant in Wrocław
-(Zwycięska 45/lok. 3). No framework, no build step required, no external
-requests — open `index.html` or drop the folder on any static host.
+Website and table-booking system for **Meatologia**, a burger and steak
+restaurant in Wrocław (Zwycięska 45/lok. 3). No framework and no dependencies —
+the front end is plain HTML/CSS/JS, the server is plain Node.
 
 ```bash
-python3 -m http.server 8000     # preview at http://localhost:8000
-node build.js                   # optional: bundle everything into dist/index.html
+npm start        # site + booking API on http://localhost:3000
+npm test         # 24 tests: booking rules and the API end to end
+npm run build    # bundle everything into a single dist/index.html
 ```
+
+Bookings need the server. Served as static files instead, the site still works —
+the booking form falls back to holding reservations in the visitor's browser and
+says plainly that the table needs confirming by phone.
 
 ## Files
 
 ```
-index.html            markup + the inline SVG <symbol> artwork for every dish
-assets/css/styles.css the whole stylesheet; design tokens live in :root
-assets/js/data.js     the menu — the only file you need to touch to change dishes
-assets/js/main.js     interactions: takeover, filtering, hours, booking form
-build.js              inlines CSS + JS into a single-file dist/index.html
+index.html               markup + the inline SVG <symbol> artwork for every dish
+assets/css/styles.css    the whole stylesheet; design tokens live in :root
+assets/js/data.js        the menu — the only file to touch to change dishes
+assets/js/booking-core.js booking rules, shared by the browser and the server
+assets/js/booking.js     the reservation flow
+assets/js/main.js        takeover, filtering, the anatomy scroll, opening hours
+server/server.js         static file server + booking API
+server/store.js          the diary, persisted to server/data/bookings.json
+server/staff.html        the book, for whoever is working the floor
+test/booking.test.js     the suite
+build.js                 inlines CSS + JS into a single-file dist/index.html
 ```
 
 ## The dish takeover
@@ -102,12 +113,65 @@ burgers on a single set of paths.
 an `<img>`. Nothing about the transitions changes: the shared-element name sits
 on the artwork element itself, so a photo morphs exactly the same way.
 
-## Booking form
+## Reservations
 
-The kitchen takes bookings by phone, so the form validates the details and
-assembles them into a confirmation line with a `tel:` link — it does not post
-anywhere. Wire it to a real endpoint by replacing the `submit` handler in
-`reservation()`.
+A real booking system, not a mailto link.
+
+**The rules** live in `assets/js/booking-core.js` and are loaded by *both* the
+browser and the server, so a seating the page offers is a seating the server
+will accept:
+
+| | |
+|---|---|
+| Seatings | 12:00 to 21:00, every 30 minutes |
+| Table held | 90 minutes, so a 19:00 booking still occupies seats at 20:00 |
+| Capacity | 56 covers at any one moment |
+| Party size | 1–12; bigger groups are asked to call |
+| Notice | 45 minutes minimum |
+| Horizon | 60 days |
+
+Change any of these in one place — `CONFIG` — and the page, the server and the
+tests all follow.
+
+**The flow.** Pick a party size and date and the seating grid fills in live:
+times that have gone are struck through, full ones are disabled, and ones
+running low are outlined. Submitting validates every field, re-checks capacity
+*on the server*, and returns a reference like `MT-K7QD3`. From the confirmation
+the guest can save a real `.ics` to their calendar, call the restaurant, or
+cancel. `Find an existing booking` takes a reference plus the phone number it
+was booked with — that pairing is what authorises a cancellation.
+
+**The API**
+
+```
+GET  /api/availability?date=YYYY-MM-DD[&guests=n]
+POST /api/bookings                 {name, phone, email?, guests, date, time, notes?}
+GET  /api/bookings/:ref            existence + status only, no personal details
+POST /api/bookings/:ref/cancel     {phone}
+GET  /api/staff/bookings           requires X-Staff-Token
+```
+
+Bookings are appended to `server/data/bookings.json`, written through a temp
+file and renamed so a crash cannot truncate the diary. Swap `server/store.js`
+for a database if the restaurant outgrows one process. Submissions are throttled
+per IP.
+
+**For the floor.** `/staff` lists the book with covers and cancellations, behind
+the token:
+
+```bash
+STAFF_TOKEN=pick-something-long npm start
+```
+
+**Without the server** — GitHub Pages, or the single-file `dist/index.html` —
+there is nothing to POST to. The form detects this, keeps the booking in
+`localStorage` (still doing the full availability maths against it) and tells
+the guest the table needs confirming by phone. Nothing pretends to be booked
+when it isn't.
+
+**Not included:** no confirmation emails or SMS (that needs a mail provider and
+credentials), and no card holds or deposits. The email field is collected and
+stored for whoever picks up the diary.
 
 ## Business data
 
@@ -129,5 +193,8 @@ Address, phone, hours and rating appear in three places: the JSON-LD block in
 - No webfonts, no analytics, no third-party anything: every byte is local.
 - Animation is limited to `transform` and `opacity`; scroll handlers are
   throttled through `requestAnimationFrame`.
+- Booking errors appear per field, tied to the input with `aria-invalid`, and
+  the confirmation takes focus so it is announced.
 - Verified in Chromium at 1440px and 390px: no console errors, no horizontal
-  page scroll.
+  page scroll, and the booking flow driven end to end against a live server —
+  book, persist, deduct seats, cancel, restore seats, staff view.

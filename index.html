@@ -538,48 +538,118 @@
       <p class="kicker">Reserve</p>
       <h2>Save yourself a table</h2>
       <p class="band-sub">
-        Fill this in and we'll put the details straight into a call — the kitchen
-        takes bookings by phone, so you'll be talking to whoever is on the pass tonight.
+        Pick a time and the table is yours — you'll get a reference straight away,
+        and you can cancel or move it from here later.
       </p>
       <ul class="reserve-points">
-        <li>Groups over 8 — call us, we'll rearrange the room</li>
-        <li>Last kitchen order at 21:15</li>
-        <li>Parking in front of the building, entrance from the courtyard</li>
+        <li>Tables are held for 90 minutes from your seating</li>
+        <li>Groups over 12 — call us and we'll rearrange the room</li>
+        <li>Last kitchen order 21:15; parking in front of the building</li>
       </ul>
     </div>
 
-    <form class="reserve-card rise" id="reserve-form" novalidate>
-      <div class="field">
-        <label for="r-name">Name</label>
-        <input id="r-name" name="name" type="text" autocomplete="name" required placeholder="Anna Kowalska">
-      </div>
-      <div class="field-row">
+    <div class="reserve-card rise">
+      <!-- Step 1: pick a table -->
+      <form id="reserve-form" novalidate>
+        <div class="field">
+          <span class="field-label" id="guests-label">Guests</span>
+          <div class="stepper" role="group" aria-labelledby="guests-label">
+            <button type="button" data-guests="-1" aria-label="One guest fewer">−</button>
+            <output id="r-guests">2</output>
+            <button type="button" data-guests="1" aria-label="One guest more">+</button>
+          </div>
+          <p class="field-error" id="err-guests"></p>
+        </div>
+
         <div class="field">
           <label for="r-date">Date</label>
           <input id="r-date" name="date" type="date" required>
+          <p class="field-error" id="err-date"></p>
         </div>
+
         <div class="field">
-          <label for="r-time">Time</label>
-          <select id="r-time" name="time" required>
-            <option value="12:00">12:00</option><option value="13:00">13:00</option>
-            <option value="14:00">14:00</option><option value="15:00">15:00</option>
-            <option value="16:00">16:00</option><option value="17:00">17:00</option>
-            <option value="18:00" selected>18:00</option><option value="19:00">19:00</option>
-            <option value="20:00">20:00</option><option value="21:00">21:00</option>
-          </select>
+          <span class="field-label" id="time-label">Seating</span>
+          <div class="slots" id="r-slots" role="group" aria-labelledby="time-label"
+               aria-describedby="slots-note"></div>
+          <p class="slots-note" id="slots-note">Tables are held for 90 minutes. Last seating 21:00.</p>
+          <p class="field-error" id="err-time"></p>
         </div>
-      </div>
-      <div class="field">
-        <label for="r-guests">Guests</label>
-        <div class="stepper">
-          <button type="button" data-guests="-1" aria-label="One guest fewer">−</button>
-          <output id="r-guests" for="r-guests">2</output>
-          <button type="button" data-guests="1" aria-label="One guest more">+</button>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="r-name">Name</label>
+            <input id="r-name" name="name" type="text" autocomplete="name" required placeholder="Anna Kowalska">
+            <p class="field-error" id="err-name"></p>
+          </div>
+          <div class="field">
+            <label for="r-phone">Phone</label>
+            <input id="r-phone" name="phone" type="tel" autocomplete="tel" required placeholder="600 000 000">
+            <p class="field-error" id="err-phone"></p>
+          </div>
         </div>
+
+        <div class="field">
+          <label for="r-email">Email <span class="field-opt">optional, for the confirmation</span></label>
+          <input id="r-email" name="email" type="email" autocomplete="email" placeholder="anna@example.com">
+          <p class="field-error" id="err-email"></p>
+        </div>
+
+        <div class="field">
+          <label for="r-notes">Anything we should know? <span class="field-opt">optional</span></label>
+          <input id="r-notes" name="notes" type="text" maxlength="400"
+                 placeholder="Birthday, allergy, high chair…">
+          <p class="field-error" id="err-notes"></p>
+        </div>
+
+        <button class="btn btn-ink btn-big btn-block" type="submit" id="r-submit">Book the table</button>
+        <p class="form-msg" id="form-msg" role="status" aria-live="polite"></p>
+        <p class="form-foot">
+          Prefer to talk to someone? <a href="tel:+48666854218">666 854 218</a> ·
+          <button type="button" class="linkish" data-find>Find an existing booking</button>
+        </p>
+      </form>
+
+      <!-- Step 2: confirmed -->
+      <div class="booked" id="booked" hidden>
+        <p class="booked-mark" aria-hidden="true">✓</p>
+        <h3 id="booked-title">Table booked</h3>
+        <p class="booked-sub" id="booked-sub"></p>
+
+        <dl class="booked-detail">
+          <div><dt>Reference</dt><dd id="booked-ref"></dd></div>
+          <div><dt>When</dt><dd id="booked-when"></dd></div>
+          <div><dt>Guests</dt><dd id="booked-guests"></dd></div>
+          <div><dt>Under</dt><dd id="booked-name"></dd></div>
+        </dl>
+
+        <div class="booked-act">
+          <button class="btn btn-ink" type="button" id="booked-ics">Add to calendar</button>
+          <a class="btn btn-line" href="tel:+48666854218">Call the restaurant</a>
+          <button class="btn btn-line" type="button" id="booked-cancel">Cancel booking</button>
+        </div>
+        <p class="form-msg" id="booked-msg" role="status" aria-live="polite"></p>
+        <button type="button" class="linkish" id="booked-again">Book another table</button>
       </div>
-      <button class="btn btn-ink btn-big btn-block" type="submit">Prepare the booking</button>
-      <p class="form-msg" id="form-msg" role="status"></p>
-    </form>
+
+      <!-- Look up an existing booking -->
+      <form class="lookup" id="lookup-form" hidden novalidate>
+        <h3>Find your booking</h3>
+        <p class="band-sub">Your reference and the phone number you booked with.</p>
+        <div class="field-row">
+          <div class="field">
+            <label for="l-ref">Reference</label>
+            <input id="l-ref" type="text" placeholder="MT-XXXXX" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="l-phone">Phone</label>
+            <input id="l-phone" type="tel" placeholder="600 000 000" autocomplete="tel">
+          </div>
+        </div>
+        <button class="btn btn-ink btn-block" type="submit">Find it</button>
+        <p class="form-msg" id="lookup-msg" role="status" aria-live="polite"></p>
+        <button type="button" class="linkish" data-find-close>Back to booking</button>
+      </form>
+    </div>
   </div>
 </section>
 
@@ -701,6 +771,8 @@
 </div>
 
 <script src="assets/js/data.js"></script>
+<script src="assets/js/booking-core.js"></script>
 <script src="assets/js/main.js"></script>
+<script src="assets/js/booking.js"></script>
 </body>
 </html>

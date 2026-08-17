@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meatologia — the book</title>
+<style>
+  :root {
+    --paper: #f3ece0; --card: #fffcf6; --ink: #1c1713; --ink-2: #4d4238;
+    --ink-3: #8a7c6c; --rule: #d9cdb8; --ox: #8a1f1c; --olive: #5f7f39;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 28px 20px 60px;
+    background: var(--paper); color: var(--ink);
+    font: 16px/1.5 'Helvetica Neue', -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  }
+  .wrap { max-width: 940px; margin-inline: auto; }
+  h1 { font-size: 1.6rem; text-transform: uppercase; letter-spacing: -.02em; margin: 0 0 4px; }
+  .sub { color: var(--ink-3); font-size: .9rem; margin: 0 0 24px; }
+
+  .bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; margin-bottom: 22px; }
+  label { display: block; font-size: .68rem; font-weight: 800; letter-spacing: .14em;
+          text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+  input, button {
+    font: inherit; padding: .6em .8em; border: 1.5px solid var(--rule);
+    border-radius: 10px; background: var(--card); color: var(--ink);
+  }
+  button { font-weight: 700; cursor: pointer; border-color: var(--ink); }
+  button:hover { background: var(--ink); color: var(--paper); }
+
+  .totals { display: flex; gap: 22px; flex-wrap: wrap; margin-bottom: 18px; font-size: .92rem; }
+  .totals b { font-size: 1.3rem; display: block; }
+
+  table { width: 100%; border-collapse: collapse; background: var(--card);
+          border: 1.5px solid var(--rule); border-radius: 12px; overflow: hidden; }
+  th, td { padding: 11px 13px; text-align: left; border-bottom: 1px solid var(--rule); font-size: .92rem; }
+  th { font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+  tr:last-child td { border-bottom: 0; }
+  td.time { font-variant-numeric: tabular-nums; font-weight: 700; }
+  td.ref { font-family: ui-monospace, Menlo, monospace; font-size: .85rem; }
+  .tag { display: inline-block; padding: 2px 9px; border-radius: 99px; font-size: .72rem; font-weight: 800; }
+  .ok { background: rgba(95,127,57,.16); color: var(--olive); }
+  .off { background: rgba(138,31,28,.14); color: var(--ox); text-decoration: line-through; }
+  .note { color: var(--ink-2); font-size: .86rem; }
+  .empty { padding: 40px; text-align: center; color: var(--ink-3); }
+  .msg { color: var(--ox); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>The book</h1>
+  <p class="sub">Bookings taken through the site. Reads the diary directly — nothing here is cached.</p>
+
+  <div class="bar">
+    <div>
+      <label for="token">Staff token</label>
+      <input id="token" type="password" placeholder="STAFF_TOKEN" autocomplete="current-password">
+    </div>
+    <div>
+      <label for="date">Date</label>
+      <input id="date" type="date">
+    </div>
+    <button id="load">Show</button>
+    <button id="all">Everything</button>
+  </div>
+
+  <p class="msg" id="msg"></p>
+  <div class="totals" id="totals"></div>
+  <div id="out"></div>
+</div>
+
+<script>
+(function () {
+  var $ = function (s) { return document.querySelector(s); };
+  var KEY = 'meatologia.staff.token';
+
+  $('#token').value = sessionStorage.getItem(KEY) || '';
+  $('#date').value = new Date().toISOString().slice(0, 10);
+
+  function load(useDate) {
+    var token = $('#token').value.trim();
+    if (!token) { $('#msg').textContent = 'Enter the staff token.'; return; }
+    sessionStorage.setItem(KEY, token);
+
+    var url = '/api/staff/bookings' + (useDate ? '?date=' + encodeURIComponent($('#date').value) : '');
+    fetch(url, { headers: { 'X-Staff-Token': token } })
+      .then(function (r) { return r.json().then(function (b) { return { ok: r.ok, b: b }; }); })
+      .then(function (res) {
+        if (!res.ok) { $('#msg').textContent = 'Rejected: ' + (res.b.error || 'unknown'); return; }
+        $('#msg').textContent = '';
+        render(res.b.bookings || []);
+      })
+      .catch(function () { $('#msg').textContent = 'Could not reach the server.'; });
+  }
+
+  function render(list) {
+    var live = list.filter(function (b) { return b.status !== 'cancelled'; });
+    var covers = live.reduce(function (n, b) { return n + Number(b.guests || 0); }, 0);
+
+    $('#totals').innerHTML =
+      '<div><b>' + live.length + '</b>bookings</div>' +
+      '<div><b>' + covers + '</b>covers</div>' +
+      '<div><b>' + (list.length - live.length) + '</b>cancelled</div>';
+
+    if (!list.length) {
+      $('#out').innerHTML = '<div class="empty">Nothing in the book for this view.</div>';
+      return;
+    }
+
+    var rows = list.slice().sort(function (a, b) {
+      return (a.date + a.time).localeCompare(b.date + b.time);
+    }).map(function (b) {
+      return '<tr>' +
+        '<td class="time">' + esc(b.date) + '<br>' + esc(b.time) + '</td>' +
+        '<td><strong>' + esc(b.name) + '</strong><br><span class="note">' + esc(b.phone) +
+          (b.email ? ' · ' + esc(b.email) : '') + '</span></td>' +
+        '<td>' + esc(String(b.guests)) + '</td>' +
+        '<td class="note">' + esc(b.notes || '—') + '</td>' +
+        '<td class="ref">' + esc(b.ref) + '</td>' +
+        '<td><span class="tag ' + (b.status === 'cancelled' ? 'off' : 'ok') + '">' +
+          esc(b.status) + '</span></td>' +
+      '</tr>';
+    }).join('');
+
+    $('#out').innerHTML =
+      '<table><thead><tr><th>When</th><th>Guest</th><th>Guests</th><th>Note</th>' +
+      '<th>Ref</th><th>Status</th></tr></thead><tbody>' + rows + '</tbody></table>';
+  }
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  $('#load').addEventListener('click', function () { load(true); });
+  $('#all').addEventListener('click', function () { load(false); });
+  if ($('#token').value) load(true);
+}());
+</script>
+</body>
+</html>

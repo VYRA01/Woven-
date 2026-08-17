@@ -895,7 +895,111 @@ h1 .line { display: block; }
 }
 .field { margin-bottom: 16px; }
 .field label,
-.stepper + label { display: block; font-size: .72rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 7px; }
+.field-label { display: block; font-size: .72rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 7px; }
+.field-opt { font-weight: 500; letter-spacing: .04em; text-transform: none; opacity: .8; }
+
+.field-error {
+  margin: 6px 0 0;
+  font-size: .84rem;
+  font-weight: 600;
+  color: var(--ember);
+  min-height: 0;
+}
+.field-error:empty { display: none; }
+
+/* Seating times */
+.slots {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(74px, 1fr));
+  gap: 7px;
+}
+.slot {
+  padding: .6em .2em;
+  border: 1.5px solid var(--rule);
+  border-radius: var(--r-sm);
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  font-size: .92rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: border-color .2s var(--ease), background .2s var(--ease),
+              color .2s var(--ease), transform .25s var(--back);
+}
+.slot:hover:not(:disabled) { border-color: var(--ink); transform: translateY(-2px); }
+.slot[aria-pressed="true"] {
+  background: var(--ox);
+  border-color: var(--ox);
+  color: #fdf6ec;
+}
+.slot:disabled {
+  opacity: .38;
+  cursor: not-allowed;
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+}
+.slot-tight:not([aria-pressed="true"]) { border-color: var(--gold); }
+
+.slots-note { margin: 9px 0 0; font-size: .82rem; color: var(--ink-3); }
+.slots-empty { grid-column: 1 / -1; margin: 0; font-size: .9rem; color: var(--ink-2); }
+.slots[aria-busy="true"] { opacity: .5; }
+
+.form-foot { margin: 14px 0 0; font-size: .88rem; color: var(--ink-3); text-align: center; }
+.linkish {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-size: inherit;
+  color: var(--ox);
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Confirmation */
+.booked { text-align: center; }
+.booked-mark {
+  display: grid;
+  place-items: center;
+  width: 54px; height: 54px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  background: var(--olive);
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+.booked h3 { margin-bottom: .4em; }
+.booked h3:focus-visible { outline: 2.5px solid var(--ox); outline-offset: 4px; }
+.booked-sub { font-size: .95rem; color: var(--ink-2); margin: 0 auto 20px; max-width: 42ch; }
+
+.booked-detail {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 14px;
+  margin: 0 0 22px;
+  padding: 18px 0;
+  border-block: 1.5px solid var(--rule);
+  text-align: left;
+}
+.booked-detail dt {
+  font-size: .68rem; font-weight: 800; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px;
+}
+.booked-detail dd { margin: 0; font-weight: 700; font-size: .98rem; }
+#booked-ref { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .06em; }
+
+.booked-act { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 6px; }
+.booked-act .btn { font-size: .88rem; }
+.booked-act .btn:disabled { opacity: .45; cursor: not-allowed; }
+#booked-again { margin-top: 12px; }
+
+.lookup h3 { margin-bottom: .3em; }
+.lookup .band-sub { font-size: .92rem; margin-bottom: 18px; }
+.lookup .linkish { display: block; margin: 14px auto 0; }
 .field input, .field select {
   width: 100%;
   padding: .78em .9em;
@@ -1573,48 +1677,118 @@ h1 .line { display: block; }
       <p class="kicker">Reserve</p>
       <h2>Save yourself a table</h2>
       <p class="band-sub">
-        Fill this in and we'll put the details straight into a call — the kitchen
-        takes bookings by phone, so you'll be talking to whoever is on the pass tonight.
+        Pick a time and the table is yours — you'll get a reference straight away,
+        and you can cancel or move it from here later.
       </p>
       <ul class="reserve-points">
-        <li>Groups over 8 — call us, we'll rearrange the room</li>
-        <li>Last kitchen order at 21:15</li>
-        <li>Parking in front of the building, entrance from the courtyard</li>
+        <li>Tables are held for 90 minutes from your seating</li>
+        <li>Groups over 12 — call us and we'll rearrange the room</li>
+        <li>Last kitchen order 21:15; parking in front of the building</li>
       </ul>
     </div>
 
-    <form class="reserve-card rise" id="reserve-form" novalidate>
-      <div class="field">
-        <label for="r-name">Name</label>
-        <input id="r-name" name="name" type="text" autocomplete="name" required placeholder="Anna Kowalska">
-      </div>
-      <div class="field-row">
+    <div class="reserve-card rise">
+      <!-- Step 1: pick a table -->
+      <form id="reserve-form" novalidate>
+        <div class="field">
+          <span class="field-label" id="guests-label">Guests</span>
+          <div class="stepper" role="group" aria-labelledby="guests-label">
+            <button type="button" data-guests="-1" aria-label="One guest fewer">−</button>
+            <output id="r-guests">2</output>
+            <button type="button" data-guests="1" aria-label="One guest more">+</button>
+          </div>
+          <p class="field-error" id="err-guests"></p>
+        </div>
+
         <div class="field">
           <label for="r-date">Date</label>
           <input id="r-date" name="date" type="date" required>
+          <p class="field-error" id="err-date"></p>
         </div>
+
         <div class="field">
-          <label for="r-time">Time</label>
-          <select id="r-time" name="time" required>
-            <option value="12:00">12:00</option><option value="13:00">13:00</option>
-            <option value="14:00">14:00</option><option value="15:00">15:00</option>
-            <option value="16:00">16:00</option><option value="17:00">17:00</option>
-            <option value="18:00" selected>18:00</option><option value="19:00">19:00</option>
-            <option value="20:00">20:00</option><option value="21:00">21:00</option>
-          </select>
+          <span class="field-label" id="time-label">Seating</span>
+          <div class="slots" id="r-slots" role="group" aria-labelledby="time-label"
+               aria-describedby="slots-note"></div>
+          <p class="slots-note" id="slots-note">Tables are held for 90 minutes. Last seating 21:00.</p>
+          <p class="field-error" id="err-time"></p>
         </div>
-      </div>
-      <div class="field">
-        <label for="r-guests">Guests</label>
-        <div class="stepper">
-          <button type="button" data-guests="-1" aria-label="One guest fewer">−</button>
-          <output id="r-guests" for="r-guests">2</output>
-          <button type="button" data-guests="1" aria-label="One guest more">+</button>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="r-name">Name</label>
+            <input id="r-name" name="name" type="text" autocomplete="name" required placeholder="Anna Kowalska">
+            <p class="field-error" id="err-name"></p>
+          </div>
+          <div class="field">
+            <label for="r-phone">Phone</label>
+            <input id="r-phone" name="phone" type="tel" autocomplete="tel" required placeholder="600 000 000">
+            <p class="field-error" id="err-phone"></p>
+          </div>
         </div>
+
+        <div class="field">
+          <label for="r-email">Email <span class="field-opt">optional, for the confirmation</span></label>
+          <input id="r-email" name="email" type="email" autocomplete="email" placeholder="anna@example.com">
+          <p class="field-error" id="err-email"></p>
+        </div>
+
+        <div class="field">
+          <label for="r-notes">Anything we should know? <span class="field-opt">optional</span></label>
+          <input id="r-notes" name="notes" type="text" maxlength="400"
+                 placeholder="Birthday, allergy, high chair…">
+          <p class="field-error" id="err-notes"></p>
+        </div>
+
+        <button class="btn btn-ink btn-big btn-block" type="submit" id="r-submit">Book the table</button>
+        <p class="form-msg" id="form-msg" role="status" aria-live="polite"></p>
+        <p class="form-foot">
+          Prefer to talk to someone? <a href="tel:+48666854218">666 854 218</a> ·
+          <button type="button" class="linkish" data-find>Find an existing booking</button>
+        </p>
+      </form>
+
+      <!-- Step 2: confirmed -->
+      <div class="booked" id="booked" hidden>
+        <p class="booked-mark" aria-hidden="true">✓</p>
+        <h3 id="booked-title">Table booked</h3>
+        <p class="booked-sub" id="booked-sub"></p>
+
+        <dl class="booked-detail">
+          <div><dt>Reference</dt><dd id="booked-ref"></dd></div>
+          <div><dt>When</dt><dd id="booked-when"></dd></div>
+          <div><dt>Guests</dt><dd id="booked-guests"></dd></div>
+          <div><dt>Under</dt><dd id="booked-name"></dd></div>
+        </dl>
+
+        <div class="booked-act">
+          <button class="btn btn-ink" type="button" id="booked-ics">Add to calendar</button>
+          <a class="btn btn-line" href="tel:+48666854218">Call the restaurant</a>
+          <button class="btn btn-line" type="button" id="booked-cancel">Cancel booking</button>
+        </div>
+        <p class="form-msg" id="booked-msg" role="status" aria-live="polite"></p>
+        <button type="button" class="linkish" id="booked-again">Book another table</button>
       </div>
-      <button class="btn btn-ink btn-big btn-block" type="submit">Prepare the booking</button>
-      <p class="form-msg" id="form-msg" role="status"></p>
-    </form>
+
+      <!-- Look up an existing booking -->
+      <form class="lookup" id="lookup-form" hidden novalidate>
+        <h3>Find your booking</h3>
+        <p class="band-sub">Your reference and the phone number you booked with.</p>
+        <div class="field-row">
+          <div class="field">
+            <label for="l-ref">Reference</label>
+            <input id="l-ref" type="text" placeholder="MT-XXXXX" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="l-phone">Phone</label>
+            <input id="l-phone" type="tel" placeholder="600 000 000" autocomplete="tel">
+          </div>
+        </div>
+        <button class="btn btn-ink btn-block" type="submit">Find it</button>
+        <p class="form-msg" id="lookup-msg" role="status" aria-live="polite"></p>
+        <button type="button" class="linkish" data-find-close>Back to booking</button>
+      </form>
+    </div>
   </div>
 </section>
 
@@ -1936,6 +2110,240 @@ window.MEATOLOGIA_MENU = {
     }
   ]
 };
+</script>
+<script>
+/**
+ * Booking rules for Meatologia.
+ *
+ * One source of truth, loaded by both the browser and the Node server, so a
+ * slot the page offers is a slot the server will accept. Pure functions only —
+ * no storage, no clock of its own; the caller passes `now` and the existing
+ * bookings in.
+ */
+(function (root, factory) {
+  var api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else root.MEATOLOGIA_BOOKING = api;
+}(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  var CONFIG = {
+    openHour: 12,          // first seating
+    lastSeatingHour: 21,   // last seating; kitchen closes 21:15, doors 22:00
+    slotMinutes: 30,
+    turnMinutes: 90,       // how long a table is held
+    seats: 56,             // covers available at any one time
+    minParty: 1,
+    maxParty: 12,          // above this we ask people to call
+    leadMinutes: 45,       // no bookings for the next 45 minutes
+    maxDaysAhead: 60
+  };
+
+  /* ── Small date helpers (local time, no library) ─────────────────── */
+
+  function pad(n) { return n < 10 ? '0' + n : String(n); }
+
+  function toISODate(d) {
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+  }
+
+  /** "2026-08-17" + "18:30" -> Date in the viewer's local time. */
+  function toDate(dateStr, timeStr) {
+    var d = String(dateStr).split('-').map(Number);
+    var t = String(timeStr || '00:00').split(':').map(Number);
+    if (d.length !== 3 || d.some(isNaN) || t.some(isNaN)) return null;
+    var out = new Date(d[0], d[1] - 1, d[2], t[0], t[1], 0, 0);
+    // reject things like 2026-02-31 that Date silently rolls over
+    if (out.getFullYear() !== d[0] || out.getMonth() !== d[1] - 1 || out.getDate() !== d[2]) return null;
+    return out;
+  }
+
+  function minutesOf(timeStr) {
+    var t = String(timeStr).split(':').map(Number);
+    return t[0] * 60 + t[1];
+  }
+
+  function timeOf(minutes) { return pad(Math.floor(minutes / 60)) + ':' + pad(minutes % 60); }
+
+  /* ── Slots ──────────────────────────────────────────────────────── */
+
+  /** Every seating time we offer on a given date, open to last seating. */
+  function slots() {
+    var out = [];
+    for (var m = CONFIG.openHour * 60; m <= CONFIG.lastSeatingHour * 60; m += CONFIG.slotMinutes) {
+      out.push(timeOf(m));
+    }
+    return out;
+  }
+
+  /** Seats already committed across bookings whose turn overlaps `time`. */
+  function seatsTaken(bookings, dateStr, time) {
+    var start = minutesOf(time);
+    var end = start + CONFIG.turnMinutes;
+
+    return (bookings || []).reduce(function (total, b) {
+      if (b.date !== dateStr) return total;
+      if (b.status === 'cancelled') return total;
+      var bStart = minutesOf(b.time);
+      var bEnd = bStart + CONFIG.turnMinutes;
+      return (bStart < end && bEnd > start) ? total + Number(b.guests || 0) : total;
+    }, 0);
+  }
+
+  /**
+   * Availability for a date.
+   * `past` — already gone (or inside the lead time). `full` — no seats left.
+   */
+  function availability(bookings, dateStr, now, guests) {
+    var party = Number(guests) || 1;
+    var cutoff = new Date((now || new Date()).getTime() + CONFIG.leadMinutes * 60000);
+
+    return slots().map(function (time) {
+      var when = toDate(dateStr, time);
+      var taken = seatsTaken(bookings, dateStr, time);
+      var left = Math.max(0, CONFIG.seats - taken);
+
+      var status = 'open';
+      if (!when || when < cutoff) status = 'past';
+      else if (left < party) status = 'full';
+
+      return { time: time, seatsLeft: left, status: status };
+    });
+  }
+
+  /* ── Validation ─────────────────────────────────────────────────── */
+
+  var PHONE = /^[+()\-\s0-9]{7,20}$/;
+  var EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  /**
+   * Check a booking request against the rules and the current book.
+   * Returns { ok, errors: {field: message}, booking }.
+   */
+  function validate(input, bookings, now) {
+    input = input || {};
+    now = now || new Date();
+
+    var errors = {};
+    var name = String(input.name || '').trim().replace(/\s+/g, ' ');
+    var phone = String(input.phone || '').trim();
+    var email = String(input.email || '').trim();
+    var notes = String(input.notes || '').trim();
+    var guests = Math.round(Number(input.guests));
+    var date = String(input.date || '').trim();
+    var time = String(input.time || '').trim();
+
+    if (name.length < 2) errors.name = 'Please give us a name for the table.';
+    else if (name.length > 80) errors.name = 'That name is too long for the book.';
+
+    if (!PHONE.test(phone)) errors.phone = 'A phone number so we can reach you if plans change.';
+    if (email && !EMAIL.test(email)) errors.email = 'That email address does not look right.';
+    if (notes.length > 400) errors.notes = 'Please keep the note under 400 characters.';
+
+    if (!(guests >= CONFIG.minParty && guests <= CONFIG.maxParty)) {
+      errors.guests = 'Tables here seat 1 to ' + CONFIG.maxParty + '. For a bigger group, call us.';
+    }
+
+    var when = toDate(date, time);
+    if (!when) {
+      errors.date = 'Pick a date and a time.';
+    } else {
+      var limit = new Date(now.getTime());
+      limit.setDate(limit.getDate() + CONFIG.maxDaysAhead);
+
+      if (!time) {
+        errors.time = 'Choose a seating time.';
+      } else if (slots().indexOf(time) < 0) {
+        errors.time = 'We seat between 12:00 and 21:00.';
+      } else if (when < new Date(now.getTime() + CONFIG.leadMinutes * 60000)) {
+        errors.time = 'That seating has passed. Please call for anything in the next hour.';
+      } else if (when > limit) {
+        errors.date = 'We take bookings up to ' + CONFIG.maxDaysAhead + ' days ahead.';
+      }
+    }
+
+    if (!errors.time && !errors.guests && !errors.date) {
+      var left = CONFIG.seats - seatsTaken(bookings, date, time);
+      if (left < guests) {
+        errors.time = left > 0
+          ? 'Only ' + left + ' ' + (left === 1 ? 'seat is' : 'seats are') + ' left at ' + time + '.'
+          : 'That seating is fully booked.';
+      }
+    }
+
+    return {
+      ok: Object.keys(errors).length === 0,
+      errors: errors,
+      booking: {
+        name: name, phone: phone, email: email, notes: notes,
+        guests: guests, date: date, time: time
+      }
+    };
+  }
+
+  /* ── References ─────────────────────────────────────────────────── */
+
+  var ALPHABET = 'ACDEFGHJKLMNPQRTUVWXY3479';   // no lookalike characters
+
+  function reference(rand) {
+    var pick = rand || Math.random;
+    var out = 'MT-';
+    for (var i = 0; i < 5; i++) out += ALPHABET[Math.floor(pick() * ALPHABET.length)];
+    return out;
+  }
+
+  /* ── Presentation helpers ───────────────────────────────────────── */
+
+  function prettyDate(dateStr) {
+    var d = toDate(dateStr, '12:00');
+    if (!d) return dateStr;
+    return d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+  }
+
+  /** An .ics the guest can save to their calendar. */
+  function toICS(booking, place) {
+    var start = toDate(booking.date, booking.time);
+    if (!start) return '';
+    var end = new Date(start.getTime() + CONFIG.turnMinutes * 60000);
+
+    function stamp(d) {
+      return d.getUTCFullYear() + pad(d.getUTCMonth() + 1) + pad(d.getUTCDate()) + 'T' +
+             pad(d.getUTCHours()) + pad(d.getUTCMinutes()) + '00Z';
+    }
+    function esc(s) { return String(s || '').replace(/([,;\\])/g, '\\$1').replace(/\n/g, '\\n'); }
+
+    return [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Meatologia//Booking//EN',
+      'BEGIN:VEVENT',
+      'UID:' + (booking.ref || reference()) + '@meatologia.pl',
+      'DTSTAMP:' + stamp(new Date()),
+      'DTSTART:' + stamp(start),
+      'DTEND:' + stamp(end),
+      'SUMMARY:' + esc('Table at Meatologia — ' + booking.guests +
+        (booking.guests === 1 ? ' guest' : ' guests')),
+      'DESCRIPTION:' + esc('Booked under ' + booking.name +
+        (booking.ref ? '. Reference ' + booking.ref : '') + '. Phone 666 854 218.'),
+      'LOCATION:' + esc(place || 'Meatologia, Zwycięska 45/lok. 3, 53-033 Wrocław'),
+      'END:VEVENT',
+      'END:VCALENDAR'
+    ].join('\r\n');
+  }
+
+  return {
+    CONFIG: CONFIG,
+    slots: slots,
+    seatsTaken: seatsTaken,
+    availability: availability,
+    validate: validate,
+    reference: reference,
+    toISODate: toISODate,
+    toDate: toDate,
+    prettyDate: prettyDate,
+    toICS: toICS
+  };
+}));
 </script>
 <script>
 /* ══════════════════════════════════════════════════════════════════════
@@ -2451,60 +2859,7 @@ window.MEATOLOGIA_MENU = {
     if (row) row.classList.add('today');
   }
 
-  /* ── Reservation ────────────────────────────────────────────────── */
-  function reservation() {
-    var form = $('#reserve-form');
-    if (!form) return;
-
-    var guests = $('#r-guests');
-    var msg = $('#form-msg');
-    var count = 2;
-
-    $$('[data-guests]', form).forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        count = Math.min(12, Math.max(1, count + Number(btn.dataset.guests)));
-        guests.textContent = String(count);
-        if (!still()) {
-          guests.animate([{ transform: 'scale(1.25)' }, { transform: 'scale(1)' }],
-            { duration: 280, easing: 'cubic-bezier(.34,1.5,.64,1)' });
-        }
-      });
-    });
-
-    var date = $('#r-date');
-    var today = new Date();
-    date.min = today.toISOString().slice(0, 10);
-    date.value = today.toISOString().slice(0, 10);
-
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var name = $('#r-name');
-      msg.className = 'form-msg';
-
-      if (!name.value.trim()) {
-        name.setAttribute('aria-invalid', 'true');
-        name.focus();
-        msg.classList.add('bad');
-        msg.textContent = 'We need a name to put the table under.';
-        return;
-      }
-      name.removeAttribute('aria-invalid');
-
-      var when = new Date(date.value + 'T00:00:00');
-      var pretty = isNaN(when) ? date.value : when.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
-
-      msg.classList.add('good');
-      msg.innerHTML = 'Ready: <strong>' + escapeHtml(name.value.trim()) + '</strong>, ' + count +
-        (count === 1 ? ' guest' : ' guests') + ', ' + pretty + ' at ' + $('#r-time').value +
-        '. <a href="tel:' + PHONE + '">Tap to call and confirm →</a>';
-    });
-  }
-
-  function escapeHtml(s) {
-    return s.replace(/[&<>"']/g, function (c) {
-      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
-    });
-  }
+  /* The reservation flow lives in booking.js, alongside the shared rules. */
 
   /* ── Reveal on scroll ───────────────────────────────────────────── */
   function reveal() {
@@ -2574,7 +2929,6 @@ window.MEATOLOGIA_MENU = {
   reveal();
   masthead();
   hours();
-  reservation();
 
   var year = $('#year');
   if (year) year.textContent = String(new Date().getFullYear());
@@ -2585,5 +2939,429 @@ window.MEATOLOGIA_MENU = {
     var card = cards.filter(function (c) { return c.dataset.id === id; })[0];
     if (card) window.setTimeout(function () { openDish(id, card); }, 350);
   }
+}());
+</script>
+<script>
+/**
+ * The reservation flow.
+ *
+ * Talks to the booking API when the site is served by server/server.js. On a
+ * plain static host there is no API, so it falls back to holding the booking
+ * in this browser and tells the guest plainly that it still needs confirming
+ * by phone — the rules and availability maths are identical either way,
+ * because both paths run booking-core.js.
+ */
+(function () {
+  'use strict';
+
+  var R = window.MEATOLOGIA_BOOKING;
+  if (!R) return;
+
+  var $ = function (s, c) { return (c || document).querySelector(s); };
+  var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
+
+  var PHONE = '+48666854218';
+  var LOCAL_KEY = 'meatologia.bookings.v1';
+
+  var form = $('#reserve-form');
+  if (!form) return;
+
+  var els = {
+    guests: $('#r-guests'), date: $('#r-date'), slots: $('#r-slots'),
+    name: $('#r-name'), phone: $('#r-phone'), email: $('#r-email'), notes: $('#r-notes'),
+    submit: $('#r-submit'), msg: $('#form-msg'),
+    booked: $('#booked'), lookup: $('#lookup-form'), lookupMsg: $('#lookup-msg'),
+    bookedMsg: $('#booked-msg')
+  };
+
+  var state = { guests: 2, date: '', time: '', slots: [], online: null, current: null };
+
+  /* ── Local book (static hosting / offline) ──────────────────────── */
+
+  function localAll() {
+    try { return JSON.parse(localStorage.getItem(LOCAL_KEY)) || []; }
+    catch (err) { return []; }
+  }
+  function localSave(list) {
+    try { localStorage.setItem(LOCAL_KEY, JSON.stringify(list)); } catch (err) { /* private mode */ }
+  }
+
+  /* ── Talking to the API ─────────────────────────────────────────── */
+
+  function api(path, options) {
+    return fetch(path, Object.assign({ headers: { 'Content-Type': 'application/json' } }, options))
+      .then(function (res) {
+        return res.json().catch(function () { return {}; }).then(function (body) {
+          return { status: res.status, ok: res.ok, body: body };
+        });
+      });
+  }
+
+  /** Load the slots for the chosen date, from the API if there is one. */
+  function loadSlots() {
+    var date = state.date;
+    if (!date) return Promise.resolve([]);
+
+    // Opened straight from disk (or inside a sandboxed frame) — there is no
+    // origin to call, so don't bother trying and littering the console.
+    if (state.online === null && !/^https?:$/.test(location.protocol)) state.online = false;
+
+    if (state.online === false) return Promise.resolve(localSlots(date));
+
+    return api('/api/availability?date=' + encodeURIComponent(date) + '&guests=' + state.guests)
+      .then(function (res) {
+        if (!res.ok || !res.body || !Array.isArray(res.body.slots)) throw new Error('no api');
+        state.online = true;
+        return res.body.slots;
+      })
+      .catch(function () {
+        state.online = false;
+        return localSlots(date);
+      });
+  }
+
+  function localSlots(date) {
+    return R.availability(localAll(), date, new Date(), state.guests);
+  }
+
+  /* ── Rendering ──────────────────────────────────────────────────── */
+
+  function renderSlots(slots) {
+    state.slots = slots;
+    els.slots.innerHTML = '';
+
+    var openCount = 0;
+    slots.forEach(function (slot) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'slot';
+      btn.textContent = slot.time;
+      btn.dataset.time = slot.time;
+
+      if (slot.status !== 'open') {
+        btn.disabled = true;
+        btn.title = slot.status === 'past' ? 'This seating has passed' : 'Fully booked';
+      } else {
+        openCount++;
+        if (slot.seatsLeft <= 8) {
+          btn.classList.add('slot-tight');
+          btn.title = slot.seatsLeft + ' seats left';
+        }
+      }
+
+      btn.setAttribute('aria-pressed', String(slot.time === state.time));
+      btn.addEventListener('click', function () { pickTime(slot.time); });
+      els.slots.appendChild(btn);
+    });
+
+    if (!openCount) {
+      var none = document.createElement('p');
+      none.className = 'slots-empty';
+      none.textContent = 'Nothing free on this date for ' + state.guests +
+        (state.guests === 1 ? ' guest' : ' guests') + '. Try another day, or call us.';
+      els.slots.appendChild(none);
+    }
+
+    // keep a chosen time only while it is still bookable
+    var still = slots.filter(function (s) { return s.time === state.time && s.status === 'open'; })[0];
+    if (!still) { state.time = ''; markTime(); }
+  }
+
+  function markTime() {
+    $$('.slot', els.slots).forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.dataset.time === state.time));
+    });
+  }
+
+  function pickTime(time) {
+    state.time = time;
+    markTime();
+    showError('time', '');
+  }
+
+  function refresh() {
+    els.slots.setAttribute('aria-busy', 'true');
+    loadSlots().then(function (slots) {
+      renderSlots(slots);
+      els.slots.setAttribute('aria-busy', 'false');
+    });
+  }
+
+  /* ── Errors ─────────────────────────────────────────────────────── */
+
+  function showError(field, message) {
+    var out = $('#err-' + field);
+    if (out) out.textContent = message || '';
+    var input = els[field];
+    if (input && input.tagName === 'INPUT') {
+      if (message) input.setAttribute('aria-invalid', 'true');
+      else input.removeAttribute('aria-invalid');
+    }
+  }
+
+  function clearErrors() {
+    ['guests', 'date', 'time', 'name', 'phone', 'email', 'notes'].forEach(function (f) {
+      showError(f, '');
+    });
+    els.msg.className = 'form-msg';
+    els.msg.textContent = '';
+  }
+
+  function say(node, text, kind) {
+    node.className = 'form-msg' + (kind ? ' ' + kind : '');
+    node.textContent = text;
+  }
+
+  /* ── Submitting ─────────────────────────────────────────────────── */
+
+  function gather() {
+    return {
+      name: els.name.value, phone: els.phone.value, email: els.email.value,
+      notes: els.notes.value, guests: state.guests, date: state.date, time: state.time
+    };
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    clearErrors();
+
+    var input = gather();
+    var known = state.online === false ? localAll() : [];
+    var checked = R.validate(input, known, new Date());
+
+    if (!checked.ok) {
+      Object.keys(checked.errors).forEach(function (f) { showError(f, checked.errors[f]); });
+      var first = $('#err-' + Object.keys(checked.errors)[0]);
+      if (first && first.previousElementSibling) first.previousElementSibling.focus();
+      say(els.msg, 'Almost — check the highlighted fields.', 'bad');
+      return;
+    }
+
+    els.submit.disabled = true;
+    els.submit.textContent = 'Booking…';
+
+    submit(checked.booking)
+      .then(function (booking) { confirmed(booking); })
+      .catch(function (err) {
+        if (err && err.errors) {
+          Object.keys(err.errors).forEach(function (f) { showError(f, err.errors[f]); });
+          say(els.msg, 'That seating just went. Pick another time.', 'bad');
+          refresh();
+        } else {
+          say(els.msg, 'We could not save that booking. Please call us on 666 854 218.', 'bad');
+        }
+      })
+      .then(function () {
+        els.submit.disabled = false;
+        els.submit.textContent = 'Book the table';
+      });
+  });
+
+  function submit(booking) {
+    if (state.online === false) return Promise.resolve(saveLocal(booking));
+
+    return api('/api/bookings', { method: 'POST', body: JSON.stringify(booking) })
+      .then(function (res) {
+        if (res.status === 201 && res.body.booking) { state.online = true; return res.body.booking; }
+        if (res.status === 422) throw { errors: res.body.errors || {} };
+        if (res.status === 429) throw new Error('rate limited');
+        throw new Error('api unavailable');
+      })
+      .catch(function (err) {
+        if (err && err.errors) throw err;
+        state.online = false;          // no API here — hold it locally instead
+        return saveLocal(booking);
+      });
+  }
+
+  function saveLocal(booking) {
+    var list = localAll();
+    var ref;
+    do { ref = R.reference(); } while (list.some(function (b) { return b.ref === ref; }));
+
+    var saved = Object.assign({ ref: ref, status: 'confirmed', local: true,
+      createdAt: new Date().toISOString() }, booking);
+    list.push(saved);
+    localSave(list);
+    return saved;
+  }
+
+  /* ── Confirmation ───────────────────────────────────────────────── */
+
+  function confirmed(booking) {
+    state.current = booking;
+
+    $('#booked-ref').textContent = booking.ref;
+    $('#booked-when').textContent = R.prettyDate(booking.date) + ' at ' + booking.time;
+    $('#booked-guests').textContent = booking.guests + (booking.guests === 1 ? ' guest' : ' guests');
+    $('#booked-name').textContent = booking.name;
+
+    $('#booked-title').textContent = booking.local ? 'Booking saved' : 'Table booked';
+    $('#booked-sub').textContent = booking.local
+      ? 'This copy of the site has no booking server, so we have kept the details on this device — ' +
+        'please ring 666 854 218 to confirm the table.'
+      : 'We have you in the book. Quote the reference if you need to change anything.';
+
+    say(els.bookedMsg, '', '');
+    form.hidden = true;
+    els.lookup.hidden = true;
+    els.booked.hidden = false;
+    $('#booked-title').setAttribute('tabindex', '-1');
+    $('#booked-title').focus();
+  }
+
+  $('#booked-again').addEventListener('click', function () {
+    els.booked.hidden = true;
+    form.hidden = false;
+    state.time = '';
+    clearErrors();
+    refresh();
+    els.name.focus();
+  });
+
+  /* Add to calendar — a real .ics file */
+  $('#booked-ics').addEventListener('click', function () {
+    var booking = state.current;
+    if (!booking) return;
+    var ics = R.toICS(booking);
+    var blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+
+    // A published artifact blocks page-initiated downloads; use the host's
+    // save capability there, and a plain link everywhere else.
+    if (window.claude && typeof window.claude.use === 'function') {
+      window.claude.use('downloads').then(function (downloads) {
+        if (!downloads) return say(els.bookedMsg, 'Saving files is not available here.', 'bad');
+        return downloads.save({ filename: 'meatologia-' + booking.ref + '.ics', data: ics })
+          .then(function () { say(els.bookedMsg, 'Saved to your calendar file.', 'good'); })
+          .catch(function () { say(els.bookedMsg, 'The download was declined.', ''); });
+      }).catch(function () { say(els.bookedMsg, 'Saving files is not available here.', 'bad'); });
+      return;
+    }
+
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'meatologia-' + booking.ref + '.ics';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    say(els.bookedMsg, 'Calendar file saved.', 'good');
+  });
+
+  /* Cancelling */
+  $('#booked-cancel').addEventListener('click', function () {
+    var booking = state.current;
+    if (!booking) return;
+    if (!window.confirm('Cancel the table on ' + R.prettyDate(booking.date) +
+        ' at ' + booking.time + '?')) return;
+
+    cancel(booking.ref, booking.phone).then(function (ok) {
+      if (!ok) return say(els.bookedMsg, 'We could not cancel it here — please call us.', 'bad');
+      say(els.bookedMsg, 'Cancelled. The table is back in the book.', 'good');
+      $('#booked-title').textContent = 'Booking cancelled';
+      $('#booked-sub').textContent = 'Nothing else to do — you are not expected.';
+      $('#booked-cancel').disabled = true;
+      $('#booked-ics').disabled = true;
+    });
+  });
+
+  function cancel(ref, phone) {
+    if (state.online === false) {
+      var list = localAll();
+      var hit = list.filter(function (b) { return b.ref === ref; })[0];
+      if (!hit) return Promise.resolve(false);
+      hit.status = 'cancelled';
+      localSave(list);
+      return Promise.resolve(true);
+    }
+    return api('/api/bookings/' + encodeURIComponent(ref) + '/cancel',
+      { method: 'POST', body: JSON.stringify({ phone: phone }) })
+      .then(function (res) { return res.ok; })
+      .catch(function () { return false; });
+  }
+
+  /* ── Look up an existing booking ────────────────────────────────── */
+
+  $$('[data-find]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      form.hidden = true;
+      els.booked.hidden = true;
+      els.lookup.hidden = false;
+      $('#l-ref').focus();
+    });
+  });
+
+  $$('[data-find-close]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      els.lookup.hidden = true;
+      form.hidden = false;
+    });
+  });
+
+  els.lookup.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var ref = $('#l-ref').value.trim().toUpperCase();
+    var phone = $('#l-phone').value.trim();
+    if (!ref || !phone) return say(els.lookupMsg, 'Both the reference and the phone number, please.', 'bad');
+
+    find(ref, phone).then(function (booking) {
+      if (!booking) return say(els.lookupMsg, 'No booking matches that pair.', 'bad');
+      if (booking.status === 'cancelled') return say(els.lookupMsg, 'That booking is already cancelled.', '');
+      els.lookup.hidden = true;
+      confirmed(booking);
+    });
+  });
+
+  function find(ref, phone) {
+    var tail = function (s) { return String(s || '').replace(/\D/g, '').slice(-4); };
+
+    if (state.online === false) {
+      var hit = localAll().filter(function (b) {
+        return b.ref === ref && tail(b.phone) === tail(phone);
+      })[0];
+      return Promise.resolve(hit || null);
+    }
+
+    return api('/api/bookings/' + encodeURIComponent(ref)).then(function (res) {
+      if (!res.ok || !res.body.booking) return null;
+      // the API withholds personal details, so carry the phone we were given
+      return Object.assign({ name: 'your booking', phone: phone }, res.body.booking);
+    }).catch(function () { return null; });
+  }
+
+  /* ── Wiring ─────────────────────────────────────────────────────── */
+
+  $$('[data-guests]', form).forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var next = state.guests + Number(btn.dataset.guests);
+      state.guests = Math.min(R.CONFIG.maxParty, Math.max(R.CONFIG.minParty, next));
+      els.guests.textContent = String(state.guests);
+      showError('guests', '');
+
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        els.guests.animate([{ transform: 'scale(1.22)' }, { transform: 'scale(1)' }],
+          { duration: 260, easing: 'cubic-bezier(.34,1.5,.64,1)' });
+      }
+      refresh();
+    });
+  });
+
+  els.date.addEventListener('change', function () {
+    state.date = els.date.value;
+    showError('date', '');
+    refresh();
+  });
+
+  var today = new Date();
+  var latest = new Date(today.getTime());
+  latest.setDate(latest.getDate() + R.CONFIG.maxDaysAhead);
+
+  els.date.min = R.toISODate(today);
+  els.date.max = R.toISODate(latest);
+  els.date.value = R.toISODate(today);
+  state.date = els.date.value;
+
+  refresh();
 }());
 </script>

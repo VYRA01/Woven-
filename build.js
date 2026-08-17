@@ -16,7 +16,9 @@ const read = (p) => fs.readFileSync(path.join(root, p), 'utf8');
 const html = read('index.html');
 const css = read('assets/css/styles.css');
 const data = read('assets/js/data.js');
+const core = read('assets/js/booking-core.js');
 const main = read('assets/js/main.js');
+const booking = read('assets/js/booking.js');
 
 // The standalone bundle is named for the restaurant; index.html keeps the
 // longer, search-friendly title for the deployed site.
@@ -28,16 +30,11 @@ const bundle = [
   '<style>',
   css.trim(),
   '</style>',
-  body
-    .replace(/<script src="assets\/js\/data\.js"><\/script>\s*/, '')
-    .replace(/<script src="assets\/js\/main\.js"><\/script>\s*/, '')
-    .trim(),
-  '<script>',
-  data.trim(),
-  '</script>',
-  '<script>',
-  main.trim(),
-  '</script>',
+  body.replace(/<script src="assets\/js\/[^"]+"><\/script>\s*/g, '').trim(),
+  '<script>', data.trim(), '</script>',
+  '<script>', core.trim(), '</script>',
+  '<script>', main.trim(), '</script>',
+  '<script>', booking.trim(), '</script>',
   ''
 ].join('\n');
 

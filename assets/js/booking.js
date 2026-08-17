@@ -11,7 +11,21 @@
   'use strict';
 
   var R = window.MEATOLOGIA_BOOKING;
-  if (!R) return;
+  var I = window.MEATOLOGIA_I18N;
+  if (!R || !I) return;
+
+  /** Turn a validation code from booking-core into a sentence. */
+  function say_(err) {
+    if (!err) return '';
+    if (typeof err === 'string') return err;      // older payload, show as-is
+    return I.t('err.' + err.code, err);
+  }
+
+  function prettyDate(dateStr) {
+    var d = R.toDate(dateStr, '12:00');
+    if (!d) return dateStr;
+    return d.toLocaleDateString(I.localeOf(), { weekday: 'long', day: 'numeric', month: 'long' });
+  }
 
   var $ = function (s, c) { return (c || document).querySelector(s); };
   var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
@@ -96,12 +110,12 @@
 
       if (slot.status !== 'open') {
         btn.disabled = true;
-        btn.title = slot.status === 'past' ? 'This seating has passed' : 'Fully booked';
+        btn.title = slot.status === 'past' ? I.t('form.passed') : I.t('form.full');
       } else {
         openCount++;
         if (slot.seatsLeft <= 8) {
           btn.classList.add('slot-tight');
-          btn.title = slot.seatsLeft + ' seats left';
+          btn.title = I.t('form.seatsLeft', { n: slot.seatsLeft });
         }
       }
 
@@ -113,8 +127,7 @@
     if (!openCount) {
       var none = document.createElement('p');
       none.className = 'slots-empty';
-      none.textContent = 'Nothing free on this date for ' + state.guests +
-        (state.guests === 1 ? ' guest' : ' guests') + '. Try another day, or call us.';
+      none.textContent = I.t('form.nothingFree', { n: state.guests });
       els.slots.appendChild(none);
     }
 
@@ -186,30 +199,30 @@
     var checked = R.validate(input, known, new Date());
 
     if (!checked.ok) {
-      Object.keys(checked.errors).forEach(function (f) { showError(f, checked.errors[f]); });
+      Object.keys(checked.errors).forEach(function (f) { showError(f, say_(checked.errors[f])); });
       var first = $('#err-' + Object.keys(checked.errors)[0]);
       if (first && first.previousElementSibling) first.previousElementSibling.focus();
-      say(els.msg, 'Almost — check the highlighted fields.', 'bad');
+      say(els.msg, I.t('form.checkFields'), 'bad');
       return;
     }
 
     els.submit.disabled = true;
-    els.submit.textContent = 'Booking…';
+    els.submit.textContent = I.t('form.submitting');
 
     submit(checked.booking)
       .then(function (booking) { confirmed(booking); })
       .catch(function (err) {
         if (err && err.errors) {
-          Object.keys(err.errors).forEach(function (f) { showError(f, err.errors[f]); });
-          say(els.msg, 'That seating just went. Pick another time.', 'bad');
+          Object.keys(err.errors).forEach(function (f) { showError(f, say_(err.errors[f])); });
+          say(els.msg, I.t('form.taken'), 'bad');
           refresh();
         } else {
-          say(els.msg, 'We could not save that booking. Please call us on 666 854 218.', 'bad');
+          say(els.msg, I.t('form.failed'), 'bad');
         }
       })
       .then(function () {
         els.submit.disabled = false;
-        els.submit.textContent = 'Book the table';
+        els.submit.textContent = I.t('form.submit');
       });
   });
 
@@ -248,15 +261,13 @@
     state.current = booking;
 
     $('#booked-ref').textContent = booking.ref;
-    $('#booked-when').textContent = R.prettyDate(booking.date) + ' at ' + booking.time;
-    $('#booked-guests').textContent = booking.guests + (booking.guests === 1 ? ' guest' : ' guests');
+    $('#booked-when').textContent = prettyDate(booking.date) + ' · ' + booking.time;
+    $('#booked-guests').textContent = booking.guests === 1
+      ? I.t('done.guest1') : I.t('done.guestsN', { n: booking.guests });
     $('#booked-name').textContent = booking.name;
 
-    $('#booked-title').textContent = booking.local ? 'Booking saved' : 'Table booked';
-    $('#booked-sub').textContent = booking.local
-      ? 'This copy of the site has no booking server, so we have kept the details on this device — ' +
-        'please ring 666 854 218 to confirm the table.'
-      : 'We have you in the book. Quote the reference if you need to change anything.';
+    $('#booked-title').textContent = I.t(booking.local ? 'done.titleLocal' : 'done.title');
+    $('#booked-sub').textContent = I.t(booking.local ? 'done.subLocal' : 'done.sub');
 
     say(els.bookedMsg, '', '');
     form.hidden = true;
@@ -286,11 +297,11 @@
     // save capability there, and a plain link everywhere else.
     if (window.claude && typeof window.claude.use === 'function') {
       window.claude.use('downloads').then(function (downloads) {
-        if (!downloads) return say(els.bookedMsg, 'Saving files is not available here.', 'bad');
+        if (!downloads) return say(els.bookedMsg, I.t('done.icsUnavailable'), 'bad');
         return downloads.save({ filename: 'meatologia-' + booking.ref + '.ics', data: ics })
-          .then(function () { say(els.bookedMsg, 'Saved to your calendar file.', 'good'); })
-          .catch(function () { say(els.bookedMsg, 'The download was declined.', ''); });
-      }).catch(function () { say(els.bookedMsg, 'Saving files is not available here.', 'bad'); });
+          .then(function () { say(els.bookedMsg, I.t('done.icsSaved'), 'good'); })
+          .catch(function () { say(els.bookedMsg, I.t('done.icsDeclined'), ''); });
+      }).catch(function () { say(els.bookedMsg, I.t('done.icsUnavailable'), 'bad'); });
       return;
     }
 
@@ -302,21 +313,21 @@
     a.click();
     document.body.removeChild(a);
     setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
-    say(els.bookedMsg, 'Calendar file saved.', 'good');
+    say(els.bookedMsg, I.t('done.icsSaved'), 'good');
   });
 
   /* Cancelling */
   $('#booked-cancel').addEventListener('click', function () {
     var booking = state.current;
     if (!booking) return;
-    if (!window.confirm('Cancel the table on ' + R.prettyDate(booking.date) +
-        ' at ' + booking.time + '?')) return;
+    if (!window.confirm(I.t('done.confirmCancel',
+        { date: prettyDate(booking.date), time: booking.time }))) return;
 
     cancel(booking.ref, booking.phone).then(function (ok) {
-      if (!ok) return say(els.bookedMsg, 'We could not cancel it here — please call us.', 'bad');
-      say(els.bookedMsg, 'Cancelled. The table is back in the book.', 'good');
-      $('#booked-title').textContent = 'Booking cancelled';
-      $('#booked-sub').textContent = 'Nothing else to do — you are not expected.';
+      if (!ok) return say(els.bookedMsg, I.t('done.cancelFailed'), 'bad');
+      say(els.bookedMsg, I.t('done.cancelled'), 'good');
+      $('#booked-title').textContent = I.t('done.cancelTitle');
+      $('#booked-sub').textContent = I.t('done.cancelSub');
       $('#booked-cancel').disabled = true;
       $('#booked-ics').disabled = true;
     });
@@ -359,11 +370,11 @@
     e.preventDefault();
     var ref = $('#l-ref').value.trim().toUpperCase();
     var phone = $('#l-phone').value.trim();
-    if (!ref || !phone) return say(els.lookupMsg, 'Both the reference and the phone number, please.', 'bad');
+    if (!ref || !phone) return say(els.lookupMsg, I.t('look.both'), 'bad');
 
     find(ref, phone).then(function (booking) {
-      if (!booking) return say(els.lookupMsg, 'No booking matches that pair.', 'bad');
-      if (booking.status === 'cancelled') return say(els.lookupMsg, 'That booking is already cancelled.', '');
+      if (!booking) return say(els.lookupMsg, I.t('look.none'), 'bad');
+      if (booking.status === 'cancelled') return say(els.lookupMsg, I.t('look.already'), '');
       els.lookup.hidden = true;
       confirmed(booking);
     });
@@ -382,7 +393,7 @@
     return api('/api/bookings/' + encodeURIComponent(ref)).then(function (res) {
       if (!res.ok || !res.body.booking) return null;
       // the API withholds personal details, so carry the phone we were given
-      return Object.assign({ name: 'your booking', phone: phone }, res.body.booking);
+      return Object.assign({ name: I.t('look.yours'), phone: phone }, res.body.booking);
     }).catch(function () { return null; });
   }
 
@@ -419,4 +430,9 @@
   state.date = els.date.value;
 
   refresh();
+
+  document.addEventListener('meatologia:language', function () {
+    if (state.slots.length) renderSlots(state.slots);
+    if (state.current) confirmed(state.current);
+  });
 }());

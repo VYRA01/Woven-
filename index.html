@@ -41,7 +41,7 @@
 </head>
 <body>
 
-<a class="skip-link" href="#menu">Skip to the menu</a>
+<a class="skip-link" href="#menu" data-i18n="a11y.skip">Skip to the menu</a>
 
 <!-- ════ Shared artwork ═══════════════════════════════════════════════ -->
 <svg width="0" height="0" aria-hidden="true" focusable="false" class="art-defs">
@@ -306,31 +306,33 @@
       <span class="brand-seal" aria-hidden="true">M</span>
       <span class="brand-text">
         <span class="brand-name">Meatologia</span>
-        <span class="brand-sub">Wrocław · est. beef</span>
+        <span class="brand-sub" data-i18n="brand.sub">Wrocław · est. beef</span>
       </span>
     </a>
 
     <nav class="nav" aria-label="Main">
-      <a href="#menu">Menu</a>
-      <a href="#craft">Craft</a>
-      <a href="#reviews">Reviews</a>
-      <a href="#reserve">Reserve</a>
-      <a href="#find">Find us</a>
+      <a href="#menu" data-i18n="nav.menu">Menu</a>
+      <a href="#craft" data-i18n="nav.craft">Craft</a>
+      <a href="#reviews" data-i18n="nav.reviews">Reviews</a>
+      <a href="#reserve" data-i18n="nav.reserve">Reserve</a>
+      <a href="#find" data-i18n="nav.find">Find us</a>
     </nav>
 
     <div class="masthead-act">
+      <div class="lang" id="lang-switch" role="group" data-i18n-attr="aria-label:a11y.language"></div>
       <span class="status" id="status-chip" data-open-hours>
         <i class="dot" aria-hidden="true"></i><span id="status-text">Open today</span>
       </span>
-      <a class="btn btn-ink" href="#reserve">Book a table</a>
-      <button class="burger-btn" type="button" aria-expanded="false" aria-controls="drawer" aria-label="Open navigation">
+      <a class="btn btn-ink" href="#reserve" data-i18n="nav.book">Book a table</a>
+      <button class="burger-btn" type="button" aria-expanded="false" aria-controls="drawer" data-i18n-attr="aria-label:nav.open">
         <span></span><span></span>
       </button>
     </div>
   </div>
   <div class="drawer" id="drawer" hidden>
-    <a href="#menu">Menu</a><a href="#craft">Craft</a><a href="#reviews">Reviews</a>
-    <a href="#reserve">Reserve</a><a href="#find">Find us</a>
+    <a href="#menu" data-i18n="nav.menu">Menu</a><a href="#craft" data-i18n="nav.craft">Craft</a>
+    <a href="#reviews" data-i18n="nav.reviews">Reviews</a>
+    <a href="#reserve" data-i18n="nav.reserve">Reserve</a><a href="#find" data-i18n="nav.find">Find us</a>
     <a class="drawer-call" href="tel:+48666854218">666 854 218</a>
   </div>
 </header>
@@ -341,33 +343,29 @@
 <section class="hero">
   <div class="wrap hero-in">
     <div class="hero-copy">
-      <p class="kicker rise">Charcoal grill · Zwycięska 45</p>
+      <p class="kicker rise" data-i18n="hero.kicker">Charcoal grill · Zwycięska 45</p>
       <h1 class="rise">
-        <span class="line">An honest</span>
-        <span class="line">love of the</span>
-        <span class="line"><em>real</em> thing</span>
+        <span class="line" data-i18n="hero.line1">An honest</span>
+        <span class="line" data-i18n="hero.line2">love of the</span>
+        <span class="line"><em data-i18n="hero.line3em">real</em> <span data-i18n="hero.line3a">thing</span></span>
       </h1>
-      <p class="hero-lede rise">
-        Top-grade beef, ground every morning. Buns baked in our own oven.
-        Steaks from Argentina, the States and Japan, cooked over live charcoal
-        by people who actually like you.
-      </p>
+      <p class="hero-lede rise" data-i18n="hero.lede">Top-grade beef, ground every morning.</p>
       <div class="hero-act rise">
-        <a class="btn btn-red btn-big" href="#menu">See the menu</a>
-        <a class="btn btn-line btn-big" href="tel:+48666854218">Call 666 854 218</a>
+        <a class="btn btn-red btn-big" href="#menu" data-i18n="hero.cta">See the menu</a>
+        <a class="btn btn-line btn-big" href="tel:+48666854218" data-i18n="hero.call">Call 666 854 218</a>
       </div>
       <dl class="hero-facts rise">
-        <div><dt>Rated</dt><dd>4.5 <span class="stars-mini" aria-hidden="true">★</span> <small>737 reviews</small></dd></div>
-        <div><dt>Per person</dt><dd>40–160 zł</dd></div>
-        <div><dt>Daily</dt><dd>12:00 – 22:00</dd></div>
+        <div><dt data-i18n="hero.rated">Rated</dt><dd>4.5 <span class="stars-mini" aria-hidden="true">★</span> <small data-i18n="hero.reviews">737 reviews</small></dd></div>
+        <div><dt data-i18n="hero.perPerson">Per person</dt><dd>40–160 zł</dd></div>
+        <div><dt data-i18n="hero.daily">Daily</dt><dd>12:00 – 22:00</dd></div>
       </dl>
     </div>
 
     <div class="hero-art rise" aria-hidden="true">
       <span class="hero-disc"></span>
       <svg class="hero-dish" viewBox="0 0 320 280"><use href="#art-burger"/></svg>
-      <span class="hero-note hero-note-1">Ground fresh<br>every morning</span>
-      <span class="hero-note hero-note-2">Buns baked<br>in house</span>
+      <span class="hero-note hero-note-1" data-i18n-html="hero.note1">Ground fresh<br>every morning</span>
+      <span class="hero-note hero-note-2" data-i18n-html="hero.note2">Buns baked<br>in house</span>
     </div>
   </div>
 
@@ -388,57 +386,57 @@
       <div class="wrap anat-in">
 
         <div class="anat-copy">
-          <p class="kicker">Anatomy of the Classic</p>
-          <h2>Take it apart</h2>
-          <p class="band-sub">Keep scrolling. Five layers, none of them an afterthought.</p>
+          <p class="kicker" data-i18n="anat.kicker">Anatomy of the Classic</p>
+          <h2 data-i18n="anat.title">Take it apart</h2>
+          <p class="band-sub" data-i18n="anat.sub">Keep scrolling.</p>
 
           <ol class="anat-list">
             <li data-step="0">
               <span class="anat-n">01</span>
-              <span class="anat-t">Sesame crown</span>
-              <span class="anat-d">Baked in our own oven each morning, brushed with butter and toasted on the plancha.</span>
+              <span class="anat-t" data-i18n="anat.s1t"></span>
+              <span class="anat-d" data-i18n="anat.s1d"></span>
             </li>
             <li data-step="1">
               <span class="anat-n">02</span>
-              <span class="anat-t">Butter lettuce</span>
-              <span class="anat-d">Cold, crisp, and there to cut the fat — not to fill the bun out.</span>
+              <span class="anat-t" data-i18n="anat.s2t"></span>
+              <span class="anat-d" data-i18n="anat.s2d"></span>
             </li>
             <li data-step="2">
               <span class="anat-n">03</span>
-              <span class="anat-t">Aged cheddar</span>
-              <span class="anat-d">Laid on the patty straight off the grill so it melts over the edges on the way to you.</span>
+              <span class="anat-t" data-i18n="anat.s3t"></span>
+              <span class="anat-d" data-i18n="anat.s3d"></span>
             </li>
             <li data-step="3">
               <span class="anat-n">04</span>
-              <span class="anat-t">180 g Black Angus</span>
-              <span class="anat-d">Chuck and brisket, coarse-ground this morning, charred hard and left juicy at medium.</span>
+              <span class="anat-t" data-i18n="anat.s4t"></span>
+              <span class="anat-d" data-i18n="anat.s4d"></span>
             </li>
             <li data-step="4">
               <span class="anat-n">05</span>
-              <span class="anat-t">Sauce &amp; base</span>
-              <span class="anat-d">Roast-garlic sauce on a toasted heel that holds to the last bite.</span>
+              <span class="anat-t" data-i18n="anat.s5t"></span>
+              <span class="anat-d" data-i18n="anat.s5d"></span>
             </li>
           </ol>
 
-          <a class="btn btn-red btn-big" href="#dish-classic" data-open-classic>See the full dish</a>
+          <a class="btn btn-red btn-big" href="#dish-classic" data-open-classic data-i18n="anat.cta">See the full dish</a>
         </div>
 
         <div class="anat-art">
           <div class="anat-plate" aria-hidden="true"></div>
           <div class="anat-burger" data-art="art-burger" role="img"
-               aria-label="An illustrated cheeseburger separating into its layers: sesame bun, lettuce, cheese, beef patty and base bun."></div>
+               data-i18n-attr="aria-label:anat.alt"></div>
 
-          <span class="anat-tag" style="--t0:37.7%; --t1:16.9%; --in:.05">Sesame crown</span>
-          <span class="anat-tag" style="--t0:48.5%; --t1:37.7%; --in:.24">Butter lettuce</span>
-          <span class="anat-tag" style="--t0:53.8%; --t1:50.0%; --in:.44">Aged cheddar</span>
-          <span class="anat-tag" style="--t0:57.1%; --t1:63.3%; --in:.62">180 g Black Angus</span>
-          <span class="anat-tag" style="--t0:64.4%; --t1:84.8%; --in:.80">Toasted base</span>
+          <span class="anat-tag" style="--t0:37.7%; --t1:16.9%; --in:.05" data-i18n="anat.tagBun">Sesame crown</span>
+          <span class="anat-tag" style="--t0:48.5%; --t1:37.7%; --in:.24" data-i18n="anat.tagVeg">Butter lettuce</span>
+          <span class="anat-tag" style="--t0:53.8%; --t1:50.0%; --in:.44" data-i18n="anat.tagCheese">Aged cheddar</span>
+          <span class="anat-tag" style="--t0:57.1%; --t1:63.3%; --in:.62" data-i18n="anat.tagPatty">180 g Black Angus</span>
+          <span class="anat-tag" style="--t0:64.4%; --t1:84.8%; --in:.80" data-i18n="anat.tagBase">Toasted base</span>
         </div>
 
       </div>
 
       <div class="anat-rail" aria-hidden="true"><i></i></div>
-      <p class="anat-hint" aria-hidden="true">Scroll</p>
+      <p class="anat-hint" aria-hidden="true" data-i18n="anat.hint">Scroll</p>
     </div>
   </div>
 </section>
@@ -447,19 +445,16 @@
 <section class="band" id="menu">
   <div class="wrap">
     <header class="band-head rise">
-      <p class="kicker">The card</p>
-      <h2>What we cook</h2>
-      <p class="band-sub">Tap any dish — it opens full screen, with the cut, the weight and what to drink alongside it.</p>
+      <p class="kicker" data-i18n="menu.kicker">The card</p>
+      <h2 data-i18n="menu.title">What we cook</h2>
+      <p class="band-sub" data-i18n="menu.sub">Tap any dish.</p>
     </header>
 
-    <div class="chips rise" role="group" aria-label="Filter the menu by course"></div>
+    <div class="chips rise" role="group" data-i18n-attr="aria-label:menu.filter"></div>
 
     <div class="dish-grid" id="dish-grid"></div>
 
-    <p class="band-note rise">
-      Prices in złoty. Allergens and seasonal specials on
-      <a href="https://meatologia.pl" target="_blank" rel="noopener">meatologia.pl</a>.
-    </p>
+    <p class="band-note rise"><span data-i18n="menu.note">Prices in złoty.</span> <a href="https://meatologia.pl" target="_blank" rel="noopener">meatologia.pl</a></p>
   </div>
 </section>
 
@@ -467,25 +462,26 @@
 <section class="band band-dark" id="craft">
   <div class="wrap">
     <header class="band-head rise">
-      <p class="kicker">Craft</p>
-      <h2>Three things we refuse to rush</h2>
+      <p class="kicker" data-i18n="craft.kicker">Craft</p>
+      <h2 data-i18n="craft.title">Three things we refuse to rush</h2>
+      <p class="band-sub craft-lead" data-i18n="craft.lead"></p>
     </header>
 
     <ol class="steps">
       <li class="step rise">
         <span class="step-n">01</span>
-        <h3>The grind</h3>
-        <p>Chuck and brisket, minced on site every morning at a coarse setting. Never pre-packed, never yesterday's. It is the whole reason a burger can taste of beef.</p>
+        <h3 data-i18n="craft.h1"></h3>
+        <p data-i18n="craft.p1"></p>
       </li>
       <li class="step rise">
         <span class="step-n">02</span>
-        <h3>The ageing</h3>
-        <p>Steaks rest for a minimum of five weeks before they are allowed near the grill. Argentina, USDA Prime and Japanese A5 — three countries, one standard.</p>
+        <h3 data-i18n="craft.h2"></h3>
+        <p data-i18n="craft.p2"></p>
       </li>
       <li class="step rise">
         <span class="step-n">03</span>
-        <h3>The fire</h3>
-        <p>Live charcoal, run hot enough to build a crust in seconds. Real smoke, no gas, no shortcuts. You can watch all of it from the open pass.</p>
+        <h3 data-i18n="craft.h3"></h3>
+        <p data-i18n="craft.p3"></p>
       </li>
     </ol>
   </div>
@@ -495,37 +491,37 @@
 <section class="band" id="reviews">
   <div class="wrap">
     <header class="band-head rise">
-      <p class="kicker">Reviews</p>
-      <h2>4.5 out of 737</h2>
-      <p class="band-sub">What people tell each other before they come.</p>
+      <p class="kicker" data-i18n="rev.kicker">Reviews</p>
+      <h2 data-i18n="rev.title">4.5 out of 737</h2>
+      <p class="band-sub" data-i18n="rev.sub"></p>
     </header>
 
     <ul class="tips rise">
-      <li>Guests single out the Argentine steaks — order one cooked exactly how you like it.</li>
-      <li>Portions run generous, so leave room for dessert or plan on taking some home.</li>
-      <li>Friday evenings fill up. Call ahead and the table will be waiting.</li>
+      <li data-i18n="rev.tip1"></li>
+      <li data-i18n="rev.tip2"></li>
+      <li data-i18n="rev.tip3"></li>
     </ul>
 
-    <div class="quotes" tabindex="0" aria-label="Guest reviews, scroll horizontally">
+    <div class="quotes" tabindex="0" data-i18n-attr="aria-label:rev.rail">
       <figure class="quote rise">
         <div class="rate" aria-label="5 out of 5">★★★★★</div>
-        <blockquote>The service here is genuinely friendly and welcoming. When we first arrived the place was packed, and they still found us a table and looked after everything.</blockquote>
-        <figcaption>Broodjeworstman <span>· a year ago</span></figcaption>
+        <blockquote data-i18n="rev.q1"></blockquote>
+        <figcaption>Broodjeworstman <span>· <span data-i18n="rev.a1"></span></span></figcaption>
       </figure>
       <figure class="quote rise">
         <div class="rate" aria-label="5 out of 5">★★★★★</div>
-        <blockquote>Great place with meat. I recommend the tartare and the burgers — juicy beef, toppings chosen with a bit of thought, and a bun that holds to the last bite.</blockquote>
-        <figcaption>Filip Staniul <span>· a year ago</span></figcaption>
+        <blockquote data-i18n="rev.q2"></blockquote>
+        <figcaption>Filip Staniul <span>· <span data-i18n="rev.a1"></span></span></figcaption>
       </figure>
       <figure class="quote rise">
         <div class="rate" aria-label="5 out of 5">★★★★★</div>
-        <blockquote>The Argentine steak came out exactly as I asked. Paired it with their own-label craft IPA — hard to beat that combination anywhere in the city.</blockquote>
-        <figcaption>A Meatologia guest <span>· 3 months ago</span></figcaption>
+        <blockquote data-i18n="rev.q3"></blockquote>
+        <figcaption><span data-i18n="rev.guest"></span> <span>· <span data-i18n="rev.a2"></span></span></figcaption>
       </figure>
       <figure class="quote rise">
         <div class="rate" aria-label="4 out of 5">★★★★☆</div>
-        <blockquote>Huge portions, fair prices for this quality of beef. We're back regularly, usually for the Double Trouble and a basket of sweet potato fries.</blockquote>
-        <figcaption>Kasia W. <span>· 6 months ago</span></figcaption>
+        <blockquote data-i18n="rev.q4"></blockquote>
+        <figcaption>Kasia W. <span>· <span data-i18n="rev.a3"></span></span></figcaption>
       </figure>
     </div>
   </div>
@@ -535,16 +531,13 @@
 <section class="band band-red" id="reserve">
   <div class="wrap reserve-grid">
     <div class="rise">
-      <p class="kicker">Reserve</p>
-      <h2>Save yourself a table</h2>
-      <p class="band-sub">
-        Pick a time and the table is yours — you'll get a reference straight away,
-        and you can cancel or move it from here later.
-      </p>
+      <p class="kicker" data-i18n="res.kicker">Reserve</p>
+      <h2 data-i18n="res.title">Save yourself a table</h2>
+      <p class="band-sub" data-i18n="res.sub"></p>
       <ul class="reserve-points">
-        <li>Tables are held for 90 minutes from your seating</li>
-        <li>Groups over 12 — call us and we'll rearrange the room</li>
-        <li>Last kitchen order 21:15; parking in front of the building</li>
+        <li data-i18n="res.p1"></li>
+        <li data-i18n="res.p2"></li>
+        <li data-i18n="res.p3"></li>
       </ul>
     </div>
 
@@ -552,102 +545,102 @@
       <!-- Step 1: pick a table -->
       <form id="reserve-form" novalidate>
         <div class="field">
-          <span class="field-label" id="guests-label">Guests</span>
+          <span class="field-label" id="guests-label" data-i18n="form.guests">Guests</span>
           <div class="stepper" role="group" aria-labelledby="guests-label">
-            <button type="button" data-guests="-1" aria-label="One guest fewer">−</button>
+            <button type="button" data-guests="-1" data-i18n-attr="aria-label:form.fewer">−</button>
             <output id="r-guests">2</output>
-            <button type="button" data-guests="1" aria-label="One guest more">+</button>
+            <button type="button" data-guests="1" data-i18n-attr="aria-label:form.more">+</button>
           </div>
           <p class="field-error" id="err-guests"></p>
         </div>
 
         <div class="field">
-          <label for="r-date">Date</label>
+          <label for="r-date" data-i18n="form.date">Date</label>
           <input id="r-date" name="date" type="date" required>
           <p class="field-error" id="err-date"></p>
         </div>
 
         <div class="field">
-          <span class="field-label" id="time-label">Seating</span>
+          <span class="field-label" id="time-label" data-i18n="form.seating">Seating</span>
           <div class="slots" id="r-slots" role="group" aria-labelledby="time-label"
                aria-describedby="slots-note"></div>
-          <p class="slots-note" id="slots-note">Tables are held for 90 minutes. Last seating 21:00.</p>
+          <p class="slots-note" id="slots-note" data-i18n="form.seatingNote"></p>
           <p class="field-error" id="err-time"></p>
         </div>
 
         <div class="field-row">
           <div class="field">
-            <label for="r-name">Name</label>
-            <input id="r-name" name="name" type="text" autocomplete="name" required placeholder="Anna Kowalska">
+            <label for="r-name" data-i18n="form.name">Name</label>
+            <input id="r-name" name="name" type="text" autocomplete="name" required data-i18n-attr="placeholder:form.namePlaceholder">
             <p class="field-error" id="err-name"></p>
           </div>
           <div class="field">
-            <label for="r-phone">Phone</label>
+            <label for="r-phone" data-i18n="form.phone">Phone</label>
             <input id="r-phone" name="phone" type="tel" autocomplete="tel" required placeholder="600 000 000">
             <p class="field-error" id="err-phone"></p>
           </div>
         </div>
 
         <div class="field">
-          <label for="r-email">Email <span class="field-opt">optional, for the confirmation</span></label>
+          <label for="r-email"><span data-i18n="form.email">Email</span> <span class="field-opt" data-i18n="form.emailOpt"></span></label>
           <input id="r-email" name="email" type="email" autocomplete="email" placeholder="anna@example.com">
           <p class="field-error" id="err-email"></p>
         </div>
 
         <div class="field">
-          <label for="r-notes">Anything we should know? <span class="field-opt">optional</span></label>
+          <label for="r-notes"><span data-i18n="form.notes"></span> <span class="field-opt" data-i18n="form.optional"></span></label>
           <input id="r-notes" name="notes" type="text" maxlength="400"
-                 placeholder="Birthday, allergy, high chair…">
+                 data-i18n-attr="placeholder:form.notesPlaceholder">
           <p class="field-error" id="err-notes"></p>
         </div>
 
-        <button class="btn btn-ink btn-big btn-block" type="submit" id="r-submit">Book the table</button>
+        <button class="btn btn-ink btn-big btn-block" type="submit" id="r-submit" data-i18n="form.submit">Book the table</button>
         <p class="form-msg" id="form-msg" role="status" aria-live="polite"></p>
         <p class="form-foot">
-          Prefer to talk to someone? <a href="tel:+48666854218">666 854 218</a> ·
-          <button type="button" class="linkish" data-find>Find an existing booking</button>
+          <span data-i18n="form.prefer"></span> <a href="tel:+48666854218">666 854 218</a> ·
+          <button type="button" class="linkish" data-find data-i18n="form.findExisting"></button>
         </p>
       </form>
 
       <!-- Step 2: confirmed -->
       <div class="booked" id="booked" hidden>
         <p class="booked-mark" aria-hidden="true">✓</p>
-        <h3 id="booked-title">Table booked</h3>
+        <h3 id="booked-title" data-i18n="done.title">Table booked</h3>
         <p class="booked-sub" id="booked-sub"></p>
 
         <dl class="booked-detail">
-          <div><dt>Reference</dt><dd id="booked-ref"></dd></div>
-          <div><dt>When</dt><dd id="booked-when"></dd></div>
-          <div><dt>Guests</dt><dd id="booked-guests"></dd></div>
-          <div><dt>Under</dt><dd id="booked-name"></dd></div>
+          <div><dt data-i18n="done.ref"></dt><dd id="booked-ref"></dd></div>
+          <div><dt data-i18n="done.when"></dt><dd id="booked-when"></dd></div>
+          <div><dt data-i18n="done.guests"></dt><dd id="booked-guests"></dd></div>
+          <div><dt data-i18n="done.under"></dt><dd id="booked-name"></dd></div>
         </dl>
 
         <div class="booked-act">
-          <button class="btn btn-ink" type="button" id="booked-ics">Add to calendar</button>
-          <a class="btn btn-line" href="tel:+48666854218">Call the restaurant</a>
-          <button class="btn btn-line" type="button" id="booked-cancel">Cancel booking</button>
+          <button class="btn btn-ink" type="button" id="booked-ics" data-i18n="done.ics"></button>
+          <a class="btn btn-line" href="tel:+48666854218" data-i18n="done.call"></a>
+          <button class="btn btn-line" type="button" id="booked-cancel" data-i18n="done.cancel"></button>
         </div>
         <p class="form-msg" id="booked-msg" role="status" aria-live="polite"></p>
-        <button type="button" class="linkish" id="booked-again">Book another table</button>
+        <button type="button" class="linkish" id="booked-again" data-i18n="done.again"></button>
       </div>
 
       <!-- Look up an existing booking -->
       <form class="lookup" id="lookup-form" hidden novalidate>
-        <h3>Find your booking</h3>
-        <p class="band-sub">Your reference and the phone number you booked with.</p>
+        <h3 data-i18n="look.title"></h3>
+        <p class="band-sub" data-i18n="look.sub"></p>
         <div class="field-row">
           <div class="field">
-            <label for="l-ref">Reference</label>
+            <label for="l-ref" data-i18n="look.ref"></label>
             <input id="l-ref" type="text" placeholder="MT-XXXXX" autocomplete="off">
           </div>
           <div class="field">
-            <label for="l-phone">Phone</label>
+            <label for="l-phone" data-i18n="form.phone"></label>
             <input id="l-phone" type="tel" placeholder="600 000 000" autocomplete="tel">
           </div>
         </div>
-        <button class="btn btn-ink btn-block" type="submit">Find it</button>
+        <button class="btn btn-ink btn-block" type="submit" data-i18n="look.find"></button>
         <p class="form-msg" id="lookup-msg" role="status" aria-live="polite"></p>
-        <button type="button" class="linkish" data-find-close>Back to booking</button>
+        <button type="button" class="linkish" data-find-close data-i18n="look.back"></button>
       </form>
     </div>
   </div>
@@ -657,31 +650,31 @@
 <section class="band" id="find">
   <div class="wrap find-grid">
     <div class="rise">
-      <p class="kicker">Find us</p>
+      <p class="kicker" data-i18n="find.kicker"></p>
       <h2>Zwycięska 45, Wrocław</h2>
-      <p class="band-sub">Award Business Park, unit 3. Ten minutes from the ring road, parking out front.</p>
+      <p class="band-sub" data-i18n="find.sub"></p>
 
       <dl class="find-info">
-        <div><dt>Address</dt><dd>Zwycięska 45/lok. 3<br>53-033 Wrocław</dd></div>
-        <div><dt>Phone</dt><dd><a href="tel:+48666854218">666 854 218</a></dd></div>
-        <div><dt>Online</dt><dd><a href="https://meatologia.pl" target="_blank" rel="noopener">meatologia.pl</a></dd></div>
+        <div><dt data-i18n="find.address"></dt><dd>Zwycięska 45/lok. 3<br>53-033 Wrocław</dd></div>
+        <div><dt data-i18n="find.phone"></dt><dd><a href="tel:+48666854218">666 854 218</a></dd></div>
+        <div><dt data-i18n="find.online"></dt><dd><a href="https://meatologia.pl" target="_blank" rel="noopener">meatologia.pl</a></dd></div>
       </dl>
 
       <table class="hours" id="hours-table">
-        <caption class="sr-only">Opening hours</caption>
+        <caption class="sr-only" data-i18n="find.hours"></caption>
         <tbody>
-          <tr data-day="1"><th scope="row">Monday</th><td>12:00 – 22:00</td></tr>
-          <tr data-day="2"><th scope="row">Tuesday</th><td>12:00 – 22:00</td></tr>
-          <tr data-day="3"><th scope="row">Wednesday</th><td>12:00 – 22:00</td></tr>
-          <tr data-day="4"><th scope="row">Thursday</th><td>12:00 – 22:00</td></tr>
-          <tr data-day="5"><th scope="row">Friday</th><td>12:00 – 22:00</td></tr>
-          <tr data-day="6"><th scope="row">Saturday</th><td>12:00 – 22:00</td></tr>
-          <tr data-day="0"><th scope="row">Sunday</th><td>12:00 – 22:00</td></tr>
+          <tr data-day="1"><th scope="row" data-i18n="find.mon"></th><td>12:00 – 22:00</td></tr>
+          <tr data-day="2"><th scope="row" data-i18n="find.tue"></th><td>12:00 – 22:00</td></tr>
+          <tr data-day="3"><th scope="row" data-i18n="find.wed"></th><td>12:00 – 22:00</td></tr>
+          <tr data-day="4"><th scope="row" data-i18n="find.thu"></th><td>12:00 – 22:00</td></tr>
+          <tr data-day="5"><th scope="row" data-i18n="find.fri"></th><td>12:00 – 22:00</td></tr>
+          <tr data-day="6"><th scope="row" data-i18n="find.sat"></th><td>12:00 – 22:00</td></tr>
+          <tr data-day="0"><th scope="row" data-i18n="find.sun"></th><td>12:00 – 22:00</td></tr>
         </tbody>
       </table>
 
       <ul class="tags">
-        <li>Wheelchair accessible</li><li>LGBTQ+ friendly</li><li>Card payments</li><li>Takeaway</li>
+        <li data-i18n="find.tag1"></li><li data-i18n="find.tag2"></li><li data-i18n="find.tag3"></li><li data-i18n="find.tag4"></li>
       </ul>
     </div>
 
@@ -707,8 +700,8 @@
       </span>
       <span class="map-foot">
         <span class="map-title">Meatologia</span>
-        <span class="map-sub">Restaurant · 40–160 zł · open until 22:00</span>
-        <span class="map-go">Open in Maps →</span>
+        <span class="map-sub" data-i18n="find.mapSub"></span>
+        <span class="map-go" data-i18n="find.mapGo"></span>
       </span>
     </a>
   </div>
@@ -721,11 +714,12 @@
   <div class="wrap foot-in">
     <div class="foot-brand">
       <span class="brand-seal" aria-hidden="true">M</span>
-      <p>An honest love of the real thing.</p>
+      <p data-i18n="foot.tag"></p>
     </div>
     <nav aria-label="Footer">
-      <a href="#menu">Menu</a><a href="#craft">Craft</a><a href="#reviews">Reviews</a>
-      <a href="#reserve">Reserve</a><a href="#find">Find us</a>
+      <a href="#menu" data-i18n="nav.menu"></a><a href="#craft" data-i18n="nav.craft"></a>
+      <a href="#reviews" data-i18n="nav.reviews"></a>
+      <a href="#reserve" data-i18n="nav.reserve"></a><a href="#find" data-i18n="nav.find"></a>
     </nav>
     <p class="foot-legal">© <span id="year">2026</span> Meatologia · Zwycięska 45/lok. 3, 53-033 Wrocław · 666 854 218</p>
   </div>
@@ -735,9 +729,9 @@
 <div class="takeover" id="takeover" hidden>
   <div class="takeover-sheet" role="dialog" aria-modal="true" aria-labelledby="dish-name">
 
-    <button class="takeover-close" type="button" data-close aria-label="Back to the menu">
+    <button class="takeover-close" type="button" data-close data-i18n-attr="aria-label:dish.back">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
-      <span>Back</span>
+      <span data-i18n="dish.back"></span>
     </button>
 
     <div class="takeover-body">
@@ -752,24 +746,26 @@
         <p class="dish-blurb" id="dish-blurb"></p>
 
         <div class="dish-specs">
-          <div><dt>Weight</dt><dd id="dish-weight"></dd></div>
-          <div><dt>Cooked</dt><dd id="dish-cook"></dd></div>
-          <div><dt>Drink it with</dt><dd id="dish-pair"></dd></div>
+          <div><dt data-i18n="dish.weight"></dt><dd id="dish-weight"></dd></div>
+          <div><dt data-i18n="dish.cooked"></dt><dd id="dish-cook"></dd></div>
+          <div><dt data-i18n="dish.pair"></dt><dd id="dish-pair"></dd></div>
         </div>
 
         <ul class="dish-parts" id="dish-parts"></ul>
 
         <div class="dish-buy">
           <p class="dish-price"><span id="dish-price"></span><small>zł</small></p>
-          <a class="btn btn-red btn-big" href="tel:+48666854218">Order by phone</a>
+          <a class="btn btn-red btn-big" href="tel:+48666854218" data-i18n="dish.order"></a>
         </div>
       </div>
     </div>
 
-    <div class="filmstrip" id="filmstrip" role="tablist" aria-label="Other dishes"></div>
+    <div class="filmstrip" id="filmstrip" role="tablist" data-i18n-attr="aria-label:dish.others"></div>
   </div>
 </div>
 
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/menu-i18n.js"></script>
 <script src="assets/js/data.js"></script>
 <script src="assets/js/booking-core.js"></script>
 <script src="assets/js/main.js"></script>

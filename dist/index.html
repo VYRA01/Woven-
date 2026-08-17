@@ -222,6 +222,32 @@ img, svg { max-width: 100%; }
 
 .masthead-act { display: flex; align-items: center; gap: 12px; }
 
+/* Language picker */
+.lang {
+  display: inline-flex;
+  padding: 3px;
+  border: 1.5px solid var(--rule);
+  border-radius: 999px;
+  background: var(--card);
+}
+.lang-pick {
+  padding: .34em .72em;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--ink-3);
+  font: inherit;
+  font-size: .8rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .25s var(--ease), color .25s var(--ease);
+}
+.lang-pick:hover { color: var(--ink); }
+.lang-pick[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+
+.craft-lead { max-width: 62ch; margin-top: 18px; }
+
 .status {
   display: inline-flex; align-items: center; gap: 7px;
   font-size: .82rem; font-weight: 600; color: var(--ink-2);
@@ -1159,6 +1185,7 @@ h1 .line { display: block; }
   .drawer:not([hidden]) { display: block; }
   .masthead-act .btn-ink { display: none; }
   .status { display: none; }
+  .lang-pick { padding: .3em .55em; font-size: .74rem; }
   .dish-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
   .dish-price { font-size: 2.5rem; }
 }
@@ -1180,7 +1207,7 @@ h1 .line { display: block; }
   .rise { opacity: 1; transform: none; }
 }
 </style>
-<a class="skip-link" href="#menu">Skip to the menu</a>
+<a class="skip-link" href="#menu" data-i18n="a11y.skip">Skip to the menu</a>
 
 <!-- ════ Shared artwork ═══════════════════════════════════════════════ -->
 <svg width="0" height="0" aria-hidden="true" focusable="false" class="art-defs">
@@ -1445,31 +1472,33 @@ h1 .line { display: block; }
       <span class="brand-seal" aria-hidden="true">M</span>
       <span class="brand-text">
         <span class="brand-name">Meatologia</span>
-        <span class="brand-sub">Wrocław · est. beef</span>
+        <span class="brand-sub" data-i18n="brand.sub">Wrocław · est. beef</span>
       </span>
     </a>
 
     <nav class="nav" aria-label="Main">
-      <a href="#menu">Menu</a>
-      <a href="#craft">Craft</a>
-      <a href="#reviews">Reviews</a>
-      <a href="#reserve">Reserve</a>
-      <a href="#find">Find us</a>
+      <a href="#menu" data-i18n="nav.menu">Menu</a>
+      <a href="#craft" data-i18n="nav.craft">Craft</a>
+      <a href="#reviews" data-i18n="nav.reviews">Reviews</a>
+      <a href="#reserve" data-i18n="nav.reserve">Reserve</a>
+      <a href="#find" data-i18n="nav.find">Find us</a>
     </nav>
 
     <div class="masthead-act">
+      <div class="lang" id="lang-switch" role="group" data-i18n-attr="aria-label:a11y.language"></div>
       <span class="status" id="status-chip" data-open-hours>
         <i class="dot" aria-hidden="true"></i><span id="status-text">Open today</span>
       </span>
-      <a class="btn btn-ink" href="#reserve">Book a table</a>
-      <button class="burger-btn" type="button" aria-expanded="false" aria-controls="drawer" aria-label="Open navigation">
+      <a class="btn btn-ink" href="#reserve" data-i18n="nav.book">Book a table</a>
+      <button class="burger-btn" type="button" aria-expanded="false" aria-controls="drawer" data-i18n-attr="aria-label:nav.open">
         <span></span><span></span>
       </button>
     </div>
   </div>
   <div class="drawer" id="drawer" hidden>
-    <a href="#menu">Menu</a><a href="#craft">Craft</a><a href="#reviews">Reviews</a>
-    <a href="#reserve">Reserve</a><a href="#find">Find us</a>
+    <a href="#menu" data-i18n="nav.menu">Menu</a><a href="#craft" data-i18n="nav.craft">Craft</a>
+    <a href="#reviews" data-i18n="nav.reviews">Reviews</a>
+    <a href="#reserve" data-i18n="nav.reserve">Reserve</a><a href="#find" data-i18n="nav.find">Find us</a>
     <a class="drawer-call" href="tel:+48666854218">666 854 218</a>
   </div>
 </header>
@@ -1480,33 +1509,29 @@ h1 .line { display: block; }
 <section class="hero">
   <div class="wrap hero-in">
     <div class="hero-copy">
-      <p class="kicker rise">Charcoal grill · Zwycięska 45</p>
+      <p class="kicker rise" data-i18n="hero.kicker">Charcoal grill · Zwycięska 45</p>
       <h1 class="rise">
-        <span class="line">An honest</span>
-        <span class="line">love of the</span>
-        <span class="line"><em>real</em> thing</span>
+        <span class="line" data-i18n="hero.line1">An honest</span>
+        <span class="line" data-i18n="hero.line2">love of the</span>
+        <span class="line"><em data-i18n="hero.line3em">real</em> <span data-i18n="hero.line3a">thing</span></span>
       </h1>
-      <p class="hero-lede rise">
-        Top-grade beef, ground every morning. Buns baked in our own oven.
-        Steaks from Argentina, the States and Japan, cooked over live charcoal
-        by people who actually like you.
-      </p>
+      <p class="hero-lede rise" data-i18n="hero.lede">Top-grade beef, ground every morning.</p>
       <div class="hero-act rise">
-        <a class="btn btn-red btn-big" href="#menu">See the menu</a>
-        <a class="btn btn-line btn-big" href="tel:+48666854218">Call 666 854 218</a>
+        <a class="btn btn-red btn-big" href="#menu" data-i18n="hero.cta">See the menu</a>
+        <a class="btn btn-line btn-big" href="tel:+48666854218" data-i18n="hero.call">Call 666 854 218</a>
       </div>
       <dl class="hero-facts rise">
-        <div><dt>Rated</dt><dd>4.5 <span class="stars-mini" aria-hidden="true">★</span> <small>737 reviews</small></dd></div>
-        <div><dt>Per person</dt><dd>40–160 zł</dd></div>
-        <div><dt>Daily</dt><dd>12:00 – 22:00</dd></div>
+        <div><dt data-i18n="hero.rated">Rated</dt><dd>4.5 <span class="stars-mini" aria-hidden="true">★</span> <small data-i18n="hero.reviews">737 reviews</small></dd></div>
+        <div><dt data-i18n="hero.perPerson">Per person</dt><dd>40–160 zł</dd></div>
+        <div><dt data-i18n="hero.daily">Daily</dt><dd>12:00 – 22:00</dd></div>
       </dl>
     </div>
 
     <div class="hero-art rise" aria-hidden="true">
       <span class="hero-disc"></span>
       <svg class="hero-dish" viewBox="0 0 320 280"><use href="#art-burger"/></svg>
-      <span class="hero-note hero-note-1">Ground fresh<br>every morning</span>
-      <span class="hero-note hero-note-2">Buns baked<br>in house</span>
+      <span class="hero-note hero-note-1" data-i18n-html="hero.note1">Ground fresh<br>every morning</span>
+      <span class="hero-note hero-note-2" data-i18n-html="hero.note2">Buns baked<br>in house</span>
     </div>
   </div>
 
@@ -1527,57 +1552,57 @@ h1 .line { display: block; }
       <div class="wrap anat-in">
 
         <div class="anat-copy">
-          <p class="kicker">Anatomy of the Classic</p>
-          <h2>Take it apart</h2>
-          <p class="band-sub">Keep scrolling. Five layers, none of them an afterthought.</p>
+          <p class="kicker" data-i18n="anat.kicker">Anatomy of the Classic</p>
+          <h2 data-i18n="anat.title">Take it apart</h2>
+          <p class="band-sub" data-i18n="anat.sub">Keep scrolling.</p>
 
           <ol class="anat-list">
             <li data-step="0">
               <span class="anat-n">01</span>
-              <span class="anat-t">Sesame crown</span>
-              <span class="anat-d">Baked in our own oven each morning, brushed with butter and toasted on the plancha.</span>
+              <span class="anat-t" data-i18n="anat.s1t"></span>
+              <span class="anat-d" data-i18n="anat.s1d"></span>
             </li>
             <li data-step="1">
               <span class="anat-n">02</span>
-              <span class="anat-t">Butter lettuce</span>
-              <span class="anat-d">Cold, crisp, and there to cut the fat — not to fill the bun out.</span>
+              <span class="anat-t" data-i18n="anat.s2t"></span>
+              <span class="anat-d" data-i18n="anat.s2d"></span>
             </li>
             <li data-step="2">
               <span class="anat-n">03</span>
-              <span class="anat-t">Aged cheddar</span>
-              <span class="anat-d">Laid on the patty straight off the grill so it melts over the edges on the way to you.</span>
+              <span class="anat-t" data-i18n="anat.s3t"></span>
+              <span class="anat-d" data-i18n="anat.s3d"></span>
             </li>
             <li data-step="3">
               <span class="anat-n">04</span>
-              <span class="anat-t">180 g Black Angus</span>
-              <span class="anat-d">Chuck and brisket, coarse-ground this morning, charred hard and left juicy at medium.</span>
+              <span class="anat-t" data-i18n="anat.s4t"></span>
+              <span class="anat-d" data-i18n="anat.s4d"></span>
             </li>
             <li data-step="4">
               <span class="anat-n">05</span>
-              <span class="anat-t">Sauce &amp; base</span>
-              <span class="anat-d">Roast-garlic sauce on a toasted heel that holds to the last bite.</span>
+              <span class="anat-t" data-i18n="anat.s5t"></span>
+              <span class="anat-d" data-i18n="anat.s5d"></span>
             </li>
           </ol>
 
-          <a class="btn btn-red btn-big" href="#dish-classic" data-open-classic>See the full dish</a>
+          <a class="btn btn-red btn-big" href="#dish-classic" data-open-classic data-i18n="anat.cta">See the full dish</a>
         </div>
 
         <div class="anat-art">
           <div class="anat-plate" aria-hidden="true"></div>
           <div class="anat-burger" data-art="art-burger" role="img"
-               aria-label="An illustrated cheeseburger separating into its layers: sesame bun, lettuce, cheese, beef patty and base bun."></div>
+               data-i18n-attr="aria-label:anat.alt"></div>
 
-          <span class="anat-tag" style="--t0:37.7%; --t1:16.9%; --in:.05">Sesame crown</span>
-          <span class="anat-tag" style="--t0:48.5%; --t1:37.7%; --in:.24">Butter lettuce</span>
-          <span class="anat-tag" style="--t0:53.8%; --t1:50.0%; --in:.44">Aged cheddar</span>
-          <span class="anat-tag" style="--t0:57.1%; --t1:63.3%; --in:.62">180 g Black Angus</span>
-          <span class="anat-tag" style="--t0:64.4%; --t1:84.8%; --in:.80">Toasted base</span>
+          <span class="anat-tag" style="--t0:37.7%; --t1:16.9%; --in:.05" data-i18n="anat.tagBun">Sesame crown</span>
+          <span class="anat-tag" style="--t0:48.5%; --t1:37.7%; --in:.24" data-i18n="anat.tagVeg">Butter lettuce</span>
+          <span class="anat-tag" style="--t0:53.8%; --t1:50.0%; --in:.44" data-i18n="anat.tagCheese">Aged cheddar</span>
+          <span class="anat-tag" style="--t0:57.1%; --t1:63.3%; --in:.62" data-i18n="anat.tagPatty">180 g Black Angus</span>
+          <span class="anat-tag" style="--t0:64.4%; --t1:84.8%; --in:.80" data-i18n="anat.tagBase">Toasted base</span>
         </div>
 
       </div>
 
       <div class="anat-rail" aria-hidden="true"><i></i></div>
-      <p class="anat-hint" aria-hidden="true">Scroll</p>
+      <p class="anat-hint" aria-hidden="true" data-i18n="anat.hint">Scroll</p>
     </div>
   </div>
 </section>
@@ -1586,19 +1611,16 @@ h1 .line { display: block; }
 <section class="band" id="menu">
   <div class="wrap">
     <header class="band-head rise">
-      <p class="kicker">The card</p>
-      <h2>What we cook</h2>
-      <p class="band-sub">Tap any dish — it opens full screen, with the cut, the weight and what to drink alongside it.</p>
+      <p class="kicker" data-i18n="menu.kicker">The card</p>
+      <h2 data-i18n="menu.title">What we cook</h2>
+      <p class="band-sub" data-i18n="menu.sub">Tap any dish.</p>
     </header>
 
-    <div class="chips rise" role="group" aria-label="Filter the menu by course"></div>
+    <div class="chips rise" role="group" data-i18n-attr="aria-label:menu.filter"></div>
 
     <div class="dish-grid" id="dish-grid"></div>
 
-    <p class="band-note rise">
-      Prices in złoty. Allergens and seasonal specials on
-      <a href="https://meatologia.pl" target="_blank" rel="noopener">meatologia.pl</a>.
-    </p>
+    <p class="band-note rise"><span data-i18n="menu.note">Prices in złoty.</span> <a href="https://meatologia.pl" target="_blank" rel="noopener">meatologia.pl</a></p>
   </div>
 </section>
 
@@ -1606,25 +1628,26 @@ h1 .line { display: block; }
 <section class="band band-dark" id="craft">
   <div class="wrap">
     <header class="band-head rise">
-      <p class="kicker">Craft</p>
-      <h2>Three things we refuse to rush</h2>
+      <p class="kicker" data-i18n="craft.kicker">Craft</p>
+      <h2 data-i18n="craft.title">Three things we refuse to rush</h2>
+      <p class="band-sub craft-lead" data-i18n="craft.lead"></p>
     </header>
 
     <ol class="steps">
       <li class="step rise">
         <span class="step-n">01</span>
-        <h3>The grind</h3>
-        <p>Chuck and brisket, minced on site every morning at a coarse setting. Never pre-packed, never yesterday's. It is the whole reason a burger can taste of beef.</p>
+        <h3 data-i18n="craft.h1"></h3>
+        <p data-i18n="craft.p1"></p>
       </li>
       <li class="step rise">
         <span class="step-n">02</span>
-        <h3>The ageing</h3>
-        <p>Steaks rest for a minimum of five weeks before they are allowed near the grill. Argentina, USDA Prime and Japanese A5 — three countries, one standard.</p>
+        <h3 data-i18n="craft.h2"></h3>
+        <p data-i18n="craft.p2"></p>
       </li>
       <li class="step rise">
         <span class="step-n">03</span>
-        <h3>The fire</h3>
-        <p>Live charcoal, run hot enough to build a crust in seconds. Real smoke, no gas, no shortcuts. You can watch all of it from the open pass.</p>
+        <h3 data-i18n="craft.h3"></h3>
+        <p data-i18n="craft.p3"></p>
       </li>
     </ol>
   </div>
@@ -1634,37 +1657,37 @@ h1 .line { display: block; }
 <section class="band" id="reviews">
   <div class="wrap">
     <header class="band-head rise">
-      <p class="kicker">Reviews</p>
-      <h2>4.5 out of 737</h2>
-      <p class="band-sub">What people tell each other before they come.</p>
+      <p class="kicker" data-i18n="rev.kicker">Reviews</p>
+      <h2 data-i18n="rev.title">4.5 out of 737</h2>
+      <p class="band-sub" data-i18n="rev.sub"></p>
     </header>
 
     <ul class="tips rise">
-      <li>Guests single out the Argentine steaks — order one cooked exactly how you like it.</li>
-      <li>Portions run generous, so leave room for dessert or plan on taking some home.</li>
-      <li>Friday evenings fill up. Call ahead and the table will be waiting.</li>
+      <li data-i18n="rev.tip1"></li>
+      <li data-i18n="rev.tip2"></li>
+      <li data-i18n="rev.tip3"></li>
     </ul>
 
-    <div class="quotes" tabindex="0" aria-label="Guest reviews, scroll horizontally">
+    <div class="quotes" tabindex="0" data-i18n-attr="aria-label:rev.rail">
       <figure class="quote rise">
         <div class="rate" aria-label="5 out of 5">★★★★★</div>
-        <blockquote>The service here is genuinely friendly and welcoming. When we first arrived the place was packed, and they still found us a table and looked after everything.</blockquote>
-        <figcaption>Broodjeworstman <span>· a year ago</span></figcaption>
+        <blockquote data-i18n="rev.q1"></blockquote>
+        <figcaption>Broodjeworstman <span>· <span data-i18n="rev.a1"></span></span></figcaption>
       </figure>
       <figure class="quote rise">
         <div class="rate" aria-label="5 out of 5">★★★★★</div>
-        <blockquote>Great place with meat. I recommend the tartare and the burgers — juicy beef, toppings chosen with a bit of thought, and a bun that holds to the last bite.</blockquote>
-        <figcaption>Filip Staniul <span>· a year ago</span></figcaption>
+        <blockquote data-i18n="rev.q2"></blockquote>
+        <figcaption>Filip Staniul <span>· <span data-i18n="rev.a1"></span></span></figcaption>
       </figure>
       <figure class="quote rise">
         <div class="rate" aria-label="5 out of 5">★★★★★</div>
-        <blockquote>The Argentine steak came out exactly as I asked. Paired it with their own-label craft IPA — hard to beat that combination anywhere in the city.</blockquote>
-        <figcaption>A Meatologia guest <span>· 3 months ago</span></figcaption>
+        <blockquote data-i18n="rev.q3"></blockquote>
+        <figcaption><span data-i18n="rev.guest"></span> <span>· <span data-i18n="rev.a2"></span></span></figcaption>
       </figure>
       <figure class="quote rise">
         <div class="rate" aria-label="4 out of 5">★★★★☆</div>
-        <blockquote>Huge portions, fair prices for this quality of beef. We're back regularly, usually for the Double Trouble and a basket of sweet potato fries.</blockquote>
-        <figcaption>Kasia W. <span>· 6 months ago</span></figcaption>
+        <blockquote data-i18n="rev.q4"></blockquote>
+        <figcaption>Kasia W. <span>· <span data-i18n="rev.a3"></span></span></figcaption>
       </figure>
     </div>
   </div>
@@ -1674,16 +1697,13 @@ h1 .line { display: block; }
 <section class="band band-red" id="reserve">
   <div class="wrap reserve-grid">
     <div class="rise">
-      <p class="kicker">Reserve</p>
-      <h2>Save yourself a table</h2>
-      <p class="band-sub">
-        Pick a time and the table is yours — you'll get a reference straight away,
-        and you can cancel or move it from here later.
-      </p>
+      <p class="kicker" data-i18n="res.kicker">Reserve</p>
+      <h2 data-i18n="res.title">Save yourself a table</h2>
+      <p class="band-sub" data-i18n="res.sub"></p>
       <ul class="reserve-points">
-        <li>Tables are held for 90 minutes from your seating</li>
-        <li>Groups over 12 — call us and we'll rearrange the room</li>
-        <li>Last kitchen order 21:15; parking in front of the building</li>
+        <li data-i18n="res.p1"></li>
+        <li data-i18n="res.p2"></li>
+        <li data-i18n="res.p3"></li>
       </ul>
     </div>
 
@@ -1691,102 +1711,102 @@ h1 .line { display: block; }
       <!-- Step 1: pick a table -->
       <form id="reserve-form" novalidate>
         <div class="field">
-          <span class="field-label" id="guests-label">Guests</span>
+          <span class="field-label" id="guests-label" data-i18n="form.guests">Guests</span>
           <div class="stepper" role="group" aria-labelledby="guests-label">
-            <button type="button" data-guests="-1" aria-label="One guest fewer">−</button>
+            <button type="button" data-guests="-1" data-i18n-attr="aria-label:form.fewer">−</button>
             <output id="r-guests">2</output>
-            <button type="button" data-guests="1" aria-label="One guest more">+</button>
+            <button type="button" data-guests="1" data-i18n-attr="aria-label:form.more">+</button>
           </div>
           <p class="field-error" id="err-guests"></p>
         </div>
 
         <div class="field">
-          <label for="r-date">Date</label>
+          <label for="r-date" data-i18n="form.date">Date</label>
           <input id="r-date" name="date" type="date" required>
           <p class="field-error" id="err-date"></p>
         </div>
 
         <div class="field">
-          <span class="field-label" id="time-label">Seating</span>
+          <span class="field-label" id="time-label" data-i18n="form.seating">Seating</span>
           <div class="slots" id="r-slots" role="group" aria-labelledby="time-label"
                aria-describedby="slots-note"></div>
-          <p class="slots-note" id="slots-note">Tables are held for 90 minutes. Last seating 21:00.</p>
+          <p class="slots-note" id="slots-note" data-i18n="form.seatingNote"></p>
           <p class="field-error" id="err-time"></p>
         </div>
 
         <div class="field-row">
           <div class="field">
-            <label for="r-name">Name</label>
-            <input id="r-name" name="name" type="text" autocomplete="name" required placeholder="Anna Kowalska">
+            <label for="r-name" data-i18n="form.name">Name</label>
+            <input id="r-name" name="name" type="text" autocomplete="name" required data-i18n-attr="placeholder:form.namePlaceholder">
             <p class="field-error" id="err-name"></p>
           </div>
           <div class="field">
-            <label for="r-phone">Phone</label>
+            <label for="r-phone" data-i18n="form.phone">Phone</label>
             <input id="r-phone" name="phone" type="tel" autocomplete="tel" required placeholder="600 000 000">
             <p class="field-error" id="err-phone"></p>
           </div>
         </div>
 
         <div class="field">
-          <label for="r-email">Email <span class="field-opt">optional, for the confirmation</span></label>
+          <label for="r-email"><span data-i18n="form.email">Email</span> <span class="field-opt" data-i18n="form.emailOpt"></span></label>
           <input id="r-email" name="email" type="email" autocomplete="email" placeholder="anna@example.com">
           <p class="field-error" id="err-email"></p>
         </div>
 
         <div class="field">
-          <label for="r-notes">Anything we should know? <span class="field-opt">optional</span></label>
+          <label for="r-notes"><span data-i18n="form.notes"></span> <span class="field-opt" data-i18n="form.optional"></span></label>
           <input id="r-notes" name="notes" type="text" maxlength="400"
-                 placeholder="Birthday, allergy, high chair…">
+                 data-i18n-attr="placeholder:form.notesPlaceholder">
           <p class="field-error" id="err-notes"></p>
         </div>
 
-        <button class="btn btn-ink btn-big btn-block" type="submit" id="r-submit">Book the table</button>
+        <button class="btn btn-ink btn-big btn-block" type="submit" id="r-submit" data-i18n="form.submit">Book the table</button>
         <p class="form-msg" id="form-msg" role="status" aria-live="polite"></p>
         <p class="form-foot">
-          Prefer to talk to someone? <a href="tel:+48666854218">666 854 218</a> ·
-          <button type="button" class="linkish" data-find>Find an existing booking</button>
+          <span data-i18n="form.prefer"></span> <a href="tel:+48666854218">666 854 218</a> ·
+          <button type="button" class="linkish" data-find data-i18n="form.findExisting"></button>
         </p>
       </form>
 
       <!-- Step 2: confirmed -->
       <div class="booked" id="booked" hidden>
         <p class="booked-mark" aria-hidden="true">✓</p>
-        <h3 id="booked-title">Table booked</h3>
+        <h3 id="booked-title" data-i18n="done.title">Table booked</h3>
         <p class="booked-sub" id="booked-sub"></p>
 
         <dl class="booked-detail">
-          <div><dt>Reference</dt><dd id="booked-ref"></dd></div>
-          <div><dt>When</dt><dd id="booked-when"></dd></div>
-          <div><dt>Guests</dt><dd id="booked-guests"></dd></div>
-          <div><dt>Under</dt><dd id="booked-name"></dd></div>
+          <div><dt data-i18n="done.ref"></dt><dd id="booked-ref"></dd></div>
+          <div><dt data-i18n="done.when"></dt><dd id="booked-when"></dd></div>
+          <div><dt data-i18n="done.guests"></dt><dd id="booked-guests"></dd></div>
+          <div><dt data-i18n="done.under"></dt><dd id="booked-name"></dd></div>
         </dl>
 
         <div class="booked-act">
-          <button class="btn btn-ink" type="button" id="booked-ics">Add to calendar</button>
-          <a class="btn btn-line" href="tel:+48666854218">Call the restaurant</a>
-          <button class="btn btn-line" type="button" id="booked-cancel">Cancel booking</button>
+          <button class="btn btn-ink" type="button" id="booked-ics" data-i18n="done.ics"></button>
+          <a class="btn btn-line" href="tel:+48666854218" data-i18n="done.call"></a>
+          <button class="btn btn-line" type="button" id="booked-cancel" data-i18n="done.cancel"></button>
         </div>
         <p class="form-msg" id="booked-msg" role="status" aria-live="polite"></p>
-        <button type="button" class="linkish" id="booked-again">Book another table</button>
+        <button type="button" class="linkish" id="booked-again" data-i18n="done.again"></button>
       </div>
 
       <!-- Look up an existing booking -->
       <form class="lookup" id="lookup-form" hidden novalidate>
-        <h3>Find your booking</h3>
-        <p class="band-sub">Your reference and the phone number you booked with.</p>
+        <h3 data-i18n="look.title"></h3>
+        <p class="band-sub" data-i18n="look.sub"></p>
         <div class="field-row">
           <div class="field">
-            <label for="l-ref">Reference</label>
+            <label for="l-ref" data-i18n="look.ref"></label>
             <input id="l-ref" type="text" placeholder="MT-XXXXX" autocomplete="off">
           </div>
           <div class="field">
-            <label for="l-phone">Phone</label>
+            <label for="l-phone" data-i18n="form.phone"></label>
             <input id="l-phone" type="tel" placeholder="600 000 000" autocomplete="tel">
           </div>
         </div>
-        <button class="btn btn-ink btn-block" type="submit">Find it</button>
+        <button class="btn btn-ink btn-block" type="submit" data-i18n="look.find"></button>
         <p class="form-msg" id="lookup-msg" role="status" aria-live="polite"></p>
-        <button type="button" class="linkish" data-find-close>Back to booking</button>
+        <button type="button" class="linkish" data-find-close data-i18n="look.back"></button>
       </form>
     </div>
   </div>
@@ -1796,31 +1816,31 @@ h1 .line { display: block; }
 <section class="band" id="find">
   <div class="wrap find-grid">
     <div class="rise">
-      <p class="kicker">Find us</p>
+      <p class="kicker" data-i18n="find.kicker"></p>
       <h2>Zwycięska 45, Wrocław</h2>
-      <p class="band-sub">Award Business Park, unit 3. Ten minutes from the ring road, parking out front.</p>
+      <p class="band-sub" data-i18n="find.sub"></p>
 
       <dl class="find-info">
-        <div><dt>Address</dt><dd>Zwycięska 45/lok. 3<br>53-033 Wrocław</dd></div>
-        <div><dt>Phone</dt><dd><a href="tel:+48666854218">666 854 218</a></dd></div>
-        <div><dt>Online</dt><dd><a href="https://meatologia.pl" target="_blank" rel="noopener">meatologia.pl</a></dd></div>
+        <div><dt data-i18n="find.address"></dt><dd>Zwycięska 45/lok. 3<br>53-033 Wrocław</dd></div>
+        <div><dt data-i18n="find.phone"></dt><dd><a href="tel:+48666854218">666 854 218</a></dd></div>
+        <div><dt data-i18n="find.online"></dt><dd><a href="https://meatologia.pl" target="_blank" rel="noopener">meatologia.pl</a></dd></div>
       </dl>
 
       <table class="hours" id="hours-table">
-        <caption class="sr-only">Opening hours</caption>
+        <caption class="sr-only" data-i18n="find.hours"></caption>
         <tbody>
-          <tr data-day="1"><th scope="row">Monday</th><td>12:00 – 22:00</td></tr>
-          <tr data-day="2"><th scope="row">Tuesday</th><td>12:00 – 22:00</td></tr>
-          <tr data-day="3"><th scope="row">Wednesday</th><td>12:00 – 22:00</td></tr>
-          <tr data-day="4"><th scope="row">Thursday</th><td>12:00 – 22:00</td></tr>
-          <tr data-day="5"><th scope="row">Friday</th><td>12:00 – 22:00</td></tr>
-          <tr data-day="6"><th scope="row">Saturday</th><td>12:00 – 22:00</td></tr>
-          <tr data-day="0"><th scope="row">Sunday</th><td>12:00 – 22:00</td></tr>
+          <tr data-day="1"><th scope="row" data-i18n="find.mon"></th><td>12:00 – 22:00</td></tr>
+          <tr data-day="2"><th scope="row" data-i18n="find.tue"></th><td>12:00 – 22:00</td></tr>
+          <tr data-day="3"><th scope="row" data-i18n="find.wed"></th><td>12:00 – 22:00</td></tr>
+          <tr data-day="4"><th scope="row" data-i18n="find.thu"></th><td>12:00 – 22:00</td></tr>
+          <tr data-day="5"><th scope="row" data-i18n="find.fri"></th><td>12:00 – 22:00</td></tr>
+          <tr data-day="6"><th scope="row" data-i18n="find.sat"></th><td>12:00 – 22:00</td></tr>
+          <tr data-day="0"><th scope="row" data-i18n="find.sun"></th><td>12:00 – 22:00</td></tr>
         </tbody>
       </table>
 
       <ul class="tags">
-        <li>Wheelchair accessible</li><li>LGBTQ+ friendly</li><li>Card payments</li><li>Takeaway</li>
+        <li data-i18n="find.tag1"></li><li data-i18n="find.tag2"></li><li data-i18n="find.tag3"></li><li data-i18n="find.tag4"></li>
       </ul>
     </div>
 
@@ -1846,8 +1866,8 @@ h1 .line { display: block; }
       </span>
       <span class="map-foot">
         <span class="map-title">Meatologia</span>
-        <span class="map-sub">Restaurant · 40–160 zł · open until 22:00</span>
-        <span class="map-go">Open in Maps →</span>
+        <span class="map-sub" data-i18n="find.mapSub"></span>
+        <span class="map-go" data-i18n="find.mapGo"></span>
       </span>
     </a>
   </div>
@@ -1860,11 +1880,12 @@ h1 .line { display: block; }
   <div class="wrap foot-in">
     <div class="foot-brand">
       <span class="brand-seal" aria-hidden="true">M</span>
-      <p>An honest love of the real thing.</p>
+      <p data-i18n="foot.tag"></p>
     </div>
     <nav aria-label="Footer">
-      <a href="#menu">Menu</a><a href="#craft">Craft</a><a href="#reviews">Reviews</a>
-      <a href="#reserve">Reserve</a><a href="#find">Find us</a>
+      <a href="#menu" data-i18n="nav.menu"></a><a href="#craft" data-i18n="nav.craft"></a>
+      <a href="#reviews" data-i18n="nav.reviews"></a>
+      <a href="#reserve" data-i18n="nav.reserve"></a><a href="#find" data-i18n="nav.find"></a>
     </nav>
     <p class="foot-legal">© <span id="year">2026</span> Meatologia · Zwycięska 45/lok. 3, 53-033 Wrocław · 666 854 218</p>
   </div>
@@ -1874,9 +1895,9 @@ h1 .line { display: block; }
 <div class="takeover" id="takeover" hidden>
   <div class="takeover-sheet" role="dialog" aria-modal="true" aria-labelledby="dish-name">
 
-    <button class="takeover-close" type="button" data-close aria-label="Back to the menu">
+    <button class="takeover-close" type="button" data-close data-i18n-attr="aria-label:dish.back">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
-      <span>Back</span>
+      <span data-i18n="dish.back"></span>
     </button>
 
     <div class="takeover-body">
@@ -1891,106 +1912,1296 @@ h1 .line { display: block; }
         <p class="dish-blurb" id="dish-blurb"></p>
 
         <div class="dish-specs">
-          <div><dt>Weight</dt><dd id="dish-weight"></dd></div>
-          <div><dt>Cooked</dt><dd id="dish-cook"></dd></div>
-          <div><dt>Drink it with</dt><dd id="dish-pair"></dd></div>
+          <div><dt data-i18n="dish.weight"></dt><dd id="dish-weight"></dd></div>
+          <div><dt data-i18n="dish.cooked"></dt><dd id="dish-cook"></dd></div>
+          <div><dt data-i18n="dish.pair"></dt><dd id="dish-pair"></dd></div>
         </div>
 
         <ul class="dish-parts" id="dish-parts"></ul>
 
         <div class="dish-buy">
           <p class="dish-price"><span id="dish-price"></span><small>zł</small></p>
-          <a class="btn btn-red btn-big" href="tel:+48666854218">Order by phone</a>
+          <a class="btn btn-red btn-big" href="tel:+48666854218" data-i18n="dish.order"></a>
         </div>
       </div>
     </div>
 
-    <div class="filmstrip" id="filmstrip" role="tablist" aria-label="Other dishes"></div>
+    <div class="filmstrip" id="filmstrip" role="tablist" data-i18n-attr="aria-label:dish.others"></div>
   </div>
 </div>
 <script>
 /**
- * Menu data for Meatologia.
+ * Translations for the interface.
+ *
+ * Dish copy lives separately in menu-i18n.js, so the two can be handed to
+ * different people. Adding a language means adding one block here, one block
+ * there, and a line in `languages` — nothing else in the codebase changes.
+ *
+ * `t('nav.menu')` returns the active language, falling back to English for
+ * anything missing rather than showing a bare key.
+ */
+(function (root, factory) {
+  var api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else root.MEATOLOGIA_I18N = api;
+}(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  var languages = [
+    { code: 'en', label: 'English',  locale: 'en-GB' },
+    { code: 'pl', label: 'Polski',   locale: 'pl-PL' },
+    { code: 'ko', label: '한국어',    locale: 'ko-KR' }
+  ];
+
+  var strings = {
+
+    /* ══ English ═══════════════════════════════════════════════════ */
+    en: {
+      'meta.title': 'Meatologia — Burgers & Steaks, Wrocław',
+      'meta.description': 'Top-grade beef, juicy burgers and charcoal-grilled steaks. Zwycięska 45, Wrocław. Open daily 12:00–22:00.',
+
+      'a11y.skip': 'Skip to the menu',
+      'a11y.language': 'Language',
+      'brand.sub': 'Wrocław · est. beef',
+
+      'nav.menu': 'Menu',
+      'nav.craft': 'Craft',
+      'nav.reviews': 'Reviews',
+      'nav.reserve': 'Reserve',
+      'nav.find': 'Find us',
+      'nav.open': 'Open navigation',
+      'nav.book': 'Book a table',
+
+      'hours.open': 'Open now · until 22:00',
+      'hours.shut': 'Closed · opens 12:00',
+
+      'hero.kicker': 'Charcoal grill · Zwycięska 45',
+      'hero.line1': 'An honest',
+      'hero.line2': 'love of the',
+      'hero.line3a': 'thing',
+      'hero.line3em': 'real',
+      'hero.lede': 'Top-grade beef, ground every morning. Buns baked in our own oven. Steaks from Argentina, the States and Japan, cooked over live charcoal by people who actually like you.',
+      'hero.cta': 'See the menu',
+      'hero.call': 'Call 666 854 218',
+      'hero.rated': 'Rated',
+      'hero.reviews': '737 reviews',
+      'hero.perPerson': 'Per person',
+      'hero.daily': 'Daily',
+      'hero.note1': 'Ground fresh<br>every morning',
+      'hero.note2': 'Buns baked<br>in house',
+
+      'menu.kicker': 'The card',
+      'menu.title': 'What we cook',
+      'menu.sub': 'Tap any dish — it opens full screen, with the cut, the weight and what to drink alongside it.',
+      'menu.filter': 'Filter the menu by course',
+      'menu.note': 'Prices in złoty. Allergens and seasonal specials on',
+      'menu.open': 'Open',
+      'menu.detailsFor': '{name}, {price} złoty — open details',
+
+      'course.all': 'Everything',
+      'course.starters': 'Starters',
+      'course.burgers': 'Street food',
+      'course.mains': 'Mains',
+      'course.kids': 'Kids',
+      'course.steaks': 'Steaks',
+      'course.sides': 'Sides',
+      'course.sweet': 'Dessert',
+      'course.drinks': 'Drinks',
+
+      'dish.back': 'Back',
+      'dish.weight': 'Weight',
+      'dish.cooked': 'Cooked',
+      'dish.pair': 'Drink it with',
+      'dish.order': 'Order by phone',
+      'dish.others': 'Other dishes',
+
+      'anat.kicker': 'Anatomy of the Classic',
+      'anat.title': 'Take it apart',
+      'anat.sub': 'Keep scrolling. Five layers, none of them an afterthought.',
+      'anat.s1t': 'Sesame crown',
+      'anat.s1d': 'Baked in our own oven each morning, brushed with butter and toasted on the plancha.',
+      'anat.s2t': 'Butter lettuce',
+      'anat.s2d': 'Cold, crisp, and there to cut the fat — not to fill the bun out.',
+      'anat.s3t': 'Aged cheddar',
+      'anat.s3d': 'Laid on the patty straight off the grill so it melts over the edges on the way to you.',
+      'anat.s4t': '180 g Black Angus',
+      'anat.s4d': 'Chuck and brisket, coarse-ground this morning, charred hard and left juicy at medium.',
+      'anat.s5t': 'Sauce & base',
+      'anat.s5d': 'Roast-garlic sauce on a toasted heel that holds to the last bite.',
+      'anat.cta': 'See the full dish',
+      'anat.hint': 'Scroll',
+      'anat.tagBun': 'Sesame crown',
+      'anat.tagVeg': 'Butter lettuce',
+      'anat.tagCheese': 'Aged cheddar',
+      'anat.tagPatty': '180 g Black Angus',
+      'anat.tagBase': 'Toasted base',
+      'anat.alt': 'An illustrated cheeseburger separating into its layers: sesame bun, lettuce, cheese, beef patty and base bun.',
+
+      'craft.kicker': 'Craft',
+      'craft.title': 'Three things we refuse to rush',
+      'craft.lead': 'Meatologia is an honest love of what is real. Top-quality beef, juicy steaks cooked exactly to the point, pastrami we have been perfecting for years, and sandwiches packed with roast meat we would fight over. Full-blooded produce. You do not have to eat meat every day — but when you do, choose the best there is. We will take care of the quality, the flavour and the honesty of it.',
+      'craft.h1': 'The grind',
+      'craft.p1': 'Chuck and brisket, minced on site every morning at a coarse setting. Never pre-packed, never yesterday\'s. It is the whole reason a burger can taste of beef.',
+      'craft.h2': 'The ageing',
+      'craft.p2': 'Steaks are wet-aged a minimum of eight weeks before they are allowed near the grill. Argentine Black Angus, USDA Prime from Creekstone Farms in Arkansas City, and A5 wagyu from Kagoshima — three countries, one standard.',
+      'craft.h3': 'The fire',
+      'craft.p3': 'Live charcoal, run hot enough to build a crust in seconds. Real smoke, no gas, no shortcuts. You can watch all of it from the open pass.',
+
+      'rev.kicker': 'Reviews',
+      'rev.title': '4.5 out of 737',
+      'rev.sub': 'What people tell each other before they come.',
+      'rev.tip1': 'Guests single out the Argentine steaks — order one cooked exactly how you like it.',
+      'rev.tip2': 'Portions run generous, so leave room for dessert or plan on taking some home.',
+      'rev.tip3': 'Friday evenings fill up. Call ahead and the table will be waiting.',
+      'rev.rail': 'Guest reviews, scroll horizontally',
+      'rev.q1': 'The service here is genuinely friendly and welcoming. When we first arrived the place was packed, and they still found us a table and looked after everything.',
+      'rev.q2': 'Great place with meat. I recommend the tartare and the burgers — juicy beef, toppings chosen with a bit of thought, and a bun that holds to the last bite.',
+      'rev.q3': 'The Argentine steak came out exactly as I asked. Paired it with their own-label craft IPA — hard to beat that combination anywhere in the city.',
+      'rev.q4': 'Huge portions, fair prices for this quality of beef. We\'re back regularly, usually for the Double Trouble and a basket of sweet potato fries.',
+      'rev.a1': 'a year ago',
+      'rev.a2': '3 months ago',
+      'rev.a3': '6 months ago',
+      'rev.guest': 'A Meatologia guest',
+
+      'res.kicker': 'Reserve',
+      'res.title': 'Save yourself a table',
+      'res.sub': 'Pick a time and the table is yours — you\'ll get a reference straight away, and you can cancel or move it from here later.',
+      'res.p1': 'Tables are held for 90 minutes from your seating',
+      'res.p2': 'Groups over 12 — call us and we\'ll rearrange the room',
+      'res.p3': 'Last kitchen order 21:15; parking in front of the building',
+
+      'form.guests': 'Guests',
+      'form.fewer': 'One guest fewer',
+      'form.more': 'One guest more',
+      'form.date': 'Date',
+      'form.seating': 'Seating',
+      'form.seatingNote': 'Tables are held for 90 minutes. Last seating 21:00.',
+      'form.name': 'Name',
+      'form.namePlaceholder': 'Anna Kowalska',
+      'form.phone': 'Phone',
+      'form.email': 'Email',
+      'form.emailOpt': 'optional, for the confirmation',
+      'form.notes': 'Anything we should know?',
+      'form.optional': 'optional',
+      'form.notesPlaceholder': 'Birthday, allergy, high chair…',
+      'form.submit': 'Book the table',
+      'form.submitting': 'Booking…',
+      'form.checkFields': 'Almost — check the highlighted fields.',
+      'form.taken': 'That seating just went. Pick another time.',
+      'form.failed': 'We could not save that booking. Please call us on 666 854 218.',
+      'form.prefer': 'Prefer to talk to someone?',
+      'form.findExisting': 'Find an existing booking',
+      'form.seatsLeft': '{n} seats left',
+      'form.passed': 'This seating has passed',
+      'form.full': 'Fully booked',
+      'form.nothingFree': 'Nothing free on this date for {n} guests. Try another day, or call us.',
+
+      'done.title': 'Table booked',
+      'done.titleLocal': 'Booking saved',
+      'done.sub': 'We have you in the book. Quote the reference if you need to change anything.',
+      'done.subLocal': 'This copy of the site has no booking server, so we have kept the details on this device — please ring 666 854 218 to confirm the table.',
+      'done.ref': 'Reference',
+      'done.when': 'When',
+      'done.guests': 'Guests',
+      'done.under': 'Under',
+      'done.ics': 'Add to calendar',
+      'done.call': 'Call the restaurant',
+      'done.cancel': 'Cancel booking',
+      'done.again': 'Book another table',
+      'done.confirmCancel': 'Cancel the table on {date} at {time}?',
+      'done.cancelled': 'Cancelled. The table is back in the book.',
+      'done.cancelTitle': 'Booking cancelled',
+      'done.cancelSub': 'Nothing else to do — you are not expected.',
+      'done.cancelFailed': 'We could not cancel it here — please call us.',
+      'done.icsSaved': 'Calendar file saved.',
+      'done.icsDeclined': 'The download was declined.',
+      'done.icsUnavailable': 'Saving files is not available here.',
+      'done.guestsN': '{n} guests',
+      'done.guest1': '1 guest',
+
+      'look.title': 'Find your booking',
+      'look.sub': 'Your reference and the phone number you booked with.',
+      'look.ref': 'Reference',
+      'look.find': 'Find it',
+      'look.back': 'Back to booking',
+      'look.both': 'Both the reference and the phone number, please.',
+      'look.none': 'No booking matches that pair.',
+      'look.already': 'That booking is already cancelled.',
+      'look.yours': 'your booking',
+
+      'find.kicker': 'Find us',
+      'find.title': 'Zwycięska 45, Wrocław',
+      'find.sub': 'Award Business Park, unit 3. Ten minutes from the ring road, parking out front.',
+      'find.address': 'Address',
+      'find.phone': 'Phone',
+      'find.online': 'Online',
+      'find.hours': 'Opening hours',
+      'find.today': ' · today',
+      'find.mon': 'Monday', 'find.tue': 'Tuesday', 'find.wed': 'Wednesday',
+      'find.thu': 'Thursday', 'find.fri': 'Friday', 'find.sat': 'Saturday', 'find.sun': 'Sunday',
+      'find.tag1': 'Wheelchair accessible',
+      'find.tag2': 'LGBTQ+ friendly',
+      'find.tag3': 'Card payments',
+      'find.tag4': 'Takeaway',
+      'find.mapSub': 'Restaurant · 40–160 zł · open until 22:00',
+      'find.mapGo': 'Open in Maps →',
+
+      'foot.tag': 'An honest love of the real thing.',
+      'foot.legal': '© {year} Meatologia · Zwycięska 45/lok. 3, 53-033 Wrocław · 666 854 218',
+
+      /* validation, keyed by the codes booking-core returns */
+      'err.name_short': 'Please give us a name for the table.',
+      'err.name_long': 'That name is too long for the book.',
+      'err.phone': 'A phone number so we can reach you if plans change.',
+      'err.email': 'That email address does not look right.',
+      'err.notes_long': 'Please keep the note under 400 characters.',
+      'err.party': 'Tables here seat 1 to {max}. For a bigger group, call us.',
+      'err.no_date': 'Pick a date and a time.',
+      'err.no_time': 'Choose a seating time.',
+      'err.off_hours': 'We seat between 12:00 and 21:00.',
+      'err.too_soon': 'That seating has passed. Please call for anything in the next hour.',
+      'err.too_far': 'We take bookings up to {days} days ahead.',
+      'err.seats_left': 'Only {n} seats are left at {time}.',
+      'err.seats_left_1': 'Only 1 seat is left at {time}.',
+      'err.full': 'That seating is fully booked.'
+    },
+
+    /* ══ Polski ════════════════════════════════════════════════════ */
+    pl: {
+      'meta.title': 'Meatologia — burgery i steki, Wrocław',
+      'meta.description': 'Najwyższej jakości wołowina, soczyste burgery i steki z rusztu węglowego. Zwycięska 45, Wrocław. Codziennie 12:00–22:00.',
+
+      'a11y.skip': 'Przejdź do menu',
+      'a11y.language': 'Język',
+      'brand.sub': 'Wrocław · od wołowiny',
+
+      'nav.menu': 'Menu',
+      'nav.craft': 'Rzemiosło',
+      'nav.reviews': 'Opinie',
+      'nav.reserve': 'Rezerwacja',
+      'nav.find': 'Dojazd',
+      'nav.open': 'Otwórz nawigację',
+      'nav.book': 'Zarezerwuj stolik',
+
+      'hours.open': 'Otwarte · do 22:00',
+      'hours.shut': 'Zamknięte · otwieramy 12:00',
+
+      'hero.kicker': 'Ruszt węglowy · Zwycięska 45',
+      'hero.line1': 'Szczera miłość',
+      'hero.line2': 'do tego, co',
+      'hero.line3a': '',
+      'hero.line3em': 'prawdziwe',
+      'hero.lede': 'Najwyższej jakości wołowina, mielona każdego ranka. Bułki z własnego pieca. Steki z Argentyny, USA i Japonii, grillowane na żywym węglu przez ludzi, którzy naprawdę was lubią.',
+      'hero.cta': 'Zobacz menu',
+      'hero.call': 'Zadzwoń 666 854 218',
+      'hero.rated': 'Ocena',
+      'hero.reviews': '737 opinii',
+      'hero.perPerson': 'Na osobę',
+      'hero.daily': 'Codziennie',
+      'hero.note1': 'Mielone świeżo<br>każdego ranka',
+      'hero.note2': 'Bułki z własnego<br>pieca',
+
+      'menu.kicker': 'Karta',
+      'menu.title': 'Co dziś gotujemy',
+      'menu.sub': 'Kliknij danie — otworzy się na pełnym ekranie, z gramaturą, sposobem przyrządzenia i tym, co do niego pijemy.',
+      'menu.filter': 'Filtruj menu według kategorii',
+      'menu.note': 'Ceny w złotych. Alergeny i dania sezonowe na',
+      'menu.open': 'Otwórz',
+      'menu.detailsFor': '{name}, {price} złotych — pokaż szczegóły',
+
+      'course.all': 'Wszystko',
+      'course.starters': 'Startery',
+      'course.burgers': 'Street food',
+      'course.mains': 'Dania główne',
+      'course.kids': 'Dla dzieci',
+      'course.steaks': 'Steki',
+      'course.sides': 'Dodatki',
+      'course.sweet': 'Deser',
+      'course.drinks': 'Napoje',
+
+      'dish.back': 'Wróć',
+      'dish.weight': 'Gramatura',
+      'dish.cooked': 'Wysmażenie',
+      'dish.pair': 'Pij z tym',
+      'dish.order': 'Zamów telefonicznie',
+      'dish.others': 'Pozostałe dania',
+
+      'anat.kicker': 'Anatomia Classica',
+      'anat.title': 'Rozłóż na części',
+      'anat.sub': 'Przewijaj dalej. Pięć warstw, żadna z nich przypadkiem.',
+      'anat.s1t': 'Bułka z sezamem',
+      'anat.s1d': 'Pieczona u nas każdego ranka, smarowana masłem i opiekana na płycie.',
+      'anat.s2t': 'Sałata masłowa',
+      'anat.s2d': 'Zimna i chrupiąca — ma przełamywać tłuszcz, a nie wypełniać bułkę.',
+      'anat.s3t': 'Dojrzewający cheddar',
+      'anat.s3d': 'Kładziony na kotlet prosto z rusztu, żeby zdążył spłynąć po bokach.',
+      'anat.s4t': '180 g Black Angus',
+      'anat.s4d': 'Łopatka i mostek, grubo mielone tego ranka, mocno przypieczone i soczyste w środku.',
+      'anat.s5t': 'Sos i spód',
+      'anat.s5d': 'Sos z pieczonego czosnku na opieczonym spodzie, który trzyma do ostatniego kęsa.',
+      'anat.cta': 'Zobacz całe danie',
+      'anat.hint': 'Przewiń',
+      'anat.tagBun': 'Bułka z sezamem',
+      'anat.tagVeg': 'Sałata masłowa',
+      'anat.tagCheese': 'Dojrzewający cheddar',
+      'anat.tagPatty': '180 g Black Angus',
+      'anat.tagBase': 'Opieczony spód',
+      'anat.alt': 'Ilustracja cheeseburgera rozłożonego na warstwy: bułka z sezamem, sałata, ser, kotlet wołowy i spód bułki.',
+
+      'craft.kicker': 'Rzemiosło',
+      'craft.title': 'Trzy rzeczy, których nie pospieszymy',
+      'craft.lead': 'Meatologia to szczera miłość do tego, co prawdziwe. Najwyższej jakości wołowina, soczyste steki zrobione w punkt, pastrami dopieszczane przez lata i kanapki wypełnione pieczonym mięsem, za które dalibyśmy się pokroić. Pełnokrwiste produkty. Nie musisz jeść mięsa codziennie, ale kiedy już to robisz — wybieraj to, co najlepsze. My zadbamy o jakość, smak i autentyczność.',
+      'craft.h1': 'Mielenie',
+      'craft.p1': 'Łopatka i mostek, mielone na miejscu każdego ranka na grubym sicie. Nigdy pakowane, nigdy wczorajsze. To cały powód, dla którego burger może smakować wołowiną.',
+      'craft.h2': 'Sezonowanie',
+      'craft.p2': 'Steki sezonujemy na mokro minimum osiem tygodni, zanim w ogóle zbliżą się do rusztu. Argentyński Black Angus, USDA Prime z farmy Creekstone w Arkansas City i wagyu A5 z Kagoshimy — trzy kraje, jeden standard.',
+      'craft.h3': 'Ogień',
+      'craft.p3': 'Żywy węgiel, rozgrzany na tyle, by skorupka powstała w kilka sekund. Prawdziwy dym, żadnego gazu, żadnych skrótów. Wszystko widać z otwartej kuchni.',
+
+      'rev.kicker': 'Opinie',
+      'rev.title': '4,5 na 737 opinii',
+      'rev.sub': 'To, co goście mówią sobie nawzajem, zanim przyjdą.',
+      'rev.tip1': 'Goście wyróżniają steki argentyńskie — zamów swój dokładnie tak, jak lubisz.',
+      'rev.tip2': 'Porcje są solidne, więc zostaw miejsce na deser albo zaplanuj pakowanie na wynos.',
+      'rev.tip3': 'W piątkowe wieczory bywa pełno. Zadzwoń wcześniej, a stolik będzie czekał.',
+      'rev.rail': 'Opinie gości, przewijane w poziomie',
+      'rev.q1': 'Obsługa jest tu naprawdę przyjazna i serdeczna. Kiedy przyszliśmy pierwszy raz, lokal był pełen, a i tak znaleźli nam stolik i zadbali o wszystko.',
+      'rev.q2': 'Świetne miejsce z mięsem. Polecam tatar i burgery — mięso soczyste, dodatki dobrane z głową, a bułka trzyma do ostatniego kęsa.',
+      'rev.q3': 'Stek z Argentyny wyszedł dokładnie taki, jak prosiłem. Do tego ich własne piwo kraftowe — trudno o lepsze połączenie w mieście.',
+      'rev.q4': 'Ogromne porcje, uczciwe ceny jak na taką jakość mięsa. Wracamy regularnie, zwykle na Double Trouble i frytki z batata.',
+      'rev.a1': 'rok temu',
+      'rev.a2': '3 miesiące temu',
+      'rev.a3': 'pół roku temu',
+      'rev.guest': 'Gość Meatologii',
+
+      'res.kicker': 'Rezerwacja',
+      'res.title': 'Zarezerwuj stolik',
+      'res.sub': 'Wybierz godzinę i stolik jest wasz — numer rezerwacji dostaniesz od razu, a odwołać ją możesz stąd w każdej chwili.',
+      'res.p1': 'Stolik trzymamy 90 minut od godziny rezerwacji',
+      'res.p2': 'Grupy powyżej 12 osób — zadzwońcie, przestawimy salę',
+      'res.p3': 'Ostatnie zamówienie do kuchni 21:15; parking przed budynkiem',
+
+      'form.guests': 'Liczba osób',
+      'form.fewer': 'Jedna osoba mniej',
+      'form.more': 'Jedna osoba więcej',
+      'form.date': 'Data',
+      'form.seating': 'Godzina',
+      'form.seatingNote': 'Stolik trzymamy 90 minut. Ostatnia godzina rezerwacji 21:00.',
+      'form.name': 'Imię i nazwisko',
+      'form.namePlaceholder': 'Anna Kowalska',
+      'form.phone': 'Telefon',
+      'form.email': 'E-mail',
+      'form.emailOpt': 'opcjonalnie, do potwierdzenia',
+      'form.notes': 'Coś, o czym powinniśmy wiedzieć?',
+      'form.optional': 'opcjonalnie',
+      'form.notesPlaceholder': 'Urodziny, alergia, krzesełko…',
+      'form.submit': 'Rezerwuję stolik',
+      'form.submitting': 'Rezerwuję…',
+      'form.checkFields': 'Prawie — sprawdź zaznaczone pola.',
+      'form.taken': 'Ta godzina właśnie zniknęła. Wybierz inną.',
+      'form.failed': 'Nie udało się zapisać rezerwacji. Zadzwoń: 666 854 218.',
+      'form.prefer': 'Wolisz porozmawiać?',
+      'form.findExisting': 'Znajdź istniejącą rezerwację',
+      'form.seatsLeft': 'zostało {n} miejsc',
+      'form.passed': 'Ta godzina już minęła',
+      'form.full': 'Komplet',
+      'form.nothingFree': 'Tego dnia nie mamy nic wolnego dla {n} osób. Spróbuj innego dnia albo zadzwoń.',
+
+      'done.title': 'Stolik zarezerwowany',
+      'done.titleLocal': 'Rezerwacja zapisana',
+      'done.sub': 'Jesteście w księdze. Podaj numer rezerwacji, jeśli coś trzeba zmienić.',
+      'done.subLocal': 'Ta kopia strony nie ma serwera rezerwacji, więc dane zostały zapisane na tym urządzeniu — zadzwoń pod 666 854 218, żeby potwierdzić stolik.',
+      'done.ref': 'Numer',
+      'done.when': 'Kiedy',
+      'done.guests': 'Osoby',
+      'done.under': 'Na nazwisko',
+      'done.ics': 'Dodaj do kalendarza',
+      'done.call': 'Zadzwoń do nas',
+      'done.cancel': 'Odwołaj rezerwację',
+      'done.again': 'Zarezerwuj kolejny stolik',
+      'done.confirmCancel': 'Odwołać stolik {date} o {time}?',
+      'done.cancelled': 'Odwołane. Stolik wrócił do puli.',
+      'done.cancelTitle': 'Rezerwacja odwołana',
+      'done.cancelSub': 'Nic więcej nie trzeba robić — nie czekamy na was.',
+      'done.cancelFailed': 'Nie udało się odwołać tutaj — zadzwoń do nas.',
+      'done.icsSaved': 'Plik kalendarza zapisany.',
+      'done.icsDeclined': 'Pobieranie zostało odrzucone.',
+      'done.icsUnavailable': 'Zapisywanie plików jest tu niedostępne.',
+      'done.guestsN': '{n} osób',
+      'done.guest1': '1 osoba',
+
+      'look.title': 'Znajdź swoją rezerwację',
+      'look.sub': 'Numer rezerwacji i telefon, którym ją zrobiono.',
+      'look.ref': 'Numer',
+      'look.find': 'Szukaj',
+      'look.back': 'Wróć do rezerwacji',
+      'look.both': 'Poproszę numer rezerwacji i telefon.',
+      'look.none': 'Żadna rezerwacja nie pasuje do tej pary.',
+      'look.already': 'Ta rezerwacja jest już odwołana.',
+      'look.yours': 'twoja rezerwacja',
+
+      'find.kicker': 'Dojazd',
+      'find.title': 'Zwycięska 45, Wrocław',
+      'find.sub': 'Award Business Park, lokal 3. Dziesięć minut od obwodnicy, parking przed budynkiem.',
+      'find.address': 'Adres',
+      'find.phone': 'Telefon',
+      'find.online': 'W sieci',
+      'find.hours': 'Godziny otwarcia',
+      'find.today': ' · dziś',
+      'find.mon': 'Poniedziałek', 'find.tue': 'Wtorek', 'find.wed': 'Środa',
+      'find.thu': 'Czwartek', 'find.fri': 'Piątek', 'find.sat': 'Sobota', 'find.sun': 'Niedziela',
+      'find.tag1': 'Dostępne dla wózków',
+      'find.tag2': 'LGBTQ+ friendly',
+      'find.tag3': 'Płatność kartą',
+      'find.tag4': 'Na wynos',
+      'find.mapSub': 'Restauracja · 40–160 zł · otwarte do 22:00',
+      'find.mapGo': 'Otwórz w Mapach →',
+
+      'foot.tag': 'Szczera miłość do tego, co prawdziwe.',
+      'foot.legal': '© {year} Meatologia · Zwycięska 45/lok. 3, 53-033 Wrocław · 666 854 218',
+
+      'err.name_short': 'Podaj nazwisko, na które zapiszemy stolik.',
+      'err.name_long': 'To nazwisko jest za długie.',
+      'err.phone': 'Telefon, żebyśmy mogli się odezwać, gdy coś się zmieni.',
+      'err.email': 'Ten adres e-mail wygląda niepoprawnie.',
+      'err.notes_long': 'Notatka może mieć najwyżej 400 znaków.',
+      'err.party': 'Sadzamy od 1 do {max} osób. Przy większej grupie zadzwoń.',
+      'err.no_date': 'Wybierz datę i godzinę.',
+      'err.no_time': 'Wybierz godzinę.',
+      'err.off_hours': 'Sadzamy między 12:00 a 21:00.',
+      'err.too_soon': 'Ta godzina już minęła. W sprawie najbliższej godziny zadzwoń.',
+      'err.too_far': 'Przyjmujemy rezerwacje do {days} dni naprzód.',
+      'err.seats_left': 'O {time} zostało tylko {n} miejsc.',
+      'err.seats_left_1': 'O {time} zostało tylko 1 miejsce.',
+      'err.full': 'Ta godzina jest w całości zarezerwowana.'
+    },
+
+    /* ══ 한국어 ═════════════════════════════════════════════════════ */
+    ko: {
+      'meta.title': 'Meatologia — 버거와 스테이크, 브로츠와프',
+      'meta.description': '최상급 소고기로 만드는 육즙 가득한 버거와 숯불 스테이크. 브로츠와프 Zwycięska 45. 매일 12:00–22:00.',
+
+      'a11y.skip': '메뉴로 건너뛰기',
+      'a11y.language': '언어',
+      'brand.sub': '브로츠와프 · 소고기 전문',
+
+      'nav.menu': '메뉴',
+      'nav.craft': '조리 원칙',
+      'nav.reviews': '후기',
+      'nav.reserve': '예약',
+      'nav.find': '오시는 길',
+      'nav.open': '메뉴 열기',
+      'nav.book': '테이블 예약',
+
+      'hours.open': '영업 중 · 22:00까지',
+      'hours.shut': '영업 종료 · 12:00 오픈',
+
+      'hero.kicker': '숯불 그릴 · Zwycięska 45',
+      'hero.line1': '진짜에 대한',
+      'hero.line2': '정직한',
+      'hero.line3a': '',
+      'hero.line3em': '애정',
+      'hero.lede': '매일 아침 직접 가는 최상급 소고기, 매장에서 굽는 번, 그리고 아르헨티나·미국·일본에서 온 스테이크. 손님을 진심으로 반기는 사람들이 숯불에 굽습니다.',
+      'hero.cta': '메뉴 보기',
+      'hero.call': '전화 666 854 218',
+      'hero.rated': '평점',
+      'hero.reviews': '후기 737개',
+      'hero.perPerson': '1인당',
+      'hero.daily': '매일',
+      'hero.note1': '매일 아침<br>직접 갈아서',
+      'hero.note2': '번은 매장에서<br>직접 굽습니다',
+
+      'menu.kicker': '메뉴판',
+      'menu.title': '오늘의 요리',
+      'menu.sub': '메뉴를 누르면 전체 화면으로 열립니다. 부위와 중량, 어울리는 음료까지 함께 보실 수 있습니다.',
+      'menu.filter': '코스별로 메뉴 보기',
+      'menu.note': '가격 단위는 즈워티입니다. 알레르기 정보와 시즌 메뉴는',
+      'menu.open': '열기',
+      'menu.detailsFor': '{name}, {price} 즈워티 — 자세히 보기',
+
+      'course.all': '전체',
+      'course.starters': '애피타이저',
+      'course.burgers': '스트리트 푸드',
+      'course.mains': '메인',
+      'course.kids': '어린이',
+      'course.steaks': '스테이크',
+      'course.sides': '사이드',
+      'course.sweet': '디저트',
+      'course.drinks': '음료',
+
+      'dish.back': '뒤로',
+      'dish.weight': '중량',
+      'dish.cooked': '굽기',
+      'dish.pair': '어울리는 음료',
+      'dish.order': '전화로 주문',
+      'dish.others': '다른 메뉴',
+
+      'anat.kicker': 'Classic 해부',
+      'anat.title': '한 겹씩 벗겨보기',
+      'anat.sub': '계속 스크롤해 보세요. 다섯 겹 모두 이유가 있습니다.',
+      'anat.s1t': '참깨 번',
+      'anat.s1d': '매일 아침 매장 오븐에서 구워 버터를 바르고 철판에 다시 굽습니다.',
+      'anat.s2t': '버터 상추',
+      'anat.s2d': '차갑고 아삭합니다. 양을 채우려는 게 아니라 기름진 맛을 잡기 위한 재료입니다.',
+      'anat.s3t': '숙성 체다',
+      'anat.s3d': '그릴에서 막 내린 패티 위에 올려, 나오는 동안 가장자리로 흘러내리게 합니다.',
+      'anat.s4t': '180g 블랙 앵거스',
+      'anat.s4d': '척아이롤과 차돌양지를 그날 아침 굵게 갈아, 겉은 바싹 속은 미디엄으로 굽습니다.',
+      'anat.s5t': '소스와 아랫면',
+      'anat.s5d': '구운 마늘 소스를 바른 아랫면이 마지막 한 입까지 형태를 잡아줍니다.',
+      'anat.cta': '전체 메뉴 보기',
+      'anat.hint': '스크롤',
+      'anat.tagBun': '참깨 번',
+      'anat.tagVeg': '버터 상추',
+      'anat.tagCheese': '숙성 체다',
+      'anat.tagPatty': '180g 블랙 앵거스',
+      'anat.tagBase': '구운 아랫면',
+      'anat.alt': '치즈버거가 참깨 번, 상추, 치즈, 소고기 패티, 아랫면 번으로 분리되는 일러스트.',
+
+      'craft.kicker': '조리 원칙',
+      'craft.title': '서두르지 않는 세 가지',
+      'craft.lead': 'Meatologia는 진짜에 대한 정직한 애정입니다. 최상급 소고기, 정확한 굽기로 완성한 육즙 가득한 스테이크, 수년간 다듬어 온 파스트라미, 그리고 아까워서 나눠 먹기 싫은 로스트 미트 샌드위치. 제대로 된 재료만 씁니다. 매일 고기를 드실 필요는 없습니다. 다만 드실 때는 가장 좋은 것을 고르세요. 품질과 맛, 그리고 정직함은 저희가 책임지겠습니다.',
+      'craft.h1': '분쇄',
+      'craft.p1': '척아이롤과 차돌양지를 매일 아침 매장에서 굵게 갑니다. 미리 포장된 고기도, 어제 간 고기도 쓰지 않습니다. 버거에서 소고기 맛이 나는 이유는 이것뿐입니다.',
+      'craft.h2': '숙성',
+      'craft.p2': '스테이크는 최소 8주 습식 숙성을 거친 뒤에야 그릴에 오릅니다. 아르헨티나 블랙 앵거스, 아칸소시티 Creekstone 농장의 USDA 프라임, 가고시마산 A5 와규 — 세 나라, 하나의 기준.',
+      'craft.h3': '불',
+      'craft.p3': '몇 초 만에 겉면이 잡힐 만큼 달군 숯불입니다. 진짜 연기, 가스 없음, 지름길 없음. 오픈 주방에서 전 과정을 보실 수 있습니다.',
+
+      'rev.kicker': '후기',
+      'rev.title': '737개 후기, 평점 4.5',
+      'rev.sub': '오기 전에 손님들이 서로 나누는 이야기입니다.',
+      'rev.tip1': '아르헨티나 스테이크를 꼽는 분이 많습니다. 원하는 굽기로 주문해 보세요.',
+      'rev.tip2': '양이 넉넉하니 디저트 자리를 남기거나 포장을 염두에 두세요.',
+      'rev.tip3': '금요일 저녁은 자리가 찹니다. 미리 전화 주시면 테이블을 잡아 둡니다.',
+      'rev.rail': '손님 후기, 좌우로 스크롤',
+      'rev.q1': '서비스가 정말 친절하고 따뜻합니다. 처음 갔을 때 만석이었는데도 자리를 마련해 주고 끝까지 살펴봐 주셨어요.',
+      'rev.q2': '고기가 훌륭한 곳입니다. 타르타르와 버거를 추천합니다. 고기는 육즙이 가득하고 재료 구성도 생각을 많이 했으며 번은 마지막까지 무너지지 않습니다.',
+      'rev.q3': '아르헨티나 스테이크가 요청한 굽기 그대로 나왔습니다. 자체 라벨 크래프트 IPA와 함께 먹었는데 이 조합은 시내에서 찾기 어렵습니다.',
+      'rev.q4': '양이 엄청나고 이 정도 고기 품질에 가격도 정직합니다. 보통 Double Trouble과 고구마튀김을 먹으러 자주 갑니다.',
+      'rev.a1': '1년 전',
+      'rev.a2': '3개월 전',
+      'rev.a3': '6개월 전',
+      'rev.guest': 'Meatologia 손님',
+
+      'res.kicker': '예약',
+      'res.title': '테이블을 잡아두세요',
+      'res.sub': '시간을 고르면 테이블은 확정됩니다. 예약번호가 바로 발급되고, 취소도 여기서 하실 수 있습니다.',
+      'res.p1': '테이블은 예약 시각부터 90분간 유지됩니다',
+      'res.p2': '12명이 넘는 단체는 전화 주시면 자리를 새로 배치해 드립니다',
+      'res.p3': '주방 마지막 주문 21:15 · 건물 앞 주차 가능',
+
+      'form.guests': '인원',
+      'form.fewer': '한 명 줄이기',
+      'form.more': '한 명 늘리기',
+      'form.date': '날짜',
+      'form.seating': '시간',
+      'form.seatingNote': '테이블은 90분간 유지됩니다. 마지막 예약 시간은 21:00입니다.',
+      'form.name': '성함',
+      'form.namePlaceholder': '홍길동',
+      'form.phone': '연락처',
+      'form.email': '이메일',
+      'form.emailOpt': '선택, 확인용',
+      'form.notes': '미리 알려주실 내용이 있나요?',
+      'form.optional': '선택',
+      'form.notesPlaceholder': '생일, 알레르기, 아기 의자…',
+      'form.submit': '예약하기',
+      'form.submitting': '예약 중…',
+      'form.checkFields': '거의 다 됐습니다 — 표시된 항목을 확인해 주세요.',
+      'form.taken': '방금 그 시간이 마감됐습니다. 다른 시간을 골라 주세요.',
+      'form.failed': '예약을 저장하지 못했습니다. 666 854 218로 전화 주세요.',
+      'form.prefer': '통화가 편하신가요?',
+      'form.findExisting': '기존 예약 조회',
+      'form.seatsLeft': '{n}자리 남음',
+      'form.passed': '지난 시간입니다',
+      'form.full': '예약 마감',
+      'form.nothingFree': '이 날짜에는 {n}명 자리가 없습니다. 다른 날짜를 보시거나 전화 주세요.',
+
+      'done.title': '예약 완료',
+      'done.titleLocal': '예약 내용 저장됨',
+      'done.sub': '예약이 확정되었습니다. 변경이 필요하면 예약번호를 알려주세요.',
+      'done.subLocal': '이 사이트 사본에는 예약 서버가 없어 내용을 이 기기에만 저장했습니다. 666 854 218로 전화해 확정해 주세요.',
+      'done.ref': '예약번호',
+      'done.when': '일시',
+      'done.guests': '인원',
+      'done.under': '예약자',
+      'done.ics': '캘린더에 추가',
+      'done.call': '매장에 전화',
+      'done.cancel': '예약 취소',
+      'done.again': '다른 테이블 예약',
+      'done.confirmCancel': '{date} {time} 예약을 취소할까요?',
+      'done.cancelled': '취소되었습니다. 테이블이 다시 열렸습니다.',
+      'done.cancelTitle': '예약이 취소되었습니다',
+      'done.cancelSub': '따로 하실 일은 없습니다.',
+      'done.cancelFailed': '여기서는 취소하지 못했습니다. 전화 주세요.',
+      'done.icsSaved': '캘린더 파일을 저장했습니다.',
+      'done.icsDeclined': '다운로드가 취소되었습니다.',
+      'done.icsUnavailable': '여기서는 파일을 저장할 수 없습니다.',
+      'done.guestsN': '{n}명',
+      'done.guest1': '1명',
+
+      'look.title': '예약 조회',
+      'look.sub': '예약번호와 예약 시 사용한 연락처를 입력해 주세요.',
+      'look.ref': '예약번호',
+      'look.find': '조회',
+      'look.back': '예약으로 돌아가기',
+      'look.both': '예약번호와 연락처를 모두 입력해 주세요.',
+      'look.none': '일치하는 예약이 없습니다.',
+      'look.already': '이미 취소된 예약입니다.',
+      'look.yours': '고객님의 예약',
+
+      'find.kicker': '오시는 길',
+      'find.title': 'Zwycięska 45, 브로츠와프',
+      'find.sub': 'Award Business Park 3호. 순환도로에서 10분, 건물 앞 주차 가능.',
+      'find.address': '주소',
+      'find.phone': '전화',
+      'find.online': '웹사이트',
+      'find.hours': '영업시간',
+      'find.today': ' · 오늘',
+      'find.mon': '월요일', 'find.tue': '화요일', 'find.wed': '수요일',
+      'find.thu': '목요일', 'find.fri': '금요일', 'find.sat': '토요일', 'find.sun': '일요일',
+      'find.tag1': '휠체어 접근 가능',
+      'find.tag2': 'LGBTQ+ 프렌들리',
+      'find.tag3': '카드 결제',
+      'find.tag4': '포장 가능',
+      'find.mapSub': '레스토랑 · 40–160 zł · 22:00까지',
+      'find.mapGo': '지도에서 열기 →',
+
+      'foot.tag': '진짜에 대한 정직한 애정.',
+      'foot.legal': '© {year} Meatologia · Zwycięska 45/lok. 3, 53-033 Wrocław · 666 854 218',
+
+      'err.name_short': '테이블을 잡을 성함을 알려주세요.',
+      'err.name_long': '이름이 너무 깁니다.',
+      'err.phone': '변동이 있을 때 연락드릴 전화번호가 필요합니다.',
+      'err.email': '이메일 주소가 올바르지 않습니다.',
+      'err.notes_long': '메모는 400자 이내로 적어주세요.',
+      'err.party': '1명부터 {max}명까지 예약할 수 있습니다. 더 큰 단체는 전화 주세요.',
+      'err.no_date': '날짜와 시간을 골라주세요.',
+      'err.no_time': '시간을 골라주세요.',
+      'err.off_hours': '12:00부터 21:00까지 예약을 받습니다.',
+      'err.too_soon': '지난 시간입니다. 한 시간 이내 예약은 전화 주세요.',
+      'err.too_far': '{days}일 뒤까지 예약을 받습니다.',
+      'err.seats_left': '{time}에는 {n}자리만 남았습니다.',
+      'err.seats_left_1': '{time}에는 1자리만 남았습니다.',
+      'err.full': '이 시간은 예약이 마감되었습니다.'
+    }
+  };
+
+  /* ── Lookup ─────────────────────────────────────────────────────── */
+
+  var current = 'en';
+
+  function has(code) { return Object.prototype.hasOwnProperty.call(strings, code); }
+
+  function setLanguage(code) {
+    current = has(code) ? code : 'en';
+    return current;
+  }
+
+  function language() { return current; }
+
+  function localeOf(code) {
+    var lang = languages.filter(function (l) { return l.code === (code || current); })[0];
+    return lang ? lang.locale : 'en-GB';
+  }
+
+  /** t('err.party', {max: 12}) — falls back to English, then to the key. */
+  function t(key, vars) {
+    var table = strings[current] || strings.en;
+    var text = table[key];
+    if (text == null) text = strings.en[key];
+    if (text == null) return key;
+
+    if (vars) {
+      Object.keys(vars).forEach(function (name) {
+        text = text.split('{' + name + '}').join(String(vars[name]));
+      });
+    }
+    return text;
+  }
+
+  /** The best of the browser's preferences that we actually speak. */
+  function preferred(list) {
+    var wanted = list || (typeof navigator !== 'undefined'
+      ? (navigator.languages || [navigator.language || 'en'])
+      : ['en']);
+
+    for (var i = 0; i < wanted.length; i++) {
+      var base = String(wanted[i] || '').toLowerCase().split('-')[0];
+      if (has(base)) return base;
+    }
+    return 'en';
+  }
+
+  return {
+    languages: languages,
+    strings: strings,
+    t: t,
+    setLanguage: setLanguage,
+    language: language,
+    localeOf: localeOf,
+    preferred: preferred
+  };
+}));
+</script>
+<script>
+/**
+ * The menu, translated.
+ *
+ * Keyed by dish id, then language. Dish *names* stay as printed on the board
+ * — "Tatar 'Nduja" is what the kitchen calls it in any language — so only the
+ * descriptive lines are translated. The Polish ingredient lists follow the
+ * board verbatim.
+ *
+ * Anything missing falls back to the English in data.js, so a half-finished
+ * language degrades one dish at a time instead of breaking the page.
+ *
+ * Adding a language: add its block to each dish and a line to `languages` in
+ * i18n.js. The completeness test in test/booking.test.js reports what is missing.
+ */
+(function (root, factory) {
+  var api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else root.MEATOLOGIA_MENU_I18N = api;
+}(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  return {
+    /* ── Startery ─────────────────────────────────────────────────── */
+    'tatar-klasyk': {
+      pl: { flag: 'Klasyk', weight: 'Polędwica argentyńska', cook: 'Surowy, siekany nożem', pair: 'Zimna wódka',
+        short: 'Polędwica argentyńska, marynowane podgrzybki, piklowany ogórek i żółtko.',
+        blurb: 'Ten, od którego się zaczyna. Polędwica argentyńska siekana nożem, marynowane podgrzybki, piklowany ogórek, cebula, żółtko i worcestershire — podane z pieczywem.',
+        parts: ['Polędwica argentyńska', 'Marynowane podgrzybki', 'Piklowany ogórek', 'Cebula', 'Oliwa', 'Żółtko', 'Worcestershire', 'Brown mustard', 'Szczypiorek', 'Pieczywo'] },
+      ko: { flag: '클래식', weight: '아르헨티나 안심', cook: '생고기, 칼로 다짐', pair: '차가운 보드카',
+        short: '아르헨티나 안심, 절인 버섯, 오이피클, 노른자.',
+        blurb: '가장 먼저 주문하게 되는 메뉴입니다. 칼로 다진 아르헨티나 안심에 절인 그물버섯, 오이피클, 양파, 노른자, 우스터소스를 더해 빵과 함께 냅니다.',
+        parts: ['아르헨티나 안심', '절인 그물버섯', '오이피클', '양파', '올리브유', '노른자', '우스터소스', '브라운 머스터드', '차이브', '빵'] }
+    },
+    'tatar-nduja': {
+      pl: { flag: 'Ostry', weight: 'Polędwica argentyńska', cook: 'Surowy, siekany nożem', pair: 'Harpagan APA',
+        short: "Tatar z 'ndują i piri piri, z chrustem z ziemniaka.",
+        blurb: "Klasyk z podkręconą ostrością: kalabryjska 'nduja i piri piri wmieszane w polędwicę, a na wierzchu chrust z ziemniaka.",
+        parts: ['Polędwica argentyńska', "'Nduja", 'Piklowany ogórek', 'Piri piri', 'Worcestershire', 'Brown mustard', 'Chrust z ziemniaka', 'Szczypiorek', 'Pieczywo'] },
+      ko: { flag: '매운맛', weight: '아르헨티나 안심', cook: '생고기, 칼로 다짐', pair: 'Harpagan APA',
+        short: "'은두야'와 피리피리로 맛을 낸 타르타르, 감자칩을 올립니다.",
+        blurb: "클래식에 매운맛을 더했습니다. 칼라브리아식 '은두야'와 피리피리를 안심에 섞고 바삭한 감자칩을 올립니다.",
+        parts: ['아르헨티나 안심', "'은두야'", '오이피클', '피리피리', '우스터소스', '브라운 머스터드', '감자칩', '차이브', '빵'] }
+    },
+    'tatar-truflowy': {
+      pl: { flag: 'Truflowy', weight: 'Polędwica argentyńska', cook: 'Surowy, siekany nożem', pair: 'Rioja, kieliszek',
+        short: 'Aioli truflowe, oliwa truflowa, kapary i piklowana cebula.',
+        blurb: 'Dla tych, którzy uważają, że tatar powinien pachnieć runem leśnym. Aioli i oliwa truflowa, a do tego siekane kapary i piklowana cebula, które to przełamują.',
+        parts: ['Polędwica argentyńska', 'Piklowany ogórek', 'Piklowana cebula', 'Siekane kapary', 'Brown mustard', 'Żółtko', 'Szczypiorek', 'Aioli truflowe', 'Oliwa truflowa', 'Pieczywo'] },
+      ko: { flag: '트러플', weight: '아르헨티나 안심', cook: '생고기, 칼로 다짐', pair: '리오하 (글라스)',
+        short: '트러플 아이올리와 트러플 오일, 케이퍼와 절인 양파.',
+        blurb: '타르타르에서 숲 향이 나야 한다고 믿는 분들을 위한 메뉴. 트러플 아이올리와 오일에 다진 케이퍼와 절인 양파로 균형을 잡습니다.',
+        parts: ['아르헨티나 안심', '오이피클', '절인 양파', '다진 케이퍼', '브라운 머스터드', '노른자', '차이브', '트러플 아이올리', '트러플 오일', '빵'] }
+    },
+    'tatary-set': {
+      pl: { flag: 'Do dzielenia', weight: 'Trzy tatary', cook: 'Surowy, siekany nożem', pair: 'Zimna wódka',
+        short: 'Trzy dowolne tatary z karty, podane na chlebie.',
+        blurb: 'Wybierasz trzy dowolne tatary z menu i przychodzą razem, podane na chlebie — najprostszy sposób, żeby rozstrzygnąć, który jest naprawdę najlepszy.',
+        parts: ['Trzy dowolne tatary', 'Podane na chlebie'] },
+      ko: { flag: '함께 나누기', weight: '타르타르 3종', cook: '생고기, 칼로 다짐', pair: '차가운 보드카',
+        short: '메뉴의 타르타르 중 원하는 세 가지를 빵 위에 올려 드립니다.',
+        blurb: '메뉴에 있는 타르타르 중 세 가지를 골라 한 번에 내드립니다. 어느 것이 제일 맛있는지 정하는 가장 확실한 방법입니다.',
+        parts: ['원하는 타르타르 3종', '빵과 함께'] }
+    },
+    'zupa-dnia': {
+      pl: { flag: 'Zupa dnia', weight: '', cook: '', pair: 'Zapytaj obsługi',
+        short: 'Zapytaj obsługi, co dzisiaj serwujemy.',
+        blurb: 'Zmienia się zależnie od tego, co przyszło rano. Zapytaj obsługi, co dziś jest w garnku.',
+        parts: ['Codziennie inna'] },
+      ko: { flag: '오늘의 수프', weight: '', cook: '', pair: '직원에게 문의',
+        short: '오늘의 수프는 직원에게 물어봐 주세요.',
+        blurb: '그날 아침 들어온 재료에 따라 달라집니다. 오늘 무엇이 준비됐는지 직원에게 물어보세요.',
+        parts: ['매일 변경'] }
+    },
+
+    /* ── Street food ──────────────────────────────────────────────── */
+    'classic-burger': {
+      pl: { flag: 'Od tego się zaczyna', weight: 'Wołowina', cook: 'Medium', pair: "Harpagan Let's Meat IPA",
+        short: 'Wołowina, sałata lodowa, pomidor, cebula i ogórek w maślanej bułce.',
+        blurb: 'Żadnych sztuczek. Wołowina, chrupiąca sałata lodowa, pomidor, cebula, piklowany ogórek, mayo i ketchup w maślanej bułce — burger, do którego porównuje się resztę karty.',
+        parts: ['Wołowina', 'Sałata lodowa', 'Pomidor', 'Cebula', 'Piklowany ogórek', 'Mayo', 'Ketchup', 'Bułka maślana'] },
+      ko: { flag: '기본', weight: '소고기', cook: '미디엄', pair: "Harpagan Let's Meat IPA",
+        short: '소고기, 양상추, 토마토, 양파, 피클을 버터 번에.',
+        blurb: '군더더기가 없습니다. 소고기, 아삭한 양상추, 토마토, 양파, 오이피클, 마요와 케첩을 버터 번에 넣었습니다. 나머지 메뉴의 기준이 되는 버거입니다.',
+        parts: ['소고기', '양상추', '토마토', '양파', '오이피클', '마요', '케첩', '버터 번'] }
+    },
+    'cheese-bacon': {
+      pl: { flag: 'Bestseller', weight: '2 × wołowina', cook: 'Smash', pair: "Harpagan Let's Meat IPA",
+        short: 'Dwa smashe, podwójny cheddar, bekon i grillowana cebula.',
+        blurb: 'Dwa kotlety wbite w rozgrzaną płytę na koronkową skorupkę, podwójny cheddar, bekon, grillowana cebula i hot mayo.',
+        parts: ['2 × wołowina', '2 × cheddar', 'Bekon', 'Sałata lodowa', 'Grillowana cebula', 'Hot mayo', 'Bułka maślana'] },
+      ko: { flag: '베스트셀러', weight: '소고기 ×2', cook: '스매시', pair: "Harpagan Let's Meat IPA",
+        short: '스매시 패티 두 장, 더블 체다, 베이컨, 구운 양파.',
+        blurb: '달군 철판에 눌러 구워 레이스처럼 바삭한 겉면을 만들고, 더블 체다와 베이컨, 구운 양파, 핫 마요를 올립니다.',
+        parts: ['소고기 ×2', '체다 ×2', '베이컨', '양상추', '구운 양파', '핫 마요', '버터 번'] }
+    },
+    'flooded': {
+      pl: { flag: 'Wybór szefa', weight: '2 × wołowina', cook: 'Smash', pair: "Harpagan Let's Meat IPA",
+        short: 'Cheese & Bacon zalany sosem Hudson, z frytkami.',
+        blurb: 'Cheese & Bacon smash pod strumieniem sosu Hudson, z frytkami obok. To właśnie kuchnia wybiera, gdy pytasz, co brać.',
+        parts: ['2 × wołowina', '2 × cheddar', 'Bekon', 'Sałata lodowa', 'Grillowana cebula', 'Hot mayo', 'Sos Hudson', 'Frytki', 'Bułka maślana'] },
+      ko: { flag: '셰프 추천', weight: '소고기 ×2', cook: '스매시', pair: "Harpagan Let's Meat IPA",
+        short: 'Cheese & Bacon에 허드슨 소스를 부어 감자튀김과 함께.',
+        blurb: 'Cheese & Bacon 스매시에 허드슨 소스를 붓고 감자튀김을 곁들입니다. 무엇을 먹을지 물으면 주방이 고르는 메뉴입니다.',
+        parts: ['소고기 ×2', '체다 ×2', '베이컨', '양상추', '구운 양파', '핫 마요', '허드슨 소스', '감자튀김', '버터 번'] }
+    },
+    'double-trouble': {
+      pl: { flag: 'Pastrami i wołowina', weight: 'Wołowina + pastrami', cook: 'Medium', pair: 'Harpagan Pils',
+        short: 'Wołowina i domowe pastrami razem, z kapustą kiszoną i musztardą.',
+        blurb: 'Burger i kanapka z pastrami kłócące się w jednej bułce — i obie wygrywają. Domowe pastrami na wołowinie, Sauerkraut, cheddar i brown mustard, żeby to przełamać.',
+        parts: ['Wołowina', 'Pastrami Meatologia', 'Cheddar', 'Sauerkraut', 'Brown mustard', 'Piklowany ogórek', 'Piklowana cebula', 'Mayo', 'Bułka maślana'] },
+      ko: { flag: '파스트라미 + 소고기', weight: '소고기 + 파스트라미', cook: '미디엄', pair: 'Harpagan Pils',
+        short: '소고기와 수제 파스트라미를 함께, 사우어크라우트와 머스터드로 마무리.',
+        blurb: '버거와 파스트라미 샌드위치가 번 하나에서 다투는데 둘 다 이깁니다. 소고기 위에 수제 파스트라미, 사우어크라우트, 체다, 브라운 머스터드를 올립니다.',
+        parts: ['소고기', 'Meatologia 파스트라미', '체다', '사우어크라우트', '브라운 머스터드', '오이피클', '절인 양파', '마요', '버터 번'] }
+    },
+    'wagyu-smash': {
+      pl: { flag: 'Premium', weight: 'Wołowina wagyu', cook: 'Smash', pair: 'Rioja, kieliszek',
+        short: 'Wołowina wagyu, cheddar, cebula cukrowa i ponzu mayo.',
+        blurb: 'Marmurkowe wagyu wytapia się na płycie i samo doprawia bułkę. Cebula cukrowa, piklowany ogórek i ponzu mayo — nic głośniejszego, co mogłoby je zagłuszyć.',
+        parts: ['Wołowina Wagyu', 'Cheddar', 'Cebula cukrowa', 'Ogórek piklowany', 'Ponzu mayo', 'Bułka maślana'] },
+      ko: { flag: '프리미엄', weight: '와규', cook: '스매시', pair: '리오하 (글라스)',
+        short: '와규, 체다, 단양파, 폰즈 마요.',
+        blurb: '마블링이 철판에서 녹아 번까지 간을 맞춥니다. 단양파와 오이피클, 폰즈 마요만 곁들여 고기 맛을 덮지 않습니다.',
+        parts: ['와규', '체다', '단양파', '오이피클', '폰즈 마요', '버터 번'] }
+    },
+    'pastrami': {
+      pl: { flag: 'Dopieszczane latami', weight: 'Pastrami Meatologia', cook: 'Wędzone u nas', pair: 'Harpagan Pils',
+        short: 'Domowe pastrami, Sauerkraut i cheddar na pullman bread.',
+        blurb: 'Pastrami, które dopieszczamy od lat: peklowane i wędzone u nas, krojone grubo, z Sauerkrautem, cheddarem, szpinakiem baby i dwiema musztardami na pullman bread.',
+        parts: ['Pastrami Meatologia', 'Sauerkraut', 'Cheddar', 'Piklowany ogórek', 'Szpinak baby', 'Hot mayo', 'Brown mustard', 'Pullman bread'] },
+      ko: { flag: '수년간 다듬은 맛', weight: 'Meatologia 파스트라미', cook: '매장 훈연', pair: 'Harpagan Pils',
+        short: '수제 파스트라미, 사우어크라우트, 체다를 풀먼 브레드에.',
+        blurb: '수년간 다듬어 온 파스트라미입니다. 직접 염지·훈연해 두껍게 썰고 사우어크라우트, 체다, 베이비 시금치와 두 가지 머스터드를 풀먼 브레드에 올립니다.',
+        parts: ['Meatologia 파스트라미', '사우어크라우트', '체다', '오이피클', '베이비 시금치', '핫 마요', '브라운 머스터드', '풀먼 브레드'] }
+    },
+
+    /* ── Steki ────────────────────────────────────────────────────── */
+    'arg-ny': {
+      pl: { flag: 'Argentyna', weight: '250 g', cook: 'Do wyboru', pair: 'Malbec, Mendoza',
+        short: 'Rasa Black Angus, sezonowanie na mokro min. 8 tygodni.',
+        blurb: 'Argentyński Black Angus sezonowany na mokro minimum osiem tygodni. Zwarte włókna, tłuszczowy brzeg mocno karmelizujący się na węglu i dość charakteru na ciężkie czerwone wino. W cenie dwa dodatki.',
+        parts: ['Black Angus', 'Sezonowanie na mokro min. 8 tygodni', 'Dwa dodatki w cenie', 'Sos do wyboru'] },
+      ko: { flag: '아르헨티나', weight: '250g', cook: '원하시는 굽기로', pair: '멘도사 말벡',
+        short: '블랙 앵거스, 최소 8주 습식 숙성.',
+        blurb: '아르헨티나 블랙 앵거스를 최소 8주 습식 숙성했습니다. 결이 단단하고 지방 가장자리가 숯불에서 진하게 캐러멜화되며 묵직한 레드 와인에도 밀리지 않습니다. 사이드 2종 포함.',
+        parts: ['블랙 앵거스', '최소 8주 습식 숙성', '사이드 2종 포함', '소스 선택'] }
+    },
+    'arg-ribeye': {
+      pl: { flag: 'Argentyna', weight: '250 g', cook: 'Do wyboru', pair: 'Malbec, Mendoza',
+        short: 'Ten wyrozumiały — marmurek, który sam się doprawia.',
+        blurb: 'Tłuszcz śródmięśniowy wytapia się w trakcie grillowania, więc stek zostaje soczysty nawet gdy zdejmiemy go chwilę za późno. Jeśli boisz się zamawiać steki, zamów ten. W cenie dwa dodatki.',
+        parts: ['Black Angus', 'Sezonowanie na mokro min. 8 tygodni', 'Dwa dodatki w cenie', 'Sos do wyboru'] },
+      ko: { flag: '아르헨티나', weight: '250g', cook: '원하시는 굽기로', pair: '멘도사 말벡',
+        short: '실패가 적은 부위 — 마블링이 알아서 간을 맞춥니다.',
+        blurb: '근내지방이 녹아들어 조금 더 익혀도 육즙이 남습니다. 스테이크 주문이 부담스럽다면 이걸 고르세요. 사이드 2종 포함.',
+        parts: ['블랙 앵거스', '최소 8주 습식 숙성', '사이드 2종 포함', '소스 선택'] }
+    },
+    'arg-filet': {
+      pl: { flag: 'Argentyna', weight: '200 g', cook: 'Prosimy o medium rare', pair: 'Barolo',
+        short: 'Krojony z serca polędwicy. Nie ma tu czego gryźć.',
+        blurb: 'Zero ścięgien, prawie zero tłuszczu, sama struktura. Wykańczamy go i wysyłamy, zanim ktokolwiek zdąży coś dołożyć. W cenie dwa dodatki.',
+        parts: ['Polędwica Black Angus', 'Sezonowanie na mokro min. 8 tygodni', 'Dwa dodatki w cenie', 'Sos do wyboru'] },
+      ko: { flag: '아르헨티나', weight: '200g', cook: '미디엄 레어 권장', pair: '바롤로',
+        short: '안심 중심부만. 씹을 것이 없습니다.',
+        blurb: '힘줄도 지방도 거의 없고 질감만 남습니다. 다른 것이 더해지기 전에 바로 내보냅니다. 사이드 2종 포함.',
+        parts: ['블랙 앵거스 안심', '최소 8주 습식 숙성', '사이드 2종 포함', '소스 선택'] }
+    },
+    'usa-ny': {
+      pl: { flag: 'USA · USDA Prime', weight: '100 g', cook: 'Do wyboru', pair: 'Cabernet z Napa',
+        short: 'Black Angus klasy USDA Prime z farmy Creekstone, Arkansas City.',
+        blurb: 'Wykańczanie kukurydzą daje gęstszy marmurek i słodszy, maślany profil niż kawałki argentyńskie. Klasę Prime dostaje tylko niewielka część amerykańskiej wołowiny. Cena za 100 g.',
+        parts: ['USDA Prime', 'Farma Creekstone, Arkansas City', 'Sezonowanie na mokro min. 8 tygodni', 'Dwa dodatki w cenie'] },
+      ko: { flag: '미국 · USDA 프라임', weight: '100g', cook: '원하시는 굽기로', pair: '나파 카베르네',
+        short: '아칸소시티 Creekstone 농장의 USDA 프라임 블랙 앵거스.',
+        blurb: '곡물 비육으로 아르헨티나 부위보다 마블링이 촘촘하고 버터 같은 단맛이 강합니다. 미국산 소고기 중 프라임 등급 비율은 아주 낮습니다. 100g 단위 가격입니다.',
+        parts: ['USDA 프라임', 'Creekstone 농장', '최소 8주 습식 숙성', '사이드 2종 포함'] }
+    },
+    'usa-ribeye': {
+      pl: { flag: 'USA · USDA Prime', weight: '100 g', cook: 'Do wyboru', pair: 'Cabernet z Napa',
+        short: 'Rib Eye klasy Prime — najbogatszy kawałek z części amerykańskiej.',
+        blurb: 'Marmurek klasy Prime w najhojniejszym kawałku, jaki mamy. Na tyle bogaty, że 200 g zwykle w zupełności wystarcza. Cena za 100 g, dwa dodatki w cenie.',
+        parts: ['USDA Prime', 'Farma Creekstone, Arkansas City', 'Sezonowanie na mokro min. 8 tygodni', 'Dwa dodatki w cenie'] },
+      ko: { flag: '미국 · USDA 프라임', weight: '100g', cook: '원하시는 굽기로', pair: '나파 카베르네',
+        short: '프라임 등급 립아이 — 미국 부위 중 가장 진한 맛.',
+        blurb: '가장 풍부한 부위에 프라임 등급 마블링이 더해졌습니다. 진해서 보통 200g이면 충분합니다. 100g 단위, 사이드 2종 포함.',
+        parts: ['USDA 프라임', 'Creekstone 농장', '최소 8주 습식 숙성', '사이드 2종 포함'] }
+    },
+    'usa-filet': {
+      pl: { flag: 'USA · USDA Prime', weight: '100 g', cook: 'Prosimy o medium rare', pair: 'Cabernet z Napa',
+        short: 'Polędwica Prime — najdelikatniejszy kawałek po amerykańsku.',
+        blurb: 'Polędwica klasy Prime: struktura argentyńskiego fileta ze słodszym, kukurydzianym wykończeniem. Cena za 100 g, dwa dodatki w cenie.',
+        parts: ['Polędwica USDA Prime', 'Farma Creekstone, Arkansas City', 'Sezonowanie na mokro min. 8 tygodni', 'Dwa dodatki w cenie'] },
+      ko: { flag: '미국 · USDA 프라임', weight: '100g', cook: '미디엄 레어 권장', pair: '나파 카베르네',
+        short: '프라임 안심 — 미국식으로 가장 부드러운 부위.',
+        blurb: '프라임 등급 안심입니다. 아르헨티나 필레의 질감에 곡물 비육 특유의 단맛이 더해집니다. 100g 단위, 사이드 2종 포함.',
+        parts: ['USDA 프라임 안심', 'Creekstone 농장', '최소 8주 습식 숙성', '사이드 2종 포함'] }
+    },
+    'wagyu-striploin': {
+      pl: { flag: 'Japonia · Wagyu A5', weight: '100 g', cook: 'Medium rare', pair: 'Zimne sake',
+        short: 'Rasa Black Wagyu, klasa A5, prefektura Kagoshima.',
+        blurb: 'Marmurek tak gęsty, że mięso wygląda różowo, nie czerwono. Podajemy w porcjach 100 g celowo — powyżej tego przestaje to być kolacja, a zaczyna być wyzwaniem.',
+        parts: ['Black Wagyu A5', 'Prefektura Kagoshima', 'Dwa dodatki w cenie', 'Sos do wyboru'] },
+      ko: { flag: '일본 · 와규 A5', weight: '100g', cook: '미디엄 레어', pair: '차가운 사케',
+        short: '가고시마현산 블랙 와규 A5 등급.',
+        blurb: '마블링이 촘촘해 고기가 붉기보다 분홍빛으로 보입니다. 100g만 내는 것은 의도된 것으로, 그 이상이면 식사가 아니라 도전이 됩니다.',
+        parts: ['블랙 와규 A5', '가고시마현', '사이드 2종 포함', '소스 선택'] }
+    },
+    'wagyu-cuberoll': {
+      pl: { flag: 'Japonia · Wagyu A5', weight: '100 g', cook: 'Medium rare', pair: 'Zimne sake',
+        short: 'Najmocniej marmurkowany kawałek wagyu A5, jaki mamy.',
+        blurb: 'Kawałek, przez który ludzie fotografują jedzenie. Tłuszcz wytapia się niemal w temperaturze pokojowej, więc potrzebuje sekund na ruszcie i niczego więcej.',
+        parts: ['Black Wagyu A5', 'Prefektura Kagoshima', 'Dwa dodatki w cenie', 'Sos do wyboru'] },
+      ko: { flag: '일본 · 와규 A5', weight: '100g', cook: '미디엄 레어', pair: '차가운 사케',
+        short: '보유한 A5 와규 중 마블링이 가장 촘촘한 부위.',
+        blurb: '사진을 찍게 만드는 부위입니다. 지방이 실온에 가까운 온도에서도 녹아 그릴에서 몇 초면 충분합니다.',
+        parts: ['블랙 와규 A5', '가고시마현', '사이드 2종 포함', '소스 선택'] }
+    },
+    'wagyu-tenderloin': {
+      pl: { flag: 'Japonia · Wagyu A5', weight: '100 g', cook: 'Medium rare', pair: 'Zimne sake',
+        short: 'Najkrótsza droga do „tego nie zapomnę".',
+        blurb: 'Najdroższa pozycja w karcie i jedyna, przy której poprosimy o odpuszczenie sosu. Krótko obsmażamy, kroimy w plastry, podajemy w kilka sekund.',
+        parts: ['Black Wagyu A5', 'Prefektura Kagoshima', 'Dwa dodatki w cenie', 'Sos do wyboru'] },
+      ko: { flag: '일본 · 와규 A5', weight: '100g', cook: '미디엄 레어', pair: '차가운 사케',
+        short: '"이건 못 잊겠다"까지 가는 가장 빠른 길.',
+        blurb: '메뉴에서 가장 비싸고, 유일하게 소스를 권하지 않는 메뉴입니다. 짧게 시어링해 썰어서 몇 초 안에 내갑니다.',
+        parts: ['블랙 와규 A5', '가고시마현', '사이드 2종 포함', '소스 선택'] }
+    },
+    'set-argentyna': {
+      pl: { flag: 'Na stół', weight: 'ok. 700 g', cook: 'Do wyboru', pair: 'Malbec, butelka',
+        short: 'Trzy steki argentyńskie — Filet Mignon, Rib Eye i New York.',
+        blurb: 'Około 700 g argentyńskiego Black Angusa w trzech kawałkach, z trzema dodatkami i trzema sosami. Dla stołu, który nie potrafi się dogadać.',
+        parts: ['Filet Mignon', 'Rib Eye', 'New York', 'Trzy dodatki', 'Trzy sosy'] },
+      ko: { flag: '테이블 공유', weight: '약 700g', cook: '원하시는 굽기로', pair: '말벡 (보틀)',
+        short: '아르헨티나 스테이크 3종 — 필레미뇽, 립아이, 뉴욕.',
+        blurb: '아르헨티나 블랙 앵거스 약 700g을 세 부위로 내고 사이드 3종과 소스 3종을 곁들입니다. 의견이 모이지 않는 테이블을 위한 구성입니다.',
+        parts: ['필레미뇽', '립아이', '뉴욕', '사이드 3종', '소스 3종'] }
+    },
+    'set-ribeye': {
+      pl: { flag: 'Trzy kraje', weight: 'ok. 750 g', cook: 'Do wyboru', pair: 'Malbec, butelka',
+        short: 'Ten sam kawałek z Argentyny, USA i Japonii, obok siebie.',
+        blurb: 'Około 750 g rib eye — argentyński, USDA Prime i wagyu A5 na jednej desce. Najprostszy sposób, żeby posmakować, czym te trzy kraje naprawdę się różnią.',
+        parts: ['Rib Eye · Argentyna', 'Rib Eye · USA Prime', 'Rib Eye · Wagyu A5', 'Trzy dodatki', 'Trzy sosy'] },
+      ko: { flag: '세 나라', weight: '약 750g', cook: '원하시는 굽기로', pair: '말벡 (보틀)',
+        short: '같은 부위를 아르헨티나·미국·일본으로 나란히.',
+        blurb: '립아이 약 750g을 아르헨티나, USDA 프라임, A5 와규로 한 접시에 냅니다. 세 나라의 차이를 가장 분명하게 느낄 수 있는 구성입니다.',
+        parts: ['립아이 · 아르헨티나', '립아이 · 미국 프라임', '립아이 · 와규 A5', '사이드 3종', '소스 3종'] }
+    },
+    'set-filet': {
+      pl: { flag: 'Trzy kraje', weight: 'ok. 600 g', cook: 'Prosimy o medium rare', pair: 'Barolo',
+        short: 'Polędwica z Argentyny, USA i Japonii na jednej desce.',
+        blurb: 'Około 600 g polędwicy z trzech krajów, z trzema dodatkami i trzema sosami. Najdroższy sposób na rozstrzygnięcie sporu i najbardziej przekonujący.',
+        parts: ['Filet Mignon · Argentyna', 'Filet Mignon · USA Prime', 'Tenderloin · Wagyu A5', 'Trzy dodatki', 'Trzy sosy'] },
+      ko: { flag: '세 나라', weight: '약 600g', cook: '미디엄 레어 권장', pair: '바롤로',
+        short: '아르헨티나·미국·일본 안심을 한 접시에.',
+        blurb: '세 산지의 안심 약 600g에 사이드 3종과 소스 3종을 곁들입니다. 논쟁을 끝내는 가장 비싸고 가장 확실한 방법입니다.',
+        parts: ['필레미뇽 · 아르헨티나', '필레미뇽 · 미국 프라임', '안심 · 와규 A5', '사이드 3종', '소스 3종'] }
+    },
+
+    /* ── Dania główne ─────────────────────────────────────────────── */
+    'zeberka': {
+      pl: { flag: 'Wolno pieczone', weight: 'Żeberka wieprzowe', cook: 'Wolnopieczone', pair: 'Harpagan Pils',
+        short: 'Wolnopieczone żeberka wieprzowe, BBQ glaze, coleslaw i frytki.',
+        blurb: 'Pieczone długo i w niskiej temperaturze, aż mięso samo odchodzi, potem glazurowane BBQ i mocno wykończone. Do tego coleslaw, frytki i sos do wyboru.',
+        parts: ['Wolnopieczone żeberka wieprzowe', 'BBQ glaze', 'Coleslaw', 'Frytki', 'Sos do wyboru'] },
+      ko: { flag: '저온 장시간', weight: '돼지갈비', cook: '저온 로스팅', pair: 'Harpagan Pils',
+        short: '저온에서 오래 구운 돼지갈비, BBQ 글레이즈, 코울슬로, 감자튀김.',
+        blurb: '고기가 뼈에서 떨어질 때까지 저온에서 오래 굽고 BBQ 글레이즈를 발라 마무리합니다. 코울슬로와 감자튀김, 원하는 소스를 곁들입니다.',
+        parts: ['저온 로스팅 돼지갈비', 'BBQ 글레이즈', '코울슬로', '감자튀김', '소스 선택'] }
+    },
+    'kaczka': {
+      pl: { flag: 'Konfitowana', weight: 'Noga z kaczki', cook: 'Konfitowana', pair: 'Rioja, kieliszek',
+        short: 'Konfitowana noga z kaczki, purée ziemniaczane i sałatka z pieczonego buraka.',
+        blurb: 'Noga z kaczki gotowana powoli we własnym tłuszczu, aż skóra się zarumieni, a mięso odchodzi od kości. Do tego purée ziemniaczane, sałatka z pieczonego buraka i sos balsamiczno-figowy.',
+        parts: ['Konfitowana noga z kaczki', 'Purée ziemniaczane', 'Sałatka z pieczonego buraka', 'Sos balsamiczno-figowy'] },
+      ko: { flag: '콩피', weight: '오리 다리', cook: '콩피', pair: '리오하 (글라스)',
+        short: '오리 다리 콩피, 감자 퓌레, 구운 비트 샐러드.',
+        blurb: '오리 다리를 자체 지방에 천천히 익혀 껍질은 바삭하고 살은 뼈에서 떨어집니다. 감자 퓌레, 구운 비트 샐러드, 발사믹 무화과 소스를 곁들입니다.',
+        parts: ['오리 다리 콩피', '감자 퓌레', '구운 비트 샐러드', '발사믹 무화과 소스'] }
+    },
+    'jagniece': {
+      pl: { flag: 'Jagnięcina z Nowej Zelandii', weight: 'Polędwiczki jagnięce', cook: 'Różowe', pair: 'Barolo',
+        short: 'Nowozelandzkie polędwiczki jagnięce, demi-glace i masło tymiankowe.',
+        blurb: 'Nowozelandzkie polędwiczki jagnięce podane różowe, z demi-glace, warzywami unagi, masłem tymiankowym i purée ziemniaczanym.',
+        parts: ['Nowozelandzkie polędwiczki jagnięce', 'Demi-glace', 'Warzywa unagi', 'Masło tymiankowe', 'Purée ziemniaczane'] },
+      ko: { flag: '뉴질랜드 양고기', weight: '양 안심', cook: '핑크', pair: '바롤로',
+        short: '뉴질랜드 양 안심, 데미글라스, 타임 버터.',
+        blurb: '뉴질랜드 양 안심을 핑크빛으로 구워 데미글라스, 우나기 채소, 타임 버터, 감자 퓌레와 함께 냅니다.',
+        parts: ['뉴질랜드 양 안심', '데미글라스', '우나기 채소', '타임 버터', '감자 퓌레'] }
+    },
+    'sandacz': {
+      pl: { flag: 'Z wody', weight: 'Filet z sandacza', cook: 'Smażony', pair: 'Domowa lemoniada',
+        short: 'Filet z sandacza, purée ziemniaczano-cytrynowe i dziki brokuł.',
+        blurb: 'Jedyne danie bez czerwonego mięsa, i broni się samo. Filet z sandacza z purée ziemniaczano-cytrynowym, dzikim brokułem i sosem śmietankowym z chorizo.',
+        parts: ['Filet z sandacza', 'Purée ziemniaczano-cytrynowe', 'Dziki brokuł', 'Sos śmietankowy z chorizo'] },
+      ko: { flag: '생선', weight: '민물농어 필레', cook: '팬 시어링', pair: '수제 레모네이드',
+        short: '민물농어 필레, 레몬 감자 퓌레, 브로콜리니.',
+        blurb: '붉은 고기가 들어가지 않는 유일한 메뉴이지만 존재감이 분명합니다. 민물농어 필레에 레몬 감자 퓌레, 브로콜리니, 초리조 크림 소스를 곁들입니다.',
+        parts: ['민물농어 필레', '레몬 감자 퓌레', '브로콜리니', '초리조 크림 소스'] }
+    },
+    'cezar': {
+      pl: { flag: 'Lżej', weight: 'Kurczak', cook: 'Grillowany', pair: 'Domowa lemoniada',
+        short: 'Grillowany kurczak, sałata rzymska, pomidorki cherry, pecorino i parmezan.',
+        blurb: 'Grillowane polędwiczki z kurczaka na sałacie rzymskiej, z pomidorkami cherry, dwoma twardymi serami, sosem Cezar i grzankami. To, co zamawia jedna osoba przy stole, która nie przyszła po wołowinę.',
+        parts: ['Grillowane polędwiczki z kurczaka', 'Sałata rzymska', 'Pomidorki cherry', 'Pecorino', 'Parmezan', 'Sos Cezar', 'Grzanki'] },
+      ko: { flag: '가볍게', weight: '닭고기', cook: '그릴', pair: '수제 레모네이드',
+        short: '구운 닭가슴살, 로메인, 방울토마토, 페코리노와 파르메산.',
+        blurb: '구운 닭안심을 로메인 위에 올리고 방울토마토, 두 가지 경성치즈, 시저 드레싱, 크루통을 더했습니다. 소고기를 먹으러 오지 않은 한 사람이 주문하는 메뉴입니다.',
+        parts: ['구운 닭안심', '로메인', '방울토마토', '페코리노', '파르메산', '시저 드레싱', '크루통'] }
+    },
+
+    /* ── Dla dzieci ───────────────────────────────────────────────── */
+    'burger-junior': {
+      pl: { flag: 'Dla dzieci', weight: 'Wołowina', cook: 'Well done', pair: 'Sok',
+        short: 'Wołowina, cheddar, sałata lodowa i ketchup, z frytkami.',
+        blurb: 'Classic w mniejszej i prostszej wersji: wołowina, cheddar, sałata lodowa, ketchup, bułka maślana i frytki.',
+        parts: ['Wołowina', 'Cheddar', 'Sałata lodowa', 'Ketchup', 'Bułka maślana', 'Frytki'] },
+      ko: { flag: '어린이', weight: '소고기', cook: '웰던', pair: '주스',
+        short: '소고기, 체다, 양상추, 케첩과 감자튀김.',
+        blurb: 'Classic을 작고 단순하게 만들었습니다. 소고기, 체다, 양상추, 케첩, 버터 번과 감자튀김.',
+        parts: ['소고기', '체다', '양상추', '케첩', '버터 번', '감자튀김'] }
+    },
+    'kurczak-junior': {
+      pl: { flag: 'Dla dzieci', weight: 'Kurczak', cook: 'Grillowany', pair: 'Sok',
+        short: 'Grillowane polędwiczki z kurczaka, sałata rzymska z winegretem, frytki.',
+        blurb: 'Grillowane polędwiczki z kurczaka z sałatą rzymską w lekkim winegrecie, frytkami i ketchupem.',
+        parts: ['Grillowane polędwiczki z kurczaka', 'Sałata rzymska z winegretem', 'Frytki', 'Ketchup'] },
+      ko: { flag: '어린이', weight: '닭고기', cook: '그릴', pair: '주스',
+        short: '구운 닭안심, 비네그레트 로메인, 감자튀김.',
+        blurb: '구운 닭안심에 가벼운 비네그레트를 두른 로메인, 감자튀김과 케첩을 곁들입니다.',
+        parts: ['구운 닭안심', '비네그레트 로메인', '감자튀김', '케첩'] }
+    },
+    'stek-junior': {
+      pl: { flag: 'Dla dzieci', weight: '100 g', cook: 'Do wyboru', pair: 'Sok',
+        short: '100 g polędwicy argentyńskiej, sałata rzymska i frytki.',
+        blurb: 'Prawdziwy stek w dziecięcej porcji: 100 g polędwicy argentyńskiej z sałatą rzymską w winegrecie, frytkami i ketchupem.',
+        parts: ['Polędwica argentyńska 100 g', 'Sałata rzymska z winegretem', 'Frytki', 'Ketchup'] },
+      ko: { flag: '어린이', weight: '100g', cook: '원하시는 굽기로', pair: '주스',
+        short: '아르헨티나 안심 100g, 로메인, 감자튀김.',
+        blurb: '아이 몫으로 나오는 진짜 스테이크입니다. 아르헨티나 안심 100g에 비네그레트 로메인, 감자튀김, 케첩을 곁들입니다.',
+        parts: ['아르헨티나 안심 100g', '비네그레트 로메인', '감자튀김', '케첩'] }
+    },
+
+    /* ── Dodatki ──────────────────────────────────────────────────── */
+    'dodatek': {
+      pl: { flag: 'Dowolny dodatek', weight: 'Jedna porcja', cook: '', pair: '',
+        short: 'Frytki, bataty, purée, coleslaw, maślany szpinak, warzywa.',
+        blurb: 'Dowolny z dodatków: frytki, bataty, purée ziemniaczane, coleslaw, maślany szpinak, sałata winegret z orzechami, grillowane warzywa albo fasolka szparagowa z dzikim brokułem. Do steków dwa z nich są w cenie.',
+        parts: ['Frytki', 'Bataty', 'Purée ziemniaczane', 'Coleslaw', 'Maślany szpinak', 'Sałata winegret z orzechami', 'Grillowane warzywa', 'Fasolka szparagowa i dziki brokuł'] },
+      ko: { flag: '사이드 선택', weight: '1인분', cook: '', pair: '',
+        short: '감자튀김, 고구마, 퓌레, 코울슬로, 버터 시금치, 채소.',
+        blurb: '감자튀김, 고구마튀김, 감자 퓌레, 코울슬로, 버터 시금치, 호두 비네그레트 샐러드, 구운 채소, 그린빈과 브로콜리니 중 하나를 고르실 수 있습니다. 스테이크에는 두 가지가 포함됩니다.',
+        parts: ['감자튀김', '고구마튀김', '감자 퓌레', '코울슬로', '버터 시금치', '호두 비네그레트 샐러드', '구운 채소', '그린빈과 브로콜리니'] }
+    },
+    'sos': {
+      pl: { flag: 'Dowolny sos', weight: 'Jedna porcja', cook: '', pair: '',
+        short: 'Chimichurri, BBQ, hot mayo, spicy, pieprzowy, brown mustard, Hudson.',
+        blurb: 'Dowolny z naszych sosów. Chimichurri do steków, Hudson do wszystkiego, co ma być zalane, hot mayo do reszty.',
+        parts: ['Chimichurri', 'BBQ', 'Hot mayo', 'Spicy', 'Pieprzowy', 'Brown mustard', 'Hudson'] },
+      ko: { flag: '소스 선택', weight: '1인분', cook: '', pair: '',
+        short: '치미추리, BBQ, 핫 마요, 스파이시, 후추, 브라운 머스터드, 허드슨.',
+        blurb: '하우스 소스 중 하나를 고르실 수 있습니다. 스테이크에는 치미추리, 소스를 부어 먹고 싶다면 허드슨, 나머지에는 핫 마요를 권합니다.',
+        parts: ['치미추리', 'BBQ', '핫 마요', '스파이시', '후추', '브라운 머스터드', '허드슨'] }
+    },
+
+    /* ── Desery ───────────────────────────────────────────────────── */
+    'brulee': {
+      pl: { flag: 'Deser', weight: '', cook: 'Wypalane na zamówienie', pair: 'Espresso',
+        short: 'Wypalane na zamówienie, więc na stole jeszcze pracuje.',
+        blurb: 'Jedyny deser w karcie, co mówi wszystko o tym, jak poważnie go traktujemy. Wypalany w chwili wydania; pod spodem zimny, gęsty krem.',
+        parts: ['Śmietanka', 'Wanilia', 'Żółtko', 'Palony cukier'] },
+      ko: { flag: '디저트', weight: '', cook: '주문 후 토치', pair: '에스프레소',
+        short: '주문 후 토치로 태워 테이블에서도 소리가 납니다.',
+        blurb: '메뉴에 있는 유일한 디저트라는 점이 이 메뉴의 위상을 말해 줍니다. 내가기 직전에 설탕을 태우고, 아래에는 차갑고 진한 크림이 있습니다.',
+        parts: ['생크림', '바닐라', '노른자', '태운 설탕'] }
+    },
+
+    /* ── Napoje ───────────────────────────────────────────────────── */
+    'lets-meat-ipa': {
+      pl: { flag: 'Nasza etykieta', weight: '500 ml', cook: 'American IPA', pair: 'Do wszystkiego z tej karty',
+        short: 'IPA warzone dla nas przez Harpagana, pod naszą własną etykietą.',
+        blurb: 'Żywiczna goryczka i cytrusowy chmiel — dokładnie to, czego potrzeba, żeby przełamać tłustego burgera. Warzone w małych partiach wyłącznie dla nas.',
+        parts: ['Warzone przez Harpagana', 'Nasza własna etykieta', '500 ml'] },
+      ko: { flag: '자체 라벨', weight: '500ml', cook: '아메리칸 IPA', pair: '이 페이지의 모든 메뉴',
+        short: 'Harpagan이 우리를 위해 자체 라벨로 만드는 IPA.',
+        blurb: '수지 같은 쓴맛과 시트러스 홉이 기름진 버거를 정확히 받쳐줍니다. 오직 우리를 위해 소량만 양조합니다.',
+        parts: ['Harpagan 양조', '자체 라벨', '500ml'] }
+    },
+    'krafty': {
+      pl: { flag: 'Pięć na karcie', weight: '500 ml', cook: '', pair: 'Do steków',
+        short: "Pils, Hefeweizen, APA, Mangoweizen i Let's Meat IPA.",
+        blurb: 'Pięć kraftów Harpagana po 21 zł i cztery bezalkoholowe po 19 zł — w tym IPA, wersja tropikalna i cytrusowa, plus Fruited Berliner Weisse (malina i wiśnia) od 4 Ścian.',
+        parts: ['Pils', 'Hefeweizen', 'APA', 'Mangoweizen', "Let's Meat IPA", 'Bezalkoholowe od 19 zł'] },
+      ko: { flag: '보드에 다섯 종', weight: '500ml', cook: '', pair: '스테이크와 함께',
+        short: "필스, 헤페바이젠, APA, 망고바이젠, Let's Meat IPA.",
+        blurb: 'Harpagan 크래프트 맥주 다섯 종이 21즈워티, 무알코올 네 종이 19즈워티입니다. IPA와 트로피컬·시트러스 버전, 4 Ściany의 라즈베리·체리 베를리너 바이세도 있습니다.',
+        parts: ['필스', '헤페바이젠', 'APA', '망고바이젠', "Let's Meat IPA", '무알코올 19즈워티부터'] }
+    },
+    'lemoniada': {
+      pl: { flag: 'Bez alkoholu', weight: '400 ml', cook: 'Robiona u nas', pair: 'Do ostrych burgerów',
+        short: 'Robiona u nas i właściwa odpowiedź na wszystko, co ostre.',
+        blurb: 'Robiona na miejscu i podawana zimna w szklance 400 ml. Woda filtrowana, gazowana lub nie, jest gratis i bez limitu, jeśli wolisz.',
+        parts: ['Robiona u nas', '400 ml', 'Woda filtrowana gratis'] },
+      ko: { flag: '무알코올', weight: '400ml', cook: '매장 제조', pair: '매운 버거와 함께',
+        short: '매장에서 직접 만들며, 매운 메뉴에 가장 잘 맞습니다.',
+        blurb: '매장에서 만들어 400ml 잔에 차갑게 냅니다. 정수된 물(탄산/무탄산)은 무료로 무제한 제공됩니다.',
+        parts: ['매장 제조', '400ml', '정수 물 무료'] }
+    },
+    'espresso': {
+      pl: { flag: 'Kawa', weight: '', cook: '', pair: 'Do crème brûlée',
+        short: 'Espresso 6 zł, doppio, americano i cappuccino po 9 zł.',
+        blurb: 'Krótka i mocna po crème brûlée. Doppio, americano i cappuccino po 9 zł; herbata 6 zł.',
+        parts: ['Espresso 6 zł', 'Doppio 9 zł', 'Americano 9 zł', 'Cappuccino 9 zł', 'Herbata 6 zł'] },
+      ko: { flag: '커피', weight: '', cook: '', pair: '크렘 브륄레와 함께',
+        short: '에스프레소 6즈워티, 도피오·아메리카노·카푸치노 9즈워티.',
+        blurb: '크렘 브륄레 뒤에 짧고 진하게. 도피오, 아메리카노, 카푸치노는 9즈워티, 차는 6즈워티입니다.',
+        parts: ['에스프레소 6 zł', '도피오 9 zł', '아메리카노 9 zł', '카푸치노 9 zł', '차 6 zł'] }
+    }
+  };
+}));
+</script>
+<script>
+/**
+ * The menu.
+ *
+ * Taken from Meatologia's own board (photographed July 2026). Prices are in
+ * złoty. Dish names are kept exactly as printed — "Tatar 'Nduja" is what the
+ * kitchen calls it in any language — and the ingredient lists follow the
+ * board's slash-separated style. Translations of the descriptive lines live
+ * in menu-i18n.js.
  *
  * art   — id of an inline <symbol> in index.html
- * paint — CSS custom properties applied to that artwork. One symbol serves
- *         many dishes; only the tint changes. Swap the <use> for an <img>
- *         here and in the takeover markup when real photography arrives.
+ * paint — CSS custom properties that tint that artwork for this dish
  */
 window.MEATOLOGIA_MENU = {
   courses: [
-    { id: 'all',      label: 'Everything' },
-    { id: 'burgers',  label: 'Burgers' },
-    { id: 'steaks',   label: 'Steaks' },
-    { id: 'sides',    label: 'Sides' },
-    { id: 'sweet',    label: 'Dessert' },
-    { id: 'drinks',   label: 'Drinks' }
+    { id: 'all',       label: 'Everything' },
+    { id: 'starters',  label: 'Starters' },
+    { id: 'burgers',   label: 'Street food' },
+    { id: 'steaks',    label: 'Steaks' },
+    { id: 'mains',     label: 'Mains' },
+    { id: 'kids',      label: 'Kids' },
+    { id: 'sides',     label: 'Sides' },
+    { id: 'sweet',     label: 'Dessert' },
+    { id: 'drinks',    label: 'Drinks' }
   ],
 
   dishes: [
-    /* ── Burgers ───────────────────────────────────────────────────── */
+    /* ── Startery ─────────────────────────────────────────────────── */
     {
-      id: 'classic', course: 'burgers', name: 'The Classic', flag: 'Where to start',
-      price: 42, weight: '180 g beef', cook: 'Medium', pair: 'Let\'s Meat IPA',
-      short: 'Black Angus, aged cheddar, butter lettuce and our own sauce.',
-      blurb: 'The dish the rest of the card is built around. Chuck and brisket ground this morning, grilled over charcoal to a juicy medium, melted cheddar, and a roast-garlic sauce we have refused to change in four years.',
-      parts: ['Black Angus beef', 'Aged cheddar', 'Butter lettuce', 'Tomato', 'Pickle', 'Meatologia sauce'],
+      id: 'tatar-klasyk', course: 'starters', name: 'Tatar klasyk', flag: 'The classic',
+      price: 45, weight: 'Argentine tenderloin', cook: 'Raw, hand cut', pair: 'Cold vodka',
+      short: 'Argentine tenderloin, marinated bay boletes, pickled cucumber and yolk.',
+      blurb: 'The one to order first. Argentine tenderloin cut by hand, with marinated bay boletes, pickled cucumber, onion, egg yolk and worcestershire, served with bread.',
+      parts: ['Argentine tenderloin', 'Marinated bay boletes', 'Pickled cucumber', 'Onion', 'Olive oil', 'Egg yolk', 'Worcestershire', 'Brown mustard', 'Chives', 'Bread'],
+      art: 'art-side',
+      paint: { '--art-veg': '#b8433a', '--art-basket': '#8c8f95' }
+    },
+    {
+      id: 'tatar-nduja', course: 'starters', name: "Tatar 'Nduja", flag: 'Hot',
+      price: 49, weight: 'Argentine tenderloin', cook: 'Raw, hand cut', pair: 'Harpagan APA',
+      short: "Tartare with 'nduja and piri piri, and potato crisp for the crunch.",
+      blurb: "The classic with the heat turned up: spreadable Calabrian 'nduja and piri piri worked through the tenderloin, with potato crisp on top.",
+      parts: ['Argentine tenderloin', "'Nduja", 'Pickled cucumber', 'Piri piri', 'Worcestershire', 'Brown mustard', 'Potato crisp', 'Chives', 'Bread'],
+      art: 'art-side',
+      paint: { '--art-veg': '#a8322c', '--art-basket': '#8c8f95' }
+    },
+    {
+      id: 'tatar-truflowy', course: 'starters', name: 'Tatar truflowy', flag: 'Truffle',
+      price: 47, weight: 'Argentine tenderloin', cook: 'Raw, hand cut', pair: 'Rioja, by the glass',
+      short: 'Truffle aioli, truffle oil, capers and pickled onion.',
+      blurb: 'For anyone who thinks tartare should smell of the forest floor. Truffle aioli and truffle oil, with chopped capers and pickled onion cutting through them.',
+      parts: ['Argentine tenderloin', 'Pickled cucumber', 'Pickled onion', 'Chopped capers', 'Brown mustard', 'Egg yolk', 'Chives', 'Truffle aioli', 'Truffle oil', 'Bread'],
+      art: 'art-side',
+      paint: { '--art-veg': '#9c4a3a', '--art-basket': '#8c8f95' }
+    },
+    {
+      id: 'tatary-set', course: 'starters', name: 'Tatary set', flag: 'To share',
+      price: 129, weight: 'Three tartares', cook: 'Raw, hand cut', pair: 'Cold vodka',
+      short: 'Any three tartares from the menu, served on bread.',
+      blurb: 'Pick any three tartares off the card and they arrive together on bread — the simplest way to settle which one is actually the best.',
+      parts: ['Three tartares of your choice', 'Served on bread'],
+      art: 'art-side',
+      paint: { '--art-veg': '#b03a34', '--art-basket': '#8c8f95' }
+    },
+    {
+      id: 'zupa-dnia', course: 'starters', name: 'Zupa dnia', flag: 'Soup of the day',
+      price: 25, weight: '', cook: '', pair: 'Ask the floor',
+      short: 'Ask whoever is serving what is on today.',
+      blurb: 'Changes with what came in that morning. Ask the floor what is in the pot today.',
+      parts: ['Changes daily'],
+      art: 'art-dessert',
+      paint: { '--art-patty': '#f0e6cf', '--art-cheese': '#c07a34', '--art-veg': '#6f9c3c' }
+    },
+
+    /* ── Street food ──────────────────────────────────────────────── */
+    {
+      id: 'classic-burger', course: 'burgers', name: 'Classic burger', flag: 'Where to start',
+      price: 39, weight: 'Beef', cook: 'Medium', pair: "Harpagan Let's Meat IPA",
+      short: 'Beef, iceberg, tomato, onion and pickle in a butter bun.',
+      blurb: 'No tricks. Beef, crisp iceberg, tomato, onion, pickled cucumber, mayo and ketchup in a butter bun — the burger the rest of the board is measured against.',
+      parts: ['Beef', 'Iceberg lettuce', 'Tomato', 'Onion', 'Pickled cucumber', 'Mayo', 'Ketchup', 'Butter bun'],
       art: 'art-burger',
       paint: { '--art-bun': '#e5a94f', '--art-bun-btm': '#cf9445', '--art-patty': '#4a2e1e', '--art-cheese': '#f2b12b', '--art-veg': '#6f9c3c' }
     },
     {
-      id: 'cheese-bacon', course: 'burgers', name: 'Cheese & Bacon', flag: 'Bestseller',
-      price: 49, weight: '180 g beef', cook: 'Medium', pair: 'Let\'s Meat IPA',
-      short: 'Double cheddar, beechwood bacon, onions caramelised in dark beer.',
-      blurb: 'For anyone who holds that there is no such thing as too much cheese. Two slices of matured cheddar, bacon smoked over beechwood, and onions cooked down slowly in porter until they turn to jam.',
-      parts: ['Black Angus beef', 'Double cheddar', 'Smoked bacon', 'Beer onions', 'Chipotle mayo'],
+      id: 'cheese-bacon', course: 'burgers', name: 'Cheese & Bacon smash', flag: 'Bestseller',
+      price: 49, weight: '2 × beef', cook: 'Smashed', pair: "Harpagan Let's Meat IPA",
+      short: 'Two smashed patties, double cheddar, bacon and grilled onion.',
+      blurb: 'Two patties pressed hard onto the plancha for a lacy brown crust, double cheddar, bacon, grilled onion and hot mayo.',
+      parts: ['2 × beef', '2 × cheddar', 'Bacon', 'Iceberg lettuce', 'Grilled onion', 'Hot mayo', 'Butter bun'],
       art: 'art-burger',
       paint: { '--art-bun': '#d8993f', '--art-bun-btm': '#bd8134', '--art-patty': '#402617', '--art-cheese': '#f5a623', '--art-veg': '#8a5a2b' }
     },
     {
-      id: 'flooded', course: 'burgers', name: 'Flooded Cheese', flag: 'Hot',
-      price: 47, weight: '180 g beef', cook: 'Medium', pair: 'House lemonade',
-      short: 'Buried under hot cheddar sauce, jalapeño and crisp onion.',
-      blurb: 'The name is not a metaphor. It reaches the table under a running pour of hot cheddar sauce, with jalapeño for heat and fried onion for the crunch that survives it. A fork is not optional.',
-      parts: ['Black Angus beef', 'Cheddar sauce', 'Jalapeño', 'Crisp onion', 'Habanero hot sauce'],
+      id: 'flooded', course: 'burgers', name: 'Flooded Cheese & Bacon smash', flag: "Chef's choice",
+      price: 55, weight: '2 × beef', cook: 'Smashed', pair: "Harpagan Let's Meat IPA",
+      short: 'The Cheese & Bacon, flooded with Hudson sauce, with fries.',
+      blurb: 'The Cheese & Bacon smash under a pour of Hudson sauce, with fries alongside. The kitchen picks this one when you ask them what to have.',
+      parts: ['2 × beef', '2 × cheddar', 'Bacon', 'Iceberg lettuce', 'Grilled onion', 'Hot mayo', 'Hudson sauce', 'Fries', 'Butter bun'],
       art: 'art-burger',
       paint: { '--art-bun': '#eab35c', '--art-bun-btm': '#d29a4c', '--art-patty': '#472b1c', '--art-cheese': '#ffc233', '--art-veg': '#4f8a2f' }
     },
     {
-      id: 'double', course: 'burgers', name: 'Double Trouble', flag: 'Smash ×2',
-      price: 55, weight: '2 × 100 g', cook: 'Well done, on purpose', pair: 'Let\'s Meat IPA',
-      short: 'Two smashed patties, double American cheese, pickles, burger sauce.',
-      blurb: 'Two balls of beef pressed hard onto a screaming plancha. Lacy brown crust on the outside, still slack in the middle. American cheese, pickles, burger sauce — the argument ends there.',
-      parts: ['2 × 100 g smash', 'American cheese ×2', 'Pickles', 'White onion', 'Burger sauce'],
+      id: 'double-trouble', course: 'burgers', name: 'Double Trouble burger', flag: 'Pastrami + beef',
+      price: 59, weight: 'Beef + pastrami', cook: 'Medium', pair: 'Harpagan Pils',
+      short: 'Beef and house pastrami together, with sauerkraut and brown mustard.',
+      blurb: 'A burger and a pastrami sandwich arguing in one bun, and both winning. House pastrami over the beef, sauerkraut, cheddar and brown mustard to cut it.',
+      parts: ['Beef', 'Meatologia pastrami', 'Cheddar', 'Sauerkraut', 'Brown mustard', 'Pickled cucumber', 'Pickled onion', 'Mayo', 'Butter bun'],
       art: 'art-burger',
       paint: { '--art-bun': '#e0a44f', '--art-bun-btm': '#c88f3d', '--art-patty': '#3a2214', '--art-cheese': '#ffb92e', '--art-veg': '#5f9438' }
     },
     {
-      id: 'wagyu-smash', course: 'burgers', name: 'Wagyu Smash', flag: 'Premium',
-      price: 69, weight: '160 g wagyu', cook: 'Medium rare', pair: 'Rioja, by the glass',
-      short: 'Wagyu beef, truffle mayo, rocket and a matured hard cheese.',
-      blurb: 'Marbled wagyu renders as it cooks and seasons the bun on its way down. Truffle and rocket are the only things we let near it — anything louder would be talking over the beef.',
-      parts: ['Wagyu beef', 'Truffle mayo', 'Rocket', 'Matured cheese', 'Red onion jam'],
+      id: 'wagyu-smash', course: 'burgers', name: 'Wagyu smash', flag: 'Premium',
+      price: 89, weight: 'Wagyu beef', cook: 'Smashed', pair: 'Rioja, by the glass',
+      short: 'Wagyu beef, cheddar, sweet onion and ponzu mayo.',
+      blurb: 'Marbled wagyu renders as it hits the plancha and seasons the bun on its way down. Sweet onion, pickled cucumber and ponzu mayo — nothing loud enough to talk over it.',
+      parts: ['Wagyu beef', 'Cheddar', 'Sweet onion', 'Pickled cucumber', 'Ponzu mayo', 'Butter bun'],
       art: 'art-burger',
       paint: { '--art-bun': '#edbc6e', '--art-bun-btm': '#d5a252', '--art-patty': '#563018', '--art-cheese': '#e6c463', '--art-veg': '#7fa93f' }
     },
     {
-      id: 'pastrami', course: 'burgers', name: 'Pastrami Burger', flag: 'New',
-      price: 52, weight: '180 g + 60 g pastrami', cook: 'Medium', pair: 'Let\'s Meat IPA',
-      short: 'House pastrami, coarse mustard and dill pickle on rye.',
-      blurb: 'We cure the brisket ourselves and smoke it for twelve hours, then shave it in ribbons over the patty. Rye bun, coarse mustard, dill pickle. It should not work as well as it does.',
-      parts: ['Black Angus beef', 'House pastrami', 'Coarse mustard', 'Dill pickle', 'Rye bun'],
+      id: 'pastrami', course: 'burgers', name: 'Pastrami', flag: 'Years in the making',
+      price: 59, weight: 'House pastrami', cook: 'Smoked in house', pair: 'Harpagan Pils',
+      short: 'House pastrami, sauerkraut and cheddar on pullman bread.',
+      blurb: 'The pastrami we have been refining for years: cured and smoked in house, shaved thick, with sauerkraut, cheddar, baby spinach and two mustards on pullman bread.',
+      parts: ['Meatologia pastrami', 'Sauerkraut', 'Cheddar', 'Pickled cucumber', 'Baby spinach', 'Hot mayo', 'Brown mustard', 'Pullman bread'],
       art: 'art-burger',
       paint: { '--art-bun': '#c08b48', '--art-bun-btm': '#a67436', '--art-patty': '#552820', '--art-cheese': '#e0a63a', '--art-veg': '#66913a' }
     },
 
-    /* ── Steaks ────────────────────────────────────────────────────── */
+    /* ── Steki · Argentyna ────────────────────────────────────────── */
     {
       id: 'arg-ny', course: 'steaks', name: 'New York', flag: 'Argentina',
-      price: 96, weight: '250 g', cook: 'Your call', pair: 'Malbec, Mendoza',
-      short: 'Grass-fed Black Angus sirloin, wet-aged five weeks.',
-      blurb: 'Argentine cattle raised on pasture, which is why it tastes of something. Firm grain, a fat edge that caramelises hard over charcoal, and enough character to stand up to a big red.',
-      parts: ['Five-week wet aged', 'Herb butter', 'Sea salt', 'Cracked pepper'],
+      price: 99, weight: '250 g', cook: 'Your call', pair: 'Malbec, Mendoza',
+      short: 'Black Angus, wet-aged a minimum of eight weeks.',
+      blurb: 'Argentine Black Angus, wet-aged at least eight weeks. Firm grain, a fat edge that caramelises hard over charcoal, and enough character to stand up to a big red. Served with two sides included.',
+      parts: ['Black Angus', 'Wet-aged 8 weeks minimum', 'Two sides included', 'Sauce of your choice'],
       art: 'art-steak',
       paint: { '--art-patty': '#77281f', '--art-crust': '#93412c', '--art-cheese': '#f6e6ae', '--art-veg': '#5f7f39' }
     },
@@ -1998,113 +3209,249 @@ window.MEATOLOGIA_MENU = {
       id: 'arg-ribeye', course: 'steaks', name: 'Rib Eye', flag: 'Argentina',
       price: 119, weight: '250 g', cook: 'Your call', pair: 'Malbec, Mendoza',
       short: 'The forgiving one — marbling that seasons itself.',
-      blurb: 'Intramuscular fat melts through the muscle as it cooks, which keeps it juicy even a shade past where you meant to stop. If you are nervous about ordering steak, order this one.',
-      parts: ['Five-week wet aged', 'Herb butter', 'Sea salt', 'Cracked pepper'],
+      blurb: 'Intramuscular fat melts through the muscle as it cooks, so it stays juicy even a shade past where you meant to stop. If you are nervous about ordering steak, order this. Two sides included.',
+      parts: ['Black Angus', 'Wet-aged 8 weeks minimum', 'Two sides included', 'Sauce of your choice'],
       art: 'art-steak',
       paint: { '--art-patty': '#802b21', '--art-crust': '#9c4430', '--art-cheese': '#f6e6ae', '--art-veg': '#5f7f39' }
     },
     {
       id: 'arg-filet', course: 'steaks', name: 'Filet Mignon', flag: 'Argentina',
-      price: 176, weight: '300 g', cook: 'Medium rare, please', pair: 'Barolo',
+      price: 139, weight: '200 g', cook: 'Medium rare, please', pair: 'Barolo',
       short: 'Cut from the heart of the tenderloin. Nothing to chew through.',
-      blurb: 'No sinew, almost no fat, all texture. We finish it with herb butter and maldon and send it out before anything else can be added to it.',
-      parts: ['Heart of tenderloin', 'Herb butter', 'Maldon salt', 'Cracked pepper'],
+      blurb: 'No sinew, almost no fat, all texture. We finish it and send it out before anything can be added to it. Two sides included.',
+      parts: ['Black Angus tenderloin', 'Wet-aged 8 weeks minimum', 'Two sides included', 'Sauce of your choice'],
       art: 'art-steak',
       paint: { '--art-patty': '#8a3025', '--art-crust': '#a44a33', '--art-cheese': '#f6e6ae', '--art-veg': '#5f7f39' }
     },
+
+    /* ── Steki · USA ──────────────────────────────────────────────── */
     {
-      id: 'usa-ribeye', course: 'steaks', name: 'Rib Eye', flag: 'USDA Prime',
-      price: 149, weight: '300 g', cook: 'Your call', pair: 'Napa Cabernet',
-      short: 'Black Angus USDA Prime — the top few percent of American beef.',
-      blurb: 'Corn finishing builds a denser marble and a sweeter, buttery profile than the Argentine cuts. Only a small share of American beef ever earns the Prime grade; this is that beef.',
-      parts: ['USDA Prime grade', 'Five-week wet aged', 'Herb butter', 'Sea salt'],
+      id: 'usa-ny', course: 'steaks', name: 'New York', flag: 'USA · USDA Prime',
+      price: 59, weight: '100 g', cook: 'Your call', pair: 'Napa Cabernet',
+      short: 'USDA Prime Black Angus from Creekstone Farms, Arkansas City.',
+      blurb: 'Corn finishing builds a denser marble and a sweeter, buttery profile than the Argentine cuts. Only a small share of American beef earns the Prime grade. Priced per 100 g.',
+      parts: ['USDA Prime', 'Creekstone Farms, Arkansas City', 'Wet-aged 8 weeks minimum', 'Two sides included'],
       art: 'art-steak',
       paint: { '--art-patty': '#8c3327', '--art-crust': '#ab4c33', '--art-cheese': '#f6e6ae', '--art-veg': '#5f7f39' }
     },
     {
-      id: 'wagyu-striploin', course: 'steaks', name: 'Striploin', flag: 'Japan A5',
-      price: 125, weight: '100 g', cook: 'Medium rare', pair: 'Cold sake',
-      short: 'Japanese wagyu at the top grade, from Kagoshima.',
-      blurb: 'Marbling so dense the meat reads pink rather than red. We serve it small deliberately — past a hundred grams it stops being dinner and starts being a dare.',
-      parts: ['A5 Kagoshima wagyu', 'Maldon salt', 'Fresh wasabi', 'Ponzu'],
+      id: 'usa-ribeye', course: 'steaks', name: 'Rib Eye', flag: 'USA · USDA Prime',
+      price: 69, weight: '100 g', cook: 'Your call', pair: 'Napa Cabernet',
+      short: 'The Prime rib eye — the richest thing on the American side.',
+      blurb: 'Prime-grade marbling in the most generous cut we carry. Rich enough that 200 g is usually plenty. Priced per 100 g, two sides included.',
+      parts: ['USDA Prime', 'Creekstone Farms, Arkansas City', 'Wet-aged 8 weeks minimum', 'Two sides included'],
+      art: 'art-steak',
+      paint: { '--art-patty': '#94382a', '--art-crust': '#b2543a', '--art-cheese': '#f6e6ae', '--art-veg': '#5f7f39' }
+    },
+    {
+      id: 'usa-filet', course: 'steaks', name: 'Filet Mignon', flag: 'USA · USDA Prime',
+      price: 89, weight: '100 g', cook: 'Medium rare, please', pair: 'Napa Cabernet',
+      short: 'Prime tenderloin — the tenderest cut, American style.',
+      blurb: 'Prime-grade tenderloin: the texture of the Argentine filet with the sweeter, corn-fed finish. Priced per 100 g, two sides included.',
+      parts: ['USDA Prime tenderloin', 'Creekstone Farms, Arkansas City', 'Wet-aged 8 weeks minimum', 'Two sides included'],
+      art: 'art-steak',
+      paint: { '--art-patty': '#9a3b2c', '--art-crust': '#b9583c', '--art-cheese': '#f6e6ae', '--art-veg': '#5f7f39' }
+    },
+
+    /* ── Steki · Japonia ──────────────────────────────────────────── */
+    {
+      id: 'wagyu-striploin', course: 'steaks', name: 'Striploin', flag: 'Japan · Wagyu A5',
+      price: 129, weight: '100 g', cook: 'Medium rare', pair: 'Cold sake',
+      short: 'Black Wagyu, grade A5, from Kagoshima prefecture.',
+      blurb: 'Marbling so dense the meat reads pink rather than red. Served in 100 g portions deliberately — past that it stops being dinner and starts being a dare.',
+      parts: ['Black Wagyu A5', 'Kagoshima prefecture', 'Two sides included', 'Sauce of your choice'],
       art: 'art-steak',
       paint: { '--art-patty': '#96453a', '--art-crust': '#c06a45', '--art-cheese': '#f7ecc4', '--art-veg': '#6f9142' }
     },
     {
-      id: 'wagyu-tenderloin', course: 'steaks', name: 'Tenderloin', flag: 'Japan A5',
-      price: 175, weight: '100 g', cook: 'Medium rare', pair: 'Cold sake',
+      id: 'wagyu-cuberoll', course: 'steaks', name: 'Cuberoll', flag: 'Japan · Wagyu A5',
+      price: 149, weight: '100 g', cook: 'Medium rare', pair: 'Cold sake',
+      short: 'The most marbled cut of A5 wagyu we carry.',
+      blurb: 'The cut that makes people photograph their food. Fat renders almost at room temperature, so it needs seconds on the grill and nothing else.',
+      parts: ['Black Wagyu A5', 'Kagoshima prefecture', 'Two sides included', 'Sauce of your choice'],
+      art: 'art-steak',
+      paint: { '--art-patty': '#9c4a3d', '--art-crust': '#c6714b', '--art-cheese': '#f7ecc4', '--art-veg': '#6f9142' }
+    },
+    {
+      id: 'wagyu-tenderloin', course: 'steaks', name: 'Tenderloin', flag: 'Japan · Wagyu A5',
+      price: 179, weight: '100 g', cook: 'Medium rare', pair: 'Cold sake',
       short: 'The shortest route to "I will remember that".',
       blurb: 'The most expensive line on the card and the only one where we will ask you to skip the sauce. Seared briefly, sliced, on the table within seconds.',
-      parts: ['A5 Kagoshima wagyu', 'Maldon salt', 'Fresh wasabi', 'Sansho pepper'],
+      parts: ['Black Wagyu A5', 'Kagoshima prefecture', 'Two sides included', 'Sauce of your choice'],
       art: 'art-steak',
-      paint: { '--art-patty': '#9d4b3e', '--art-crust': '#c9744c', '--art-cheese': '#f7ecc4', '--art-veg': '#6f9142' }
+      paint: { '--art-patty': '#a35043', '--art-crust': '#cd7a52', '--art-cheese': '#f7ecc4', '--art-veg': '#6f9142' }
     },
 
-    /* ── Sides ─────────────────────────────────────────────────────── */
+    /* ── Sety steków ──────────────────────────────────────────────── */
     {
-      id: 'fries', course: 'sides', name: 'Belgian Fries', flag: 'Classic',
-      price: 16, weight: '200 g', cook: 'Twice fried', pair: 'Garlic mayo, included',
-      short: 'Cut from whole potatoes, fried twice, salted with sea salt.',
-      blurb: 'Done the long way: a first fry at low temperature, a rest, then a hard second fry. Fluffy through the middle, audibly crisp at the edge.',
-      parts: ['Whole potatoes', 'Sea salt', 'Garlic mayo included'],
+      id: 'set-argentyna', course: 'steaks', name: 'Set Argentyński', flag: 'For the table',
+      price: 399, weight: '≈ 700 g', cook: 'Your call', pair: 'Malbec, by the bottle',
+      short: 'Three Argentine steaks — Filet Mignon, Rib Eye and New York.',
+      blurb: 'Around 700 g of Argentine Black Angus across three cuts, with three sides and three sauces. Built for a table that cannot agree.',
+      parts: ['Filet Mignon', 'Rib Eye', 'New York', 'Three sides', 'Three sauces'],
+      art: 'art-steak',
+      paint: { '--art-patty': '#7d2c22', '--art-crust': '#9a4430', '--art-cheese': '#f6e6ae', '--art-veg': '#5f7f39' }
+    },
+    {
+      id: 'set-ribeye', course: 'steaks', name: 'Set Rib Eye', flag: 'Three countries',
+      price: 699, weight: '≈ 750 g', cook: 'Your call', pair: 'Malbec, by the bottle',
+      short: 'The same cut from Argentina, the States and Japan, side by side.',
+      blurb: 'Around 750 g of rib eye — Argentine, USDA Prime and A5 wagyu on one board. The clearest way to taste what the three countries actually do differently.',
+      parts: ['Rib Eye · Argentina', 'Rib Eye · USA Prime', 'Rib Eye · Wagyu A5', 'Three sides', 'Three sauces'],
+      art: 'art-steak',
+      paint: { '--art-patty': '#8c3428', '--art-crust': '#ac5237', '--art-cheese': '#f6e6ae', '--art-veg': '#5f7f39' }
+    },
+    {
+      id: 'set-filet', course: 'steaks', name: 'Set Filet Mignon', flag: 'Three countries',
+      price: 749, weight: '≈ 600 g', cook: 'Medium rare, please', pair: 'Barolo',
+      short: 'Tenderloin from Argentina, the States and Japan on one board.',
+      blurb: 'Around 600 g of tenderloin across the three origins, with three sides and three sauces. The most expensive way to settle an argument, and the most convincing.',
+      parts: ['Filet Mignon · Argentina', 'Filet Mignon · USA Prime', 'Tenderloin · Wagyu A5', 'Three sides', 'Three sauces'],
+      art: 'art-steak',
+      paint: { '--art-patty': '#94402f', '--art-crust': '#b45f40', '--art-cheese': '#f7ecc4', '--art-veg': '#6f9142' }
+    },
+
+    /* ── Dania główne ─────────────────────────────────────────────── */
+    {
+      id: 'zeberka', course: 'mains', name: 'Żeberka Low & Slow', flag: 'Slow cooked',
+      price: 79, weight: 'Pork ribs', cook: 'Slow roasted', pair: 'Harpagan Pils',
+      short: 'Slow-roasted pork ribs, BBQ glaze, coleslaw and fries.',
+      blurb: 'Roasted low and slow until the meat gives up, then glazed in BBQ and finished hard. Coleslaw and fries alongside, and a sauce of your choosing.',
+      parts: ['Slow-roasted pork ribs', 'BBQ glaze', 'Coleslaw', 'Fries', 'Sauce of your choice'],
+      art: 'art-steak',
+      paint: { '--art-patty': '#6e3320', '--art-crust': '#8f4a2c', '--art-cheese': '#f0dca8', '--art-veg': '#5f7f39' }
+    },
+    {
+      id: 'kaczka', course: 'mains', name: 'Kaczka', flag: 'Confit',
+      price: 79, weight: 'Duck leg', cook: 'Confit', pair: 'Rioja, by the glass',
+      short: 'Confit duck leg, potato purée and roast beetroot salad.',
+      blurb: 'Duck leg cooked slowly in its own fat until the skin crisps and the meat falls away, with potato purée, roast beetroot salad and a balsamic-fig sauce.',
+      parts: ['Confit duck leg', 'Potato purée', 'Roast beetroot salad', 'Balsamic-fig sauce'],
+      art: 'art-steak',
+      paint: { '--art-patty': '#7a3a26', '--art-crust': '#9c5432', '--art-cheese': '#e9d6a4', '--art-veg': '#8c3a52' }
+    },
+    {
+      id: 'jagniece', course: 'mains', name: 'Polędwiczki jagnięce', flag: 'New Zealand lamb',
+      price: 99, weight: 'Lamb loin', cook: 'Pink', pair: 'Barolo',
+      short: 'New Zealand lamb loin, demi-glace and thyme butter.',
+      blurb: 'New Zealand lamb loin cooked pink, with demi-glace, unagi-glazed vegetables, thyme butter and potato purée.',
+      parts: ['New Zealand lamb loin', 'Demi-glace', 'Unagi vegetables', 'Thyme butter', 'Potato purée'],
+      art: 'art-steak',
+      paint: { '--art-patty': '#8a3a34', '--art-crust': '#a85440', '--art-cheese': '#efdcac', '--art-veg': '#5f7f39' }
+    },
+    {
+      id: 'sandacz', course: 'mains', name: 'Sandacz', flag: 'From the water',
+      price: 79, weight: 'Pike-perch fillet', cook: 'Pan seared', pair: 'House lemonade',
+      short: 'Pike-perch fillet, lemon potato purée and wild broccoli.',
+      blurb: 'The one dish here with no red meat in it, and it earns its place. Pike-perch fillet with lemon-potato purée, wild broccoli and a creamy chorizo sauce.',
+      parts: ['Pike-perch fillet', 'Lemon potato purée', 'Wild broccoli', 'Creamy chorizo sauce'],
+      art: 'art-side',
+      paint: { '--art-veg': '#cbd3d8', '--art-basket': '#8c8f95' }
+    },
+    {
+      id: 'cezar', course: 'mains', name: 'Sałatka Cezar', flag: 'Lighter',
+      price: 45, weight: 'Chicken', cook: 'Grilled', pair: 'House lemonade',
+      short: 'Grilled chicken, romaine, cherry tomatoes, pecorino and parmesan.',
+      blurb: 'Grilled chicken fillets over romaine with cherry tomatoes, two hard cheeses, Caesar dressing and croutons. What the one person at the table who did not come for beef orders.',
+      parts: ['Grilled chicken fillets', 'Romaine', 'Cherry tomatoes', 'Pecorino', 'Parmesan', 'Caesar dressing', 'Croutons'],
+      art: 'art-side',
+      paint: { '--art-veg': '#6f9c3c', '--art-basket': '#b7bcc4' }
+    },
+
+    /* ── Dla dzieci ───────────────────────────────────────────────── */
+    {
+      id: 'burger-junior', course: 'kids', name: 'Burger Junior', flag: 'For children',
+      price: 35, weight: 'Beef', cook: 'Well done', pair: 'Juice',
+      short: 'Beef, cheddar, iceberg and ketchup, with fries.',
+      blurb: 'The Classic, scaled down and simplified: beef, cheddar, iceberg, ketchup, butter bun and fries.',
+      parts: ['Beef', 'Cheddar', 'Iceberg lettuce', 'Ketchup', 'Butter bun', 'Fries'],
+      art: 'art-burger',
+      paint: { '--art-bun': '#e8b45f', '--art-bun-btm': '#d09b48', '--art-patty': '#4a2e1e', '--art-cheese': '#f2b12b', '--art-veg': '#6f9c3c' }
+    },
+    {
+      id: 'kurczak-junior', course: 'kids', name: 'Kurczak Junior', flag: 'For children',
+      price: 35, weight: 'Chicken', cook: 'Grilled', pair: 'Juice',
+      short: 'Grilled chicken fillets, romaine with vinaigrette, fries.',
+      blurb: 'Grilled chicken fillets with romaine in a light vinaigrette, fries and ketchup.',
+      parts: ['Grilled chicken fillets', 'Romaine with vinaigrette', 'Fries', 'Ketchup'],
+      art: 'art-side',
+      paint: { '--art-veg': '#e0b34a', '--art-basket': '#b7bcc4' }
+    },
+    {
+      id: 'stek-junior', course: 'kids', name: 'Stek Junior', flag: 'For children',
+      price: 49, weight: '100 g', cook: 'Your call', pair: 'Juice',
+      short: '100 g of Argentine tenderloin, romaine and fries.',
+      blurb: 'A proper steak in a child-sized portion: 100 g of Argentine tenderloin with romaine in vinaigrette, fries and ketchup.',
+      parts: ['Argentine tenderloin 100 g', 'Romaine with vinaigrette', 'Fries', 'Ketchup'],
+      art: 'art-steak',
+      paint: { '--art-patty': '#82302a', '--art-crust': '#a04a34', '--art-cheese': '#f6e6ae', '--art-veg': '#5f7f39' }
+    },
+
+    /* ── Dodatki ──────────────────────────────────────────────────── */
+    {
+      id: 'dodatek', course: 'sides', name: 'Dodatek', flag: 'Any side',
+      price: 9, weight: 'One portion', cook: '', pair: '',
+      short: 'Fries, sweet potato, purée, coleslaw, buttered spinach, greens.',
+      blurb: 'Any one of the sides: fries, sweet potato fries, potato purée, coleslaw, buttered spinach, walnut vinaigrette salad, grilled vegetables, or green beans with wild broccoli. Steaks come with two of them included.',
+      parts: ['Fries', 'Sweet potato fries', 'Potato purée', 'Coleslaw', 'Buttered spinach', 'Walnut vinaigrette salad', 'Grilled vegetables', 'Green beans & wild broccoli'],
       art: 'art-side',
       paint: { '--art-veg': '#eab53f', '--art-basket': '#9aa2ab' }
     },
     {
-      id: 'sweet-fries', course: 'sides', name: 'Sweet Potato Fries', flag: 'Veggie',
-      price: 19, weight: '200 g', cook: 'Twice fried', pair: 'Chipotle mayo',
-      short: 'Smoked paprika, chipotle mayo, a little sweeter than they look.',
-      blurb: 'Sweeter, heavily seasoned, and the right answer to anything spicy on the card. Comes with chipotle mayo, though you can swap the sauce.',
-      parts: ['Sweet potato', 'Smoked paprika', 'Chipotle mayo'],
+      id: 'sos', course: 'sides', name: 'Sos', flag: 'Any sauce',
+      price: 5, weight: 'One portion', cook: '', pair: '',
+      short: 'Chimichurri, BBQ, hot mayo, spicy, pepper, brown mustard, Hudson.',
+      blurb: 'Any one of the house sauces. Chimichurri for the steaks, Hudson for anything you want flooded, hot mayo for everything else.',
+      parts: ['Chimichurri', 'BBQ', 'Hot mayo', 'Spicy', 'Pepper', 'Brown mustard', 'Hudson'],
       art: 'art-side',
-      paint: { '--art-veg': '#e08234', '--art-basket': '#9aa2ab' }
-    },
-    {
-      id: 'tartare', course: 'sides', name: 'Beef Tartare', flag: 'Recommended',
-      price: 46, weight: '150 g', cook: 'Raw, hand cut', pair: 'Cold vodka',
-      short: 'Hand-cut tenderloin, pickle, onion and an egg yolk.',
-      blurb: 'Cut to order with a knife, never minced — that is the whole difference. Served with sourdough toast and the classic set of trimmings on the side, so you build it how you like it.',
-      parts: ['Beef tenderloin', 'Dill pickle', 'Onion', 'Egg yolk', 'Sourdough toast'],
-      art: 'art-side',
-      paint: { '--art-veg': '#b8433a', '--art-basket': '#8c8f95' }
+      paint: { '--art-veg': '#b8433a', '--art-basket': '#9aa2ab' }
     },
 
-    /* ── Dessert ───────────────────────────────────────────────────── */
+    /* ── Desery ───────────────────────────────────────────────────── */
     {
-      id: 'brulee', course: 'sweet', name: 'Crème Brûlée', flag: 'Dessert',
-      price: 24, weight: '150 g', cook: 'Torched to order', pair: 'Espresso',
-      short: 'Madagascar vanilla under a lid of burnt sugar.',
-      blurb: 'We fire the sugar the moment it leaves the pass, so it is still working when it reaches you. Underneath: cold, dense, properly vanilla-heavy custard.',
-      parts: ['Cream', 'Bourbon vanilla', 'Egg yolk', 'Burnt sugar', 'Raspberries'],
+      id: 'brulee', course: 'sweet', name: 'Crème brûlée', flag: 'Dessert',
+      price: 17, weight: '', cook: 'Torched to order', pair: 'Espresso',
+      short: 'Torched to order, so it is still working when it reaches you.',
+      blurb: 'The only dessert on the card, which tells you how seriously it is taken. Fired the moment it leaves the pass; cold, dense custard underneath.',
+      parts: ['Cream', 'Vanilla', 'Egg yolk', 'Burnt sugar'],
       art: 'art-dessert',
       paint: { '--art-patty': '#f7f0dd', '--art-cheese': '#c98a2e', '--art-veg': '#b8324a' }
     },
 
-    /* ── Drinks ────────────────────────────────────────────────────── */
+    /* ── Napoje ───────────────────────────────────────────────────── */
     {
-      id: 'ipa', course: 'drinks', name: "Let's Meat IPA", flag: 'Our own label',
-      price: 22, weight: '500 ml', cook: '6.2% American IPA', pair: 'Everything on this page',
-      short: 'An American IPA brewed for us by Harpagan, in Wrocław.',
-      blurb: 'Resinous bitterness and citrus hop, which is exactly what a fatty burger needs pushing back against it. Brewed in small batches under our own label.',
-      parts: ['Citra hops', 'Simcoe hops', '6.2% ABV', 'Brewed in Wrocław'],
+      id: 'lets-meat-ipa', course: 'drinks', name: "Harpagan Let's Meat IPA", flag: 'Our own label',
+      price: 21, weight: '500 ml', cook: 'American IPA', pair: 'Everything on this page',
+      short: 'An IPA brewed for us by Harpagan, under our own label.',
+      blurb: 'Resinous bitterness and citrus hop — exactly what a fatty burger needs pushing back against it. Brewed in small batches for us alone.',
+      parts: ['Brewed by Harpagan', 'Our own label', '500 ml'],
       art: 'art-drink',
       paint: { '--art-patty': '#a8641f', '--art-liquid': '#e0a33c', '--art-label': '#f3ece0', '--art-ink': '#8a1f1c', '--art-cap': '#6f4415' }
     },
     {
-      id: 'lemonade', course: 'drinks', name: 'House Lemonade', flag: 'No alcohol',
-      price: 16, weight: '400 ml', cook: 'Pressed to order', pair: 'The hot burgers',
-      short: 'Lemon, mint, our own syrup — refills are on us.',
-      blurb: 'Pressed at the bar, sweetened with cane syrup and chilled with frozen fruit instead of ice, so it is still lemonade halfway down the glass.',
-      parts: ['Fresh lemon', 'Mint', 'Cane syrup', 'Sparkling water'],
+      id: 'krafty', course: 'drinks', name: 'Harpagan · krafty', flag: 'Five on the board',
+      price: 21, weight: '500 ml', cook: '', pair: 'The steaks',
+      short: 'Pils, Hefeweizen, APA, Mangoweizen and Let\'s Meat IPA.',
+      blurb: 'Five craft beers from Harpagan on the board at 21 zł, and four alcohol-free ones at 19 zł — including an IPA, a tropical and a citrus version, plus a raspberry-and-cherry Berliner Weisse from 4 Ściany.',
+      parts: ['Pils', 'Hefeweizen', 'APA', 'Mangoweizen', "Let's Meat IPA", 'Alcohol-free from 19 zł'],
+      art: 'art-drink',
+      paint: { '--art-patty': '#b8791f', '--art-liquid': '#e8b24a', '--art-label': '#f3ece0', '--art-ink': '#5f7f39', '--art-cap': '#6f4415' }
+    },
+    {
+      id: 'lemoniada', course: 'drinks', name: 'Domowa lemoniada', flag: 'No alcohol',
+      price: 19, weight: '400 ml', cook: 'Made in house', pair: 'The hot burgers',
+      short: 'Made here, and the right answer to anything spicy.',
+      blurb: 'Made in house and served cold in a 400 ml glass. Filtered water, still or sparkling, is free and unlimited if you would rather have that.',
+      parts: ['Made in house', '400 ml', 'Filtered water free of charge'],
       art: 'art-drink',
       paint: { '--art-patty': '#cbb43c', '--art-liquid': '#e8dc59', '--art-label': '#f6f2e2', '--art-ink': '#5f7f39', '--art-cap': '#8f7d1f' }
     },
     {
       id: 'espresso', course: 'drinks', name: 'Espresso', flag: 'Coffee',
-      price: 9, weight: '30 ml', cook: 'Short extraction', pair: 'The brûlée',
-      short: 'Polish-roasted arabica with a dark chocolate finish.',
-      blurb: 'A blend roasted for our machine and pulled short. Thick crema, chocolate rather than fruit. Double shot for four złoty more.',
-      parts: ['100% arabica', 'Ground to order', 'Double shot +4 zł'],
+      price: 6, weight: '', cook: '', pair: 'The brûlée',
+      short: 'Espresso 6 zł, doppio, americano and cappuccino 9 zł.',
+      blurb: 'Short and dark after the brûlée. Doppio, americano and cappuccino are 9 zł; tea is 6 zł.',
+      parts: ['Espresso 6 zł', 'Doppio 9 zł', 'Americano 9 zł', 'Cappuccino 9 zł', 'Tea 6 zł'],
       art: 'art-drink',
       paint: { '--art-patty': '#4a3126', '--art-liquid': '#5b3a24', '--art-label': '#efe4d2', '--art-ink': '#3a2318', '--art-cap': '#2f1d12' }
     }
@@ -2260,41 +3607,48 @@ window.MEATOLOGIA_MENU = {
     var date = String(input.date || '').trim();
     var time = String(input.time || '').trim();
 
-    if (name.length < 2) errors.name = 'Please give us a name for the table.';
-    else if (name.length > 80) errors.name = 'That name is too long for the book.';
-
-    if (!PHONE.test(phone)) errors.phone = 'A phone number so we can reach you if plans change.';
-    if (email && !EMAIL.test(email)) errors.email = 'That email address does not look right.';
-    if (notes.length > 400) errors.notes = 'Please keep the note under 400 characters.';
-
-    if (!(guests >= CONFIG.minParty && guests <= CONFIG.maxParty)) {
-      errors.guests = 'Tables here seat 1 to ' + CONFIG.maxParty + '. For a bigger group, call us.';
+    // Errors are reported as codes, not prose: the same check has to speak
+    // whatever language the guest is reading, and the server has no idea
+    // which that is. `vars` carries anything the sentence needs to say.
+    function fail(field, code, vars) {
+      if (!errors[field]) errors[field] = Object.assign({ code: code }, vars || {});
     }
 
-    var when = toDate(date, time);
-    if (!when) {
-      errors.date = 'Pick a date and a time.';
+    if (name.length < 2) fail('name', 'name_short');
+    else if (name.length > 80) fail('name', 'name_long');
+
+    if (!PHONE.test(phone)) fail('phone', 'phone');
+    if (email && !EMAIL.test(email)) fail('email', 'email');
+    if (notes.length > 400) fail('notes', 'notes_long');
+
+    if (!(guests >= CONFIG.minParty && guests <= CONFIG.maxParty)) {
+      fail('guests', 'party', { max: CONFIG.maxParty });
+    }
+
+    var when = time ? toDate(date, time) : null;
+    if (!time) {
+      fail('time', 'no_time');
+      if (!date) fail('date', 'no_date');
+    } else if (!when) {
+      fail('date', 'no_date');
     } else {
       var limit = new Date(now.getTime());
       limit.setDate(limit.getDate() + CONFIG.maxDaysAhead);
 
-      if (!time) {
-        errors.time = 'Choose a seating time.';
-      } else if (slots().indexOf(time) < 0) {
-        errors.time = 'We seat between 12:00 and 21:00.';
+      if (slots().indexOf(time) < 0) {
+        fail('time', 'off_hours');
       } else if (when < new Date(now.getTime() + CONFIG.leadMinutes * 60000)) {
-        errors.time = 'That seating has passed. Please call for anything in the next hour.';
+        fail('time', 'too_soon');
       } else if (when > limit) {
-        errors.date = 'We take bookings up to ' + CONFIG.maxDaysAhead + ' days ahead.';
+        fail('date', 'too_far', { days: CONFIG.maxDaysAhead });
       }
     }
 
     if (!errors.time && !errors.guests && !errors.date) {
       var left = CONFIG.seats - seatsTaken(bookings, date, time);
       if (left < guests) {
-        errors.time = left > 0
-          ? 'Only ' + left + ' ' + (left === 1 ? 'seat is' : 'seats are') + ' left at ' + time + '.'
-          : 'That seating is fully booked.';
+        if (left <= 0) fail('time', 'full');
+        else fail('time', left === 1 ? 'seats_left_1' : 'seats_left', { n: left, time: time });
       }
     }
 
@@ -2387,6 +3741,8 @@ window.MEATOLOGIA_MENU = {
   'use strict';
 
   var MENU = window.MEATOLOGIA_MENU;
+  var I = window.MEATOLOGIA_I18N;
+  var MENU_T = window.MEATOLOGIA_MENU_I18N || {};
   var $  = function (s, c) { return (c || document).querySelector(s); };
   var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
 
@@ -2410,7 +3766,15 @@ window.MEATOLOGIA_MENU = {
 
   function courseLabel(id) {
     var c = MENU.courses.filter(function (x) { return x.id === id; })[0];
-    return c ? c.label : '';
+    return I.t('course.' + id) !== 'course.' + id ? I.t('course.' + id) : (c ? c.label : '');
+  }
+
+  /** A dish field in the active language, falling back to the English in data.js. */
+  function text(dish, field) {
+    var block = (MENU_T[dish.id] || {})[I.language()];
+    var value = block && block[field];
+    if (value == null || value === '') return dish[field];
+    return value;
   }
 
   function makeCard(dish, i) {
@@ -2420,27 +3784,27 @@ window.MEATOLOGIA_MENU = {
     el.dataset.id = dish.id;
     el.dataset.course = dish.course;
     el.style.setProperty('--delay', Math.min(i, 8) * 55 + 'ms');
-    el.setAttribute('aria-label', dish.name + ', ' + dish.price + ' złoty — open details');
+    el.setAttribute('aria-label', I.t('menu.detailsFor', { name: dish.name, price: dish.price }));
 
     el.innerHTML =
       '<span class="dish-media" style="' + tint(dish) + '">' +
         '<svg class="dish-pic" viewBox="0 0 320 280" aria-hidden="true"><use href="#' + dish.art + '"></use></svg>' +
-        '<span class="dish-flag">' + dish.flag + '</span>' +
+        '<span class="dish-flag">' + text(dish, 'flag') + '</span>' +
       '</span>' +
       '<span class="dish-body">' +
         '<span class="dish-name">' + dish.name + '</span>' +
-        '<span class="dish-short">' + dish.short + '</span>' +
+        '<span class="dish-short">' + text(dish, 'short') + '</span>' +
       '</span>' +
       '<span class="dish-foot">' +
         '<span class="dish-cost">' + dish.price + '<small>zł</small></span>' +
-        '<span class="dish-open">Open <span aria-hidden="true">→</span></span>' +
+        '<span class="dish-open">' + I.t('menu.open') + ' <span aria-hidden="true">→</span></span>' +
       '</span>';
 
     el.addEventListener('click', function () { openDish(dish.id, el); });
     return el;
   }
 
-  function buildMenu() {
+  function buildMenu(rebuild) {
     var frag = document.createDocumentFragment();
     MENU.dishes.forEach(function (dish, i) {
       var card = makeCard(dish, i);
@@ -2448,13 +3812,14 @@ window.MEATOLOGIA_MENU = {
       frag.appendChild(card);
     });
     grid.appendChild(frag);
+    if (rebuild) return;
 
     MENU.courses.forEach(function (c) {
       var chip = document.createElement('button');
       chip.type = 'button';
       chip.className = 'chip';
       chip.dataset.course = c.id;
-      chip.textContent = c.label;
+      chip.textContent = courseLabel(c.id);
       chip.setAttribute('aria-pressed', c.id === course ? 'true' : 'false');
       chip.addEventListener('click', function () { filter(c.id); });
       chipBar.appendChild(chip);
@@ -2513,7 +3878,21 @@ window.MEATOLOGIA_MENU = {
   var current   = -1;
   var from      = null;      // card the takeover grew out of
   var restoreTo = null;
-  var busy      = false;
+  var seq       = 0;    // guards against a stale transition callback landing late
+  var active    = null; // the in-flight view transition, if any
+
+  /**
+   * A new open/close cancels whatever is still animating rather than being
+   * refused. Bumping `seq` makes the old transition's callback inert, so a
+   * late-landing close cannot hide a dish that has just been opened.
+   */
+  function supersede() {
+    if (active && typeof active.skipTransition === 'function') {
+      try { active.skipTransition(); } catch (err) { /* already finished */ }
+    }
+    active = null;
+    return ++seq;
+  }
 
   function shown() {
     return MENU.dishes.filter(function (d) { return course === 'all' || d.course === course; });
@@ -2523,17 +3902,17 @@ window.MEATOLOGIA_MENU = {
     stageUse.setAttribute('href', '#' + dish.art);
     $('.takeover-stage').setAttribute('style', tint(dish));
 
-    $('#dish-course').textContent = courseLabel(dish.course) + ' · ' + dish.flag;
+    $('#dish-course').textContent = courseLabel(dish.course) + ' · ' + text(dish, 'flag');
     $('#dish-name').textContent = dish.name;
-    $('#dish-blurb').textContent = dish.blurb;
-    $('#dish-weight').textContent = dish.weight;
-    $('#dish-cook').textContent = dish.cook;
-    $('#dish-pair').textContent = dish.pair;
+    $('#dish-blurb').textContent = text(dish, 'blurb');
+    $('#dish-weight').textContent = text(dish, 'weight') || '—';
+    $('#dish-cook').textContent = text(dish, 'cook') || '—';
+    $('#dish-pair').textContent = text(dish, 'pair') || '—';
     $('#dish-price').textContent = dish.price;
 
     var parts = $('#dish-parts');
     parts.innerHTML = '';
-    dish.parts.forEach(function (p, i) {
+    (text(dish, 'parts') || []).forEach(function (p, i) {
       var li = document.createElement('li');
       li.style.setProperty('--i', i);
       li.textContent = p;
@@ -2617,7 +3996,6 @@ window.MEATOLOGIA_MENU = {
   }
 
   function openDish(id, card) {
-    if (busy) return;
     var i = MENU.dishes.findIndex(function (d) { return d.id === id; });
     if (i < 0) return;
 
@@ -2633,15 +4011,20 @@ window.MEATOLOGIA_MENU = {
     if (still()) { show(); focusSheet(); return; }
 
     if (hasVT && from) {
-      busy = true;
+      var mine = supersede();
       label(from, true);
       var vt = document.startViewTransition(function () {
+        if (mine !== seq) return;      // a newer open/close has taken over
         label(from, false);
         show();
         labelStage(true);
       });
-      vt.finished.then(function () { labelStage(false); busy = false; })
-                 .catch(function () { labelStage(false); busy = false; });
+      active = vt;
+      var settle = function () {
+        labelStage(false);
+        if (active === vt) active = null;
+      };
+      vt.finished.then(settle).catch(settle);
       vt.ready.then(focusSheet).catch(focusSheet);
       return;
     }
@@ -2652,7 +4035,7 @@ window.MEATOLOGIA_MENU = {
   }
 
   function closeDish() {
-    if (over.hidden || busy) return;
+    if (over.hidden) return;
     var pic = from ? $('.dish-pic', from) : null;
 
     function back() {
@@ -2667,21 +4050,27 @@ window.MEATOLOGIA_MENU = {
     if (pic && !onScreen(pic)) pic.scrollIntoView({ block: 'center', behavior: 'auto' });
 
     if (hasVT && pic && !from.classList.contains('gone')) {
-      busy = true;
+      var mine = supersede();
+      var leaving = from;
       labelStage(true);
       var vt = document.startViewTransition(function () {
+        if (mine !== seq) return;
         labelStage(false);
         hide();
         label(from, true);
       });
-      var done = function () { label(from, false); busy = false; back(); };
+      active = vt;
+      var done = function () {
+        label(leaving, false);
+        if (active === vt) active = null;
+        back();
+      };
       vt.finished.then(done).catch(done);
       return;
     }
 
     over.classList.add('shutting');
-    busy = true;
-    var end = function () { busy = false; hide(); back(); };
+    var end = function () { hide(); back(); };
     if (pic) flip(pic.getBoundingClientRect(), true).then(end); else end();
   }
 
@@ -2877,10 +4266,10 @@ window.MEATOLOGIA_MENU = {
     var open = now.getHours() >= OPEN_HOUR && now.getHours() < CLOSE_HOUR;
 
     var chip = $('#status-chip');
-    var text = $('#status-text');
+    var text = $('#status-text');   // shadows the dish helper; local to hours()
     if (chip && text) {
       chip.classList.toggle('shut', !open);
-      text.textContent = open ? 'Open now · until 22:00' : 'Closed · opens 12:00';
+      text.textContent = I.t(open ? 'hours.open' : 'hours.shut');
     }
 
     var row = $('#hours-table tr[data-day="' + now.getDay() + '"]');
@@ -2950,16 +4339,95 @@ window.MEATOLOGIA_MENU = {
     });
   }
 
+  /* ── Language ───────────────────────────────────────────────────── */
+
+  var LANG_KEY = 'meatologia.lang';
+
+  /** Fill every [data-i18n] element from the active language. */
+  function applyStatic() {
+    $$('[data-i18n]').forEach(function (el) {
+      el.textContent = I.t(el.dataset.i18n);
+    });
+    $$('[data-i18n-html]').forEach(function (el) {
+      el.innerHTML = I.t(el.dataset.i18nHtml);
+    });
+    // data-i18n-attr="placeholder:form.namePlaceholder, aria-label:nav.open"
+    $$('[data-i18n-attr]').forEach(function (el) {
+      el.dataset.i18nAttr.split(',').forEach(function (pair) {
+        var bits = pair.split(':');
+        if (bits.length === 2) el.setAttribute(bits[0].trim(), I.t(bits[1].trim()));
+      });
+    });
+
+    document.documentElement.lang = I.language();
+    document.title = I.t('meta.title');
+    var desc = $('meta[name="description"]');
+    if (desc) desc.setAttribute('content', I.t('meta.description'));
+
+    var year = $('#year');
+    if (year) year.textContent = String(new Date().getFullYear());
+    var legal = $('.foot-legal');
+    if (legal) legal.textContent = I.t('foot.legal', { year: new Date().getFullYear() });
+  }
+
+  function setLanguage(code, remember) {
+    I.setLanguage(code);
+    if (remember) { try { localStorage.setItem(LANG_KEY, I.language()); } catch (err) {} }
+
+    applyStatic();
+
+    // anything rendered from data has to be rebuilt
+    var openId = current >= 0 ? MENU.dishes[current].id : null;
+    grid.innerHTML = '';
+    cards.length = 0;
+    buildMenu(true);
+    cards.forEach(function (c) {
+      c.classList.toggle('gone', !(course === 'all' || c.dataset.course === course));
+      c.classList.add('up');
+    });
+    buildFilmstrip();
+    if (openId) fill(MENU.dishes[current]);
+
+    $$('.chip', chipBar).forEach(function (c) { c.textContent = courseLabel(c.dataset.course); });
+
+    $$('.lang-pick').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.dataset.lang === I.language()));
+    });
+
+    hours();
+    document.dispatchEvent(new CustomEvent('meatologia:language', { detail: I.language() }));
+  }
+
+  function languagePicker() {
+    var host = $('#lang-switch');
+    if (!host) return;
+
+    I.languages.forEach(function (lang) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'lang-pick';
+      b.dataset.lang = lang.code;
+      b.textContent = lang.label;
+      b.lang = lang.code;
+      b.setAttribute('aria-pressed', String(lang.code === I.language()));
+      b.addEventListener('click', function () { setLanguage(lang.code, true); });
+      host.appendChild(b);
+    });
+  }
+
   /* ── Go ─────────────────────────────────────────────────────────── */
+  var saved = null;
+  try { saved = localStorage.getItem(LANG_KEY); } catch (err) {}
+  I.setLanguage(saved || I.preferred());
+  applyStatic();
+  languagePicker();
+
   buildMenu();
   buildFilmstrip();
   anatomy();
   reveal();
   masthead();
   hours();
-
-  var year = $('#year');
-  if (year) year.textContent = String(new Date().getFullYear());
 
   // #dish-classic opens that dish on load
   if (/^#dish-/.test(location.hash)) {
@@ -2983,7 +4451,21 @@ window.MEATOLOGIA_MENU = {
   'use strict';
 
   var R = window.MEATOLOGIA_BOOKING;
-  if (!R) return;
+  var I = window.MEATOLOGIA_I18N;
+  if (!R || !I) return;
+
+  /** Turn a validation code from booking-core into a sentence. */
+  function say_(err) {
+    if (!err) return '';
+    if (typeof err === 'string') return err;      // older payload, show as-is
+    return I.t('err.' + err.code, err);
+  }
+
+  function prettyDate(dateStr) {
+    var d = R.toDate(dateStr, '12:00');
+    if (!d) return dateStr;
+    return d.toLocaleDateString(I.localeOf(), { weekday: 'long', day: 'numeric', month: 'long' });
+  }
 
   var $ = function (s, c) { return (c || document).querySelector(s); };
   var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
@@ -3068,12 +4550,12 @@ window.MEATOLOGIA_MENU = {
 
       if (slot.status !== 'open') {
         btn.disabled = true;
-        btn.title = slot.status === 'past' ? 'This seating has passed' : 'Fully booked';
+        btn.title = slot.status === 'past' ? I.t('form.passed') : I.t('form.full');
       } else {
         openCount++;
         if (slot.seatsLeft <= 8) {
           btn.classList.add('slot-tight');
-          btn.title = slot.seatsLeft + ' seats left';
+          btn.title = I.t('form.seatsLeft', { n: slot.seatsLeft });
         }
       }
 
@@ -3085,8 +4567,7 @@ window.MEATOLOGIA_MENU = {
     if (!openCount) {
       var none = document.createElement('p');
       none.className = 'slots-empty';
-      none.textContent = 'Nothing free on this date for ' + state.guests +
-        (state.guests === 1 ? ' guest' : ' guests') + '. Try another day, or call us.';
+      none.textContent = I.t('form.nothingFree', { n: state.guests });
       els.slots.appendChild(none);
     }
 
@@ -3158,30 +4639,30 @@ window.MEATOLOGIA_MENU = {
     var checked = R.validate(input, known, new Date());
 
     if (!checked.ok) {
-      Object.keys(checked.errors).forEach(function (f) { showError(f, checked.errors[f]); });
+      Object.keys(checked.errors).forEach(function (f) { showError(f, say_(checked.errors[f])); });
       var first = $('#err-' + Object.keys(checked.errors)[0]);
       if (first && first.previousElementSibling) first.previousElementSibling.focus();
-      say(els.msg, 'Almost — check the highlighted fields.', 'bad');
+      say(els.msg, I.t('form.checkFields'), 'bad');
       return;
     }
 
     els.submit.disabled = true;
-    els.submit.textContent = 'Booking…';
+    els.submit.textContent = I.t('form.submitting');
 
     submit(checked.booking)
       .then(function (booking) { confirmed(booking); })
       .catch(function (err) {
         if (err && err.errors) {
-          Object.keys(err.errors).forEach(function (f) { showError(f, err.errors[f]); });
-          say(els.msg, 'That seating just went. Pick another time.', 'bad');
+          Object.keys(err.errors).forEach(function (f) { showError(f, say_(err.errors[f])); });
+          say(els.msg, I.t('form.taken'), 'bad');
           refresh();
         } else {
-          say(els.msg, 'We could not save that booking. Please call us on 666 854 218.', 'bad');
+          say(els.msg, I.t('form.failed'), 'bad');
         }
       })
       .then(function () {
         els.submit.disabled = false;
-        els.submit.textContent = 'Book the table';
+        els.submit.textContent = I.t('form.submit');
       });
   });
 
@@ -3220,15 +4701,13 @@ window.MEATOLOGIA_MENU = {
     state.current = booking;
 
     $('#booked-ref').textContent = booking.ref;
-    $('#booked-when').textContent = R.prettyDate(booking.date) + ' at ' + booking.time;
-    $('#booked-guests').textContent = booking.guests + (booking.guests === 1 ? ' guest' : ' guests');
+    $('#booked-when').textContent = prettyDate(booking.date) + ' · ' + booking.time;
+    $('#booked-guests').textContent = booking.guests === 1
+      ? I.t('done.guest1') : I.t('done.guestsN', { n: booking.guests });
     $('#booked-name').textContent = booking.name;
 
-    $('#booked-title').textContent = booking.local ? 'Booking saved' : 'Table booked';
-    $('#booked-sub').textContent = booking.local
-      ? 'This copy of the site has no booking server, so we have kept the details on this device — ' +
-        'please ring 666 854 218 to confirm the table.'
-      : 'We have you in the book. Quote the reference if you need to change anything.';
+    $('#booked-title').textContent = I.t(booking.local ? 'done.titleLocal' : 'done.title');
+    $('#booked-sub').textContent = I.t(booking.local ? 'done.subLocal' : 'done.sub');
 
     say(els.bookedMsg, '', '');
     form.hidden = true;
@@ -3258,11 +4737,11 @@ window.MEATOLOGIA_MENU = {
     // save capability there, and a plain link everywhere else.
     if (window.claude && typeof window.claude.use === 'function') {
       window.claude.use('downloads').then(function (downloads) {
-        if (!downloads) return say(els.bookedMsg, 'Saving files is not available here.', 'bad');
+        if (!downloads) return say(els.bookedMsg, I.t('done.icsUnavailable'), 'bad');
         return downloads.save({ filename: 'meatologia-' + booking.ref + '.ics', data: ics })
-          .then(function () { say(els.bookedMsg, 'Saved to your calendar file.', 'good'); })
-          .catch(function () { say(els.bookedMsg, 'The download was declined.', ''); });
-      }).catch(function () { say(els.bookedMsg, 'Saving files is not available here.', 'bad'); });
+          .then(function () { say(els.bookedMsg, I.t('done.icsSaved'), 'good'); })
+          .catch(function () { say(els.bookedMsg, I.t('done.icsDeclined'), ''); });
+      }).catch(function () { say(els.bookedMsg, I.t('done.icsUnavailable'), 'bad'); });
       return;
     }
 
@@ -3274,21 +4753,21 @@ window.MEATOLOGIA_MENU = {
     a.click();
     document.body.removeChild(a);
     setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
-    say(els.bookedMsg, 'Calendar file saved.', 'good');
+    say(els.bookedMsg, I.t('done.icsSaved'), 'good');
   });
 
   /* Cancelling */
   $('#booked-cancel').addEventListener('click', function () {
     var booking = state.current;
     if (!booking) return;
-    if (!window.confirm('Cancel the table on ' + R.prettyDate(booking.date) +
-        ' at ' + booking.time + '?')) return;
+    if (!window.confirm(I.t('done.confirmCancel',
+        { date: prettyDate(booking.date), time: booking.time }))) return;
 
     cancel(booking.ref, booking.phone).then(function (ok) {
-      if (!ok) return say(els.bookedMsg, 'We could not cancel it here — please call us.', 'bad');
-      say(els.bookedMsg, 'Cancelled. The table is back in the book.', 'good');
-      $('#booked-title').textContent = 'Booking cancelled';
-      $('#booked-sub').textContent = 'Nothing else to do — you are not expected.';
+      if (!ok) return say(els.bookedMsg, I.t('done.cancelFailed'), 'bad');
+      say(els.bookedMsg, I.t('done.cancelled'), 'good');
+      $('#booked-title').textContent = I.t('done.cancelTitle');
+      $('#booked-sub').textContent = I.t('done.cancelSub');
       $('#booked-cancel').disabled = true;
       $('#booked-ics').disabled = true;
     });
@@ -3331,11 +4810,11 @@ window.MEATOLOGIA_MENU = {
     e.preventDefault();
     var ref = $('#l-ref').value.trim().toUpperCase();
     var phone = $('#l-phone').value.trim();
-    if (!ref || !phone) return say(els.lookupMsg, 'Both the reference and the phone number, please.', 'bad');
+    if (!ref || !phone) return say(els.lookupMsg, I.t('look.both'), 'bad');
 
     find(ref, phone).then(function (booking) {
-      if (!booking) return say(els.lookupMsg, 'No booking matches that pair.', 'bad');
-      if (booking.status === 'cancelled') return say(els.lookupMsg, 'That booking is already cancelled.', '');
+      if (!booking) return say(els.lookupMsg, I.t('look.none'), 'bad');
+      if (booking.status === 'cancelled') return say(els.lookupMsg, I.t('look.already'), '');
       els.lookup.hidden = true;
       confirmed(booking);
     });
@@ -3354,7 +4833,7 @@ window.MEATOLOGIA_MENU = {
     return api('/api/bookings/' + encodeURIComponent(ref)).then(function (res) {
       if (!res.ok || !res.body.booking) return null;
       // the API withholds personal details, so carry the phone we were given
-      return Object.assign({ name: 'your booking', phone: phone }, res.body.booking);
+      return Object.assign({ name: I.t('look.yours'), phone: phone }, res.body.booking);
     }).catch(function () { return null; });
   }
 
@@ -3391,5 +4870,10 @@ window.MEATOLOGIA_MENU = {
   state.date = els.date.value;
 
   refresh();
+
+  document.addEventListener('meatologia:language', function () {
+    if (state.slots.length) renderSlots(state.slots);
+    if (state.current) confirmed(state.current);
+  });
 }());
 </script>

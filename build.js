@@ -15,6 +15,8 @@ const read = (p) => fs.readFileSync(path.join(root, p), 'utf8');
 
 const html = read('index.html');
 const css = read('assets/css/styles.css');
+const i18n = read('assets/js/i18n.js');
+const menuI18n = read('assets/js/menu-i18n.js');
 const data = read('assets/js/data.js');
 const core = read('assets/js/booking-core.js');
 const main = read('assets/js/main.js');
@@ -31,6 +33,8 @@ const bundle = [
   css.trim(),
   '</style>',
   body.replace(/<script src="assets\/js\/[^"]+"><\/script>\s*/g, '').trim(),
+  '<script>', i18n.trim(), '</script>',
+  '<script>', menuI18n.trim(), '</script>',
   '<script>', data.trim(), '</script>',
   '<script>', core.trim(), '</script>',
   '<script>', main.trim(), '</script>',

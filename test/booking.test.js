@@ -139,23 +139,32 @@ test('party size is held between one and the table limit', () => {
 });
 
 test('bookings in the past, off the clock, or too far ahead are refused', () => {
-  assert.ok(R.validate(booking({ date: '2026-08-16' }), [], NOW).errors.time, 'yesterday');
-  assert.ok(R.validate(booking({ time: '23:00' }), [], NOW).errors.time, 'after last seating');
-  assert.ok(R.validate(booking({ time: '11:00' }), [], NOW).errors.time, 'before opening');
+  assert.equal(R.validate(booking({ date: '2026-08-16' }), [], NOW).errors.time.code, 'too_soon', 'yesterday');
+  assert.equal(R.validate(booking({ time: '23:00' }), [], NOW).errors.time.code, 'off_hours', 'after last seating');
+  assert.equal(R.validate(booking({ time: '11:00' }), [], NOW).errors.time.code, 'off_hours', 'before opening');
   assert.ok(R.validate(booking({ date: '2026-02-31' }), [], NOW).errors.date, 'not a real date');
-  assert.ok(R.validate(booking({ date: '2027-01-01' }), [], NOW).errors.date, 'beyond the horizon');
+  assert.equal(R.validate(booking({ date: '2027-01-01' }), [], NOW).errors.date.code, 'too_far', 'beyond the horizon');
 });
 
-test('leaving the seating unchosen says so plainly', () => {
+test('leaving the seating unchosen says so, rather than blaming the hours', () => {
   const out = R.validate(booking({ time: '' }), [], NOW);
-  assert.equal(out.errors.time, 'Choose a seating time.');
+  assert.equal(out.errors.time.code, 'no_time');
+});
+
+test('errors come back as codes the page can translate', () => {
+  const out = R.validate(booking({ name: '', guests: 40 }), [], NOW);
+  assert.equal(out.errors.name.code, 'name_short');
+  assert.equal(out.errors.guests.code, 'party');
+  assert.equal(out.errors.guests.max, R.CONFIG.maxParty, 'carries what the sentence needs');
 });
 
 test('a booking is refused when the seating has filled up', () => {
   const book = [{ date: SOON, time: '18:00', guests: R.CONFIG.seats - 1, status: 'confirmed' }];
   const out = R.validate(booking({ guests: 4 }), book, NOW);
   assert.ok(!out.ok);
-  assert.match(out.errors.time, /1 seat is left/);
+  assert.equal(out.errors.time.code, 'seats_left_1');
+  assert.equal(out.errors.time.n, 1);
+  assert.equal(out.errors.time.time, '18:00');
 });
 
 /* ── References ───────────────────────────────────────────────────── */
@@ -313,4 +322,66 @@ test('the API takes a booking, holds the seats, and cancels on request', async (
       assert.ok(res.status === 404 || res.status === 403, attempt + ' got ' + res.status);
     }
   });
+});
+
+/* ── Translations ─────────────────────────────────────────────────── */
+
+test('every language carries every interface string', () => {
+  const I = require('../assets/js/i18n');
+  const base = Object.keys(I.strings.en);
+
+  assert.ok(base.length > 100, 'the English table is the reference');
+
+  for (const lang of I.languages) {
+    const table = I.strings[lang.code];
+    assert.ok(table, lang.code + ' has a string table');
+
+    const missing = base.filter((key) => table[key] == null);
+    const extra = Object.keys(table).filter((key) => I.strings.en[key] == null);
+
+    assert.deepEqual(missing, [], lang.label + ' is missing keys');
+    assert.deepEqual(extra, [], lang.label + ' has keys English does not');
+  }
+});
+
+test('every dish is translated into every language', () => {
+  const I = require('../assets/js/i18n');
+  const MENU = (() => {
+    const sandbox = { window: {} };
+    new Function('window', fs.readFileSync(__dirname + '/../assets/js/data.js', 'utf8'))(sandbox.window);
+    return sandbox.window.MEATOLOGIA_MENU;
+  })();
+  const T = require('../assets/js/menu-i18n');
+
+  const fields = ['flag', 'short', 'blurb', 'parts', 'weight', 'cook', 'pair'];
+  const gaps = [];
+
+  for (const dish of MENU.dishes) {
+    for (const lang of I.languages) {
+      if (lang.code === 'en') continue;              // data.js is the English copy
+      const block = (T[dish.id] || {})[lang.code];
+      if (!block) { gaps.push(dish.id + ' has no ' + lang.code); continue; }
+
+      for (const field of fields) {
+        // an empty string in data.js means the dish genuinely has no such field
+        if (dish[field] === '' || (Array.isArray(dish[field]) && !dish[field].length)) continue;
+        if (block[field] == null) gaps.push(dish.id + '.' + lang.code + ' missing ' + field);
+      }
+    }
+  }
+
+  assert.deepEqual(gaps, [], 'untranslated menu copy');
+});
+
+test('course chips have a label in every language', () => {
+  const I = require('../assets/js/i18n');
+  const sandbox = { window: {} };
+  new Function('window', fs.readFileSync(__dirname + '/../assets/js/data.js', 'utf8'))(sandbox.window);
+
+  for (const course of sandbox.window.MEATOLOGIA_MENU.courses) {
+    for (const lang of I.languages) {
+      assert.ok(I.strings[lang.code]['course.' + course.id],
+        course.id + ' has no label in ' + lang.label);
+    }
+  }
 });

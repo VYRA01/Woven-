@@ -146,41 +146,48 @@
     var date = String(input.date || '').trim();
     var time = String(input.time || '').trim();
 
-    if (name.length < 2) errors.name = 'Please give us a name for the table.';
-    else if (name.length > 80) errors.name = 'That name is too long for the book.';
-
-    if (!PHONE.test(phone)) errors.phone = 'A phone number so we can reach you if plans change.';
-    if (email && !EMAIL.test(email)) errors.email = 'That email address does not look right.';
-    if (notes.length > 400) errors.notes = 'Please keep the note under 400 characters.';
-
-    if (!(guests >= CONFIG.minParty && guests <= CONFIG.maxParty)) {
-      errors.guests = 'Tables here seat 1 to ' + CONFIG.maxParty + '. For a bigger group, call us.';
+    // Errors are reported as codes, not prose: the same check has to speak
+    // whatever language the guest is reading, and the server has no idea
+    // which that is. `vars` carries anything the sentence needs to say.
+    function fail(field, code, vars) {
+      if (!errors[field]) errors[field] = Object.assign({ code: code }, vars || {});
     }
 
-    var when = toDate(date, time);
-    if (!when) {
-      errors.date = 'Pick a date and a time.';
+    if (name.length < 2) fail('name', 'name_short');
+    else if (name.length > 80) fail('name', 'name_long');
+
+    if (!PHONE.test(phone)) fail('phone', 'phone');
+    if (email && !EMAIL.test(email)) fail('email', 'email');
+    if (notes.length > 400) fail('notes', 'notes_long');
+
+    if (!(guests >= CONFIG.minParty && guests <= CONFIG.maxParty)) {
+      fail('guests', 'party', { max: CONFIG.maxParty });
+    }
+
+    var when = time ? toDate(date, time) : null;
+    if (!time) {
+      fail('time', 'no_time');
+      if (!date) fail('date', 'no_date');
+    } else if (!when) {
+      fail('date', 'no_date');
     } else {
       var limit = new Date(now.getTime());
       limit.setDate(limit.getDate() + CONFIG.maxDaysAhead);
 
-      if (!time) {
-        errors.time = 'Choose a seating time.';
-      } else if (slots().indexOf(time) < 0) {
-        errors.time = 'We seat between 12:00 and 21:00.';
+      if (slots().indexOf(time) < 0) {
+        fail('time', 'off_hours');
       } else if (when < new Date(now.getTime() + CONFIG.leadMinutes * 60000)) {
-        errors.time = 'That seating has passed. Please call for anything in the next hour.';
+        fail('time', 'too_soon');
       } else if (when > limit) {
-        errors.date = 'We take bookings up to ' + CONFIG.maxDaysAhead + ' days ahead.';
+        fail('date', 'too_far', { days: CONFIG.maxDaysAhead });
       }
     }
 
     if (!errors.time && !errors.guests && !errors.date) {
       var left = CONFIG.seats - seatsTaken(bookings, date, time);
       if (left < guests) {
-        errors.time = left > 0
-          ? 'Only ' + left + ' ' + (left === 1 ? 'seat is' : 'seats are') + ' left at ' + time + '.'
-          : 'That seating is fully booked.';
+        if (left <= 0) fail('time', 'full');
+        else fail('time', left === 1 ? 'seats_left_1' : 'seats_left', { n: left, time: time });
       }
     }
 

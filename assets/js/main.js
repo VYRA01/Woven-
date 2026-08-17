@@ -11,6 +11,8 @@
   'use strict';
 
   var MENU = window.MEATOLOGIA_MENU;
+  var I = window.MEATOLOGIA_I18N;
+  var MENU_T = window.MEATOLOGIA_MENU_I18N || {};
   var $  = function (s, c) { return (c || document).querySelector(s); };
   var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
 
@@ -34,7 +36,15 @@
 
   function courseLabel(id) {
     var c = MENU.courses.filter(function (x) { return x.id === id; })[0];
-    return c ? c.label : '';
+    return I.t('course.' + id) !== 'course.' + id ? I.t('course.' + id) : (c ? c.label : '');
+  }
+
+  /** A dish field in the active language, falling back to the English in data.js. */
+  function text(dish, field) {
+    var block = (MENU_T[dish.id] || {})[I.language()];
+    var value = block && block[field];
+    if (value == null || value === '') return dish[field];
+    return value;
   }
 
   function makeCard(dish, i) {
@@ -44,27 +54,27 @@
     el.dataset.id = dish.id;
     el.dataset.course = dish.course;
     el.style.setProperty('--delay', Math.min(i, 8) * 55 + 'ms');
-    el.setAttribute('aria-label', dish.name + ', ' + dish.price + ' złoty — open details');
+    el.setAttribute('aria-label', I.t('menu.detailsFor', { name: dish.name, price: dish.price }));
 
     el.innerHTML =
       '<span class="dish-media" style="' + tint(dish) + '">' +
         '<svg class="dish-pic" viewBox="0 0 320 280" aria-hidden="true"><use href="#' + dish.art + '"></use></svg>' +
-        '<span class="dish-flag">' + dish.flag + '</span>' +
+        '<span class="dish-flag">' + text(dish, 'flag') + '</span>' +
       '</span>' +
       '<span class="dish-body">' +
         '<span class="dish-name">' + dish.name + '</span>' +
-        '<span class="dish-short">' + dish.short + '</span>' +
+        '<span class="dish-short">' + text(dish, 'short') + '</span>' +
       '</span>' +
       '<span class="dish-foot">' +
         '<span class="dish-cost">' + dish.price + '<small>zł</small></span>' +
-        '<span class="dish-open">Open <span aria-hidden="true">→</span></span>' +
+        '<span class="dish-open">' + I.t('menu.open') + ' <span aria-hidden="true">→</span></span>' +
       '</span>';
 
     el.addEventListener('click', function () { openDish(dish.id, el); });
     return el;
   }
 
-  function buildMenu() {
+  function buildMenu(rebuild) {
     var frag = document.createDocumentFragment();
     MENU.dishes.forEach(function (dish, i) {
       var card = makeCard(dish, i);
@@ -72,13 +82,14 @@
       frag.appendChild(card);
     });
     grid.appendChild(frag);
+    if (rebuild) return;
 
     MENU.courses.forEach(function (c) {
       var chip = document.createElement('button');
       chip.type = 'button';
       chip.className = 'chip';
       chip.dataset.course = c.id;
-      chip.textContent = c.label;
+      chip.textContent = courseLabel(c.id);
       chip.setAttribute('aria-pressed', c.id === course ? 'true' : 'false');
       chip.addEventListener('click', function () { filter(c.id); });
       chipBar.appendChild(chip);
@@ -137,7 +148,21 @@
   var current   = -1;
   var from      = null;      // card the takeover grew out of
   var restoreTo = null;
-  var busy      = false;
+  var seq       = 0;    // guards against a stale transition callback landing late
+  var active    = null; // the in-flight view transition, if any
+
+  /**
+   * A new open/close cancels whatever is still animating rather than being
+   * refused. Bumping `seq` makes the old transition's callback inert, so a
+   * late-landing close cannot hide a dish that has just been opened.
+   */
+  function supersede() {
+    if (active && typeof active.skipTransition === 'function') {
+      try { active.skipTransition(); } catch (err) { /* already finished */ }
+    }
+    active = null;
+    return ++seq;
+  }
 
   function shown() {
     return MENU.dishes.filter(function (d) { return course === 'all' || d.course === course; });
@@ -147,17 +172,17 @@
     stageUse.setAttribute('href', '#' + dish.art);
     $('.takeover-stage').setAttribute('style', tint(dish));
 
-    $('#dish-course').textContent = courseLabel(dish.course) + ' · ' + dish.flag;
+    $('#dish-course').textContent = courseLabel(dish.course) + ' · ' + text(dish, 'flag');
     $('#dish-name').textContent = dish.name;
-    $('#dish-blurb').textContent = dish.blurb;
-    $('#dish-weight').textContent = dish.weight;
-    $('#dish-cook').textContent = dish.cook;
-    $('#dish-pair').textContent = dish.pair;
+    $('#dish-blurb').textContent = text(dish, 'blurb');
+    $('#dish-weight').textContent = text(dish, 'weight') || '—';
+    $('#dish-cook').textContent = text(dish, 'cook') || '—';
+    $('#dish-pair').textContent = text(dish, 'pair') || '—';
     $('#dish-price').textContent = dish.price;
 
     var parts = $('#dish-parts');
     parts.innerHTML = '';
-    dish.parts.forEach(function (p, i) {
+    (text(dish, 'parts') || []).forEach(function (p, i) {
       var li = document.createElement('li');
       li.style.setProperty('--i', i);
       li.textContent = p;
@@ -241,7 +266,6 @@
   }
 
   function openDish(id, card) {
-    if (busy) return;
     var i = MENU.dishes.findIndex(function (d) { return d.id === id; });
     if (i < 0) return;
 
@@ -257,15 +281,20 @@
     if (still()) { show(); focusSheet(); return; }
 
     if (hasVT && from) {
-      busy = true;
+      var mine = supersede();
       label(from, true);
       var vt = document.startViewTransition(function () {
+        if (mine !== seq) return;      // a newer open/close has taken over
         label(from, false);
         show();
         labelStage(true);
       });
-      vt.finished.then(function () { labelStage(false); busy = false; })
-                 .catch(function () { labelStage(false); busy = false; });
+      active = vt;
+      var settle = function () {
+        labelStage(false);
+        if (active === vt) active = null;
+      };
+      vt.finished.then(settle).catch(settle);
       vt.ready.then(focusSheet).catch(focusSheet);
       return;
     }
@@ -276,7 +305,7 @@
   }
 
   function closeDish() {
-    if (over.hidden || busy) return;
+    if (over.hidden) return;
     var pic = from ? $('.dish-pic', from) : null;
 
     function back() {
@@ -291,21 +320,27 @@
     if (pic && !onScreen(pic)) pic.scrollIntoView({ block: 'center', behavior: 'auto' });
 
     if (hasVT && pic && !from.classList.contains('gone')) {
-      busy = true;
+      var mine = supersede();
+      var leaving = from;
       labelStage(true);
       var vt = document.startViewTransition(function () {
+        if (mine !== seq) return;
         labelStage(false);
         hide();
         label(from, true);
       });
-      var done = function () { label(from, false); busy = false; back(); };
+      active = vt;
+      var done = function () {
+        label(leaving, false);
+        if (active === vt) active = null;
+        back();
+      };
       vt.finished.then(done).catch(done);
       return;
     }
 
     over.classList.add('shutting');
-    busy = true;
-    var end = function () { busy = false; hide(); back(); };
+    var end = function () { hide(); back(); };
     if (pic) flip(pic.getBoundingClientRect(), true).then(end); else end();
   }
 
@@ -501,10 +536,10 @@
     var open = now.getHours() >= OPEN_HOUR && now.getHours() < CLOSE_HOUR;
 
     var chip = $('#status-chip');
-    var text = $('#status-text');
+    var text = $('#status-text');   // shadows the dish helper; local to hours()
     if (chip && text) {
       chip.classList.toggle('shut', !open);
-      text.textContent = open ? 'Open now · until 22:00' : 'Closed · opens 12:00';
+      text.textContent = I.t(open ? 'hours.open' : 'hours.shut');
     }
 
     var row = $('#hours-table tr[data-day="' + now.getDay() + '"]');
@@ -574,16 +609,95 @@
     });
   }
 
+  /* ── Language ───────────────────────────────────────────────────── */
+
+  var LANG_KEY = 'meatologia.lang';
+
+  /** Fill every [data-i18n] element from the active language. */
+  function applyStatic() {
+    $$('[data-i18n]').forEach(function (el) {
+      el.textContent = I.t(el.dataset.i18n);
+    });
+    $$('[data-i18n-html]').forEach(function (el) {
+      el.innerHTML = I.t(el.dataset.i18nHtml);
+    });
+    // data-i18n-attr="placeholder:form.namePlaceholder, aria-label:nav.open"
+    $$('[data-i18n-attr]').forEach(function (el) {
+      el.dataset.i18nAttr.split(',').forEach(function (pair) {
+        var bits = pair.split(':');
+        if (bits.length === 2) el.setAttribute(bits[0].trim(), I.t(bits[1].trim()));
+      });
+    });
+
+    document.documentElement.lang = I.language();
+    document.title = I.t('meta.title');
+    var desc = $('meta[name="description"]');
+    if (desc) desc.setAttribute('content', I.t('meta.description'));
+
+    var year = $('#year');
+    if (year) year.textContent = String(new Date().getFullYear());
+    var legal = $('.foot-legal');
+    if (legal) legal.textContent = I.t('foot.legal', { year: new Date().getFullYear() });
+  }
+
+  function setLanguage(code, remember) {
+    I.setLanguage(code);
+    if (remember) { try { localStorage.setItem(LANG_KEY, I.language()); } catch (err) {} }
+
+    applyStatic();
+
+    // anything rendered from data has to be rebuilt
+    var openId = current >= 0 ? MENU.dishes[current].id : null;
+    grid.innerHTML = '';
+    cards.length = 0;
+    buildMenu(true);
+    cards.forEach(function (c) {
+      c.classList.toggle('gone', !(course === 'all' || c.dataset.course === course));
+      c.classList.add('up');
+    });
+    buildFilmstrip();
+    if (openId) fill(MENU.dishes[current]);
+
+    $$('.chip', chipBar).forEach(function (c) { c.textContent = courseLabel(c.dataset.course); });
+
+    $$('.lang-pick').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.dataset.lang === I.language()));
+    });
+
+    hours();
+    document.dispatchEvent(new CustomEvent('meatologia:language', { detail: I.language() }));
+  }
+
+  function languagePicker() {
+    var host = $('#lang-switch');
+    if (!host) return;
+
+    I.languages.forEach(function (lang) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'lang-pick';
+      b.dataset.lang = lang.code;
+      b.textContent = lang.label;
+      b.lang = lang.code;
+      b.setAttribute('aria-pressed', String(lang.code === I.language()));
+      b.addEventListener('click', function () { setLanguage(lang.code, true); });
+      host.appendChild(b);
+    });
+  }
+
   /* ── Go ─────────────────────────────────────────────────────────── */
+  var saved = null;
+  try { saved = localStorage.getItem(LANG_KEY); } catch (err) {}
+  I.setLanguage(saved || I.preferred());
+  applyStatic();
+  languagePicker();
+
   buildMenu();
   buildFilmstrip();
   anatomy();
   reveal();
   masthead();
   hours();
-
-  var year = $('#year');
-  if (year) year.textContent = String(new Date().getFullYear());
 
   // #dish-classic opens that dish on load
   if (/^#dish-/.test(location.hash)) {

@@ -75,6 +75,33 @@ animates there). Wherever layers need to move independently, `inlineArt()` /
 `fillSvg()` in `main.js` clone the symbol into real nodes first. The hero
 burger is cloned for the same reason.
 
+## Languages
+
+English, Polish and Korean, switched from the masthead. The choice is
+remembered; on a first visit the browser's own preference is used, falling back
+to English.
+
+```
+assets/js/i18n.js       interface strings, one block per language
+assets/js/menu-i18n.js  dish copy, keyed by dish then language
+```
+
+Two rules keep it honest. Dish **names** are never translated — "Tatar 'Nduja"
+is what the kitchen calls it in any language. And validation errors travel as
+*codes* (`{code: 'seats_left', n: 3, time: '19:00'}`), not sentences, because
+the same check runs on the server, which has no idea what the guest is reading;
+the page turns the code into a sentence in the active language.
+
+**Adding a language** — say Ukrainian:
+
+1. add `{ code: 'uk', label: 'Українська', locale: 'uk-UA' }` to `languages` in `i18n.js`
+2. copy the `en` block, translate it
+3. add a `uk` block to each dish in `menu-i18n.js`
+
+`npm test` then reports exactly which keys and which dishes are still missing —
+three tests compare every language against English and fail with the list.
+Nothing else in the codebase changes.
+
 ## Editing the menu
 
 Everything lives in `assets/js/data.js`:
@@ -216,11 +243,16 @@ domain at it.
 Address, phone, hours and rating appear in three places: the JSON-LD block in
 `<head>`, the `#find` section, and the footer. Change all three together.
 
-> **On the content:** dish names, prices, weights and descriptions are written
-> from a photo of the menu board and the Google listing — treat them as
-> placeholder copy to replace with the real card from `meatologia.pl`.
-> Accurate as written: the address, phone number, 12:00–22:00 hours, the
-> 40–160 zł per-person range, and the 4.5 rating from 737 reviews.
+> **On the content:** the menu is transcribed from Meatologia's own board,
+> photographed July 2026 — 38 dishes with their real prices, weights and
+> ingredient lists, and the restaurant's own words in the Craft section. The
+> descriptive sentences under each dish are written for the site; the facts
+> around them are the restaurant's.
+>
+> Worth re-checking before launch: prices move, and the board carries a few
+> things the site does not yet — the weekday lunch menu (to 16:00), spirits and
+> cocktails, the Steak Art Festival specials, and the 10% service charge on
+> groups of eight or more.
 
 ## Accessibility and performance
 

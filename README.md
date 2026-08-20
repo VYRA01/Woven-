@@ -8,6 +8,7 @@ the front end is plain HTML/CSS/JS, the server is plain Node.
 npm start        # site + booking API on http://localhost:3000
 npm test         # 31 tests: booking rules, the API end to end, translations
 npm run build    # bundle everything into a single dist/index.html
+npm run photos   # rebuild the photo manifest from assets/photos/
 ```
 
 Bookings need the server. Served as static files instead, the site still works —
@@ -21,6 +22,7 @@ index.html               markup + the inline SVG <symbol> artwork for every dish
 assets/css/styles.css    the whole stylesheet; design tokens live in :root
 assets/js/data.js        the menu — the only file to touch to change dishes
 assets/js/photos.js      photographs, if there are any; empty means "keep drawing"
+tools/photos.js          fills that manifest in from assets/photos/
 assets/js/booking-core.js booking rules, shared by the browser and the server
 assets/js/booking.js     the reservation flow
 assets/js/main.js        takeover, filtering, the anatomy scroll, opening hours
@@ -140,11 +142,11 @@ burgers on a single set of paths.
 ## Photographs
 
 The site draws its food rather than photographing it, and is complete that way.
-Real photographs are a manifest entry, not a code change:
+Real photographs are a file drop, not a code change:
 
-```js
-// assets/js/photos.js
-dishes: { 'classic-burger': { src: 'assets/photos/dishes/classic-burger.jpg' } }
+```bash
+cp classic-burger.jpg assets/photos/dishes/    # named after the dish's id
+npm run photos                                 # writes assets/js/photos.js
 ```
 
 That dish now shows the photograph on its card, in the takeover, in the

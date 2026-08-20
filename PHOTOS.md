@@ -4,16 +4,28 @@ The site ships with drawings, not photographs, and it is complete that way —
 nothing is broken or missing while `assets/js/photos.js` is empty. This is the
 list to hand a photographer when Meatologia want their own food on it.
 
-Adding a photograph is one line. Drop the file in `assets/photos/`, name it in
-`assets/js/photos.js`, and that dish stops drawing and starts showing the
-picture — on the card, in the full-screen takeover, in the filmstrip, and
-through the morph between them. Nothing else changes, and dishes you have no
-photograph for keep their drawing, so the board can be shot a few dishes at a
-time.
+## The short version
 
-Run `npm test` after editing the manifest. It fails with the specific line if a
-dish id is wrong, a path points at a file nobody added, or the anatomy stack is
-missing a layer.
+```bash
+# drop the files in assets/photos/dishes/, named after the dish
+npm run photos      # writes the manifest from whatever is in there
+npm test            # checks every path resolves
+npm run build       # refresh the single-file dist/index.html
+```
+
+`npm run photos` matches each file to a dish by its filename, pairs up any
+`@2x` versions, works out the five anatomy layers from their numbering, and
+prints the name of anything it could not place and why. It only rewrites the
+two marked regions of `assets/js/photos.js`, so anything you added by hand
+elsewhere in the file stays put.
+
+Editing the manifest by hand instead is fine — it is a plain object, and the
+rest of this document is what goes in it.
+
+A dish with a photograph stops drawing and starts showing the picture — on the
+card, in the full-screen takeover, in the filmstrip, and through the morph
+between them. Dishes you have no photograph for keep their drawing, so the
+board can be shot a few dishes at a time.
 
 ---
 
@@ -28,6 +40,16 @@ missing a layer.
 | Crop | the dish fills the frame; it is cropped to fill, not fitted |
 | Weight | keep each under 300 KB, or the menu grid gets slow on a phone |
 
+**Name each file after the dish's `id` in `assets/js/data.js`** — then
+`npm run photos` places it without you writing anything:
+
+```
+assets/photos/dishes/classic-burger.jpg
+assets/photos/dishes/double-trouble.jpg
+assets/photos/dishes/double-trouble@2x.jpg     ← optional retina version
+assets/photos/dishes/arg-ribeye.jpg
+```
+
 ```js
 dishes: {
   'classic-burger': { src: 'assets/photos/dishes/classic-burger.jpg' },
@@ -35,11 +57,11 @@ dishes: {
 }
 ```
 
-The key is the dish's `id` in `assets/js/data.js` — `classic-burger`,
-`cheese-bacon`, `arg-ribeye`, `tatar-klasyk`, and so on for all 38.
+The ids are `classic-burger`, `cheese-bacon`, `double-trouble`, `pastrami`,
+`arg-ribeye`, `tatar-klasyk` and so on for all 38 — `npm run photos` lists any
+filename that does not match one.
 
-Add `src2x` pointing at a double-resolution file if you want it sharp on retina
-screens; it is optional, and one well-sized image is usually enough.
+`src2x` is optional — one well-sized image is usually enough.
 
 ## 2 · The scroll section — five shots, not one
 

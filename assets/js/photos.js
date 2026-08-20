@@ -37,9 +37,14 @@
   'use strict';
 
   return {
-    /** dish id -> { src, src2x? }. Anything absent keeps its illustration. */
+    /**
+     * dish id -> { src, src2x? }. Anything absent keeps its illustration.
+     * `npm run photos` fills this in from assets/photos/dishes/; edit it by
+     * hand if you would rather, but keep the markers so the script still can.
+     */
     dishes: {
-      // 'classic-burger': { src: 'assets/photos/dishes/classic-burger.jpg' },
+      /* dishes:start */
+      /* dishes:end */
     },
 
     /** The hero, if you would rather show a photograph than the illustration. */
@@ -53,11 +58,8 @@
        * or none — a half-filled stack falls back to the drawing.
        */
       layers: [
-        // { key: 'art-bun-btm', src: 'assets/photos/anatomy/1-base.png' },
-        // { key: 'art-patty',   src: 'assets/photos/anatomy/2-patty.png' },
-        // { key: 'art-cheese',  src: 'assets/photos/anatomy/3-cheese.png' },
-        // { key: 'art-veg',     src: 'assets/photos/anatomy/4-lettuce.png' },
-        // { key: 'art-bun-top', src: 'assets/photos/anatomy/5-crown.png' }
+        /* layers:start */
+        /* layers:end */
       ]
     }
   };

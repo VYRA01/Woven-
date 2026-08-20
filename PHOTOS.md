@@ -65,9 +65,12 @@ filename that does not match one.
 
 ## 2 · The scroll section — five shots, not one
 
-`#anatomy` pins the burger and pulls it apart as you scroll. **A single
-photograph cannot do this.** There is nothing behind the bun in a flat image;
-the layers have to exist separately before they can be separated.
+`#anatomy` pins the burger and pulls it apart as you scroll. Until you supply
+these, it uses a burger built in 3D — five layers of stacked discs in a tilted
+scene, which is a real object and comes apart properly.
+
+**A single photograph cannot replace it.** There is nothing behind the bun in a
+flat image; the layers have to exist separately before they can be separated.
 
 So the burger is photographed **five times, one layer at a time**:
 

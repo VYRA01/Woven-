@@ -62,22 +62,46 @@ it apart layer by layer — sesame crown, lettuce, cheddar, patty, base — with
 label pinned to each layer and a step list that lights up as its layer lifts
 away.
 
+**The burger is built, not drawn.** It is a real 3D object: a tilted scene
+holding five layers, each one a short stack of discs whose radius follows a
+profile — a dome for the crown, a bulge for the patty, a rounded underside for
+the heel. Scroll lifts the layers apart along the scene's own vertical axis and
+turns the whole thing as it goes, so you look *into* the gaps rather than at a
+flat drawing pretending to have them.
+
+Two details make it hold together. Each disc is a flat colour shaded by its
+depth, with the lit and shaded sides painted at the size of the whole *layer*
+and centred — give every disc its own highlight and the stack reads as a set of
+concentric rings instead of a solid. And only the five layer elements are
+promoted (`will-change: transform`), so the fifty-odd discs inside are never
+re-rastered mid-scroll; frame times sit on 16.7 ms through the whole section.
+
 Scroll position drives a single custom property, `--p` (0 = assembled,
 1 = fully apart), set on the section inside a `requestAnimationFrame`; every
-layer transform, the label fades, the plate shadow and the progress rail are
-all `calc()`s off that one value. Label positions are *measured* from each
-layer's real box on every frame rather than predicted, so the artwork can be
-redrawn without the labels drifting out of alignment.
+layer transform, the scene's tilt and turn, the label fades, the plate shadow
+and the progress rail are all `calc()`s off that one value. Sizes are in `u` —
+hundredths of the stage's short side, set from JS — so the burger keeps its
+proportions in a tall desktop column and a wide phone one alike.
+
+Label positions are *measured* from each layer's real box rather than
+predicted, so the artwork can change without them drifting. Two layers can sit
+closer together than their labels are tall, so overlapping labels are pushed
+apart and then pulled back wherever there turned out to be room. Under reduced
+motion the labels are placed once, which means waiting until the section is
+actually on screen to do it — measured from below the fold, a promoted 3D layer
+reports the box it had before its transform.
 
 Under `prefers-reduced-motion: reduce` the pinning is dropped entirely and the
 burger renders already apart, with every step expanded.
 
+Supply the five photographed layers described in **[PHOTOS.md](PHOTOS.md)** and
+the section uses those instead — the 3D burger is what stands in until then.
+
 **Worth knowing if you edit the artwork:** CSS cannot reach inside a `<use>`
-shadow tree, so individual layers cannot be animated where the symbol is drawn
-with `<use>` (that is how the menu cards draw theirs — only the whole artwork
-animates there). Wherever layers need to move independently, `inlineArt()` /
-`fillSvg()` in `main.js` clone the symbol into real nodes first. The hero
-burger is cloned for the same reason.
+shadow tree, so individual layers cannot be animated where a symbol is drawn
+with `<use>` — that is how the menu cards draw theirs, and only the whole
+artwork animates there. The hero clones its symbol into real nodes
+(`fillSvg()`) for exactly that reason.
 
 ## Languages
 

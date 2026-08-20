@@ -568,10 +568,11 @@ h1 .line { display: block; }
 .anat-plate {
   position: absolute;
   left: 50%;
-  bottom: 2%;
-  width: 74%;
+  /* sits where the burger actually rests, not at the foot of the box */
+  top: calc(48% + 27 * var(--u, 4px));
+  width: calc(78 * var(--u, 4px));
   aspect-ratio: 1 / .17;
-  translate: -50% 0;
+  translate: -50% -50%;
   border-radius: 50%;
   background: radial-gradient(closest-side, rgba(90, 70, 45, .28), transparent 72%);
   /* the plate shrinks away as the stack lifts off it */
@@ -581,33 +582,110 @@ h1 .line { display: block; }
 .anat-burger {
   position: absolute;
   inset: 0;
-  /* lift the group as it fans out, so it stays optically centred */
-  transform: translateY(calc(var(--p) * -4%));
 }
-/* The svg is pinned to the box rather than left to size itself: given only
-   width, it would take its height from the viewBox aspect and paint the
-   layers well outside this element. */
-.anat-burger svg {
+/* The photo stack is a set of flat images and still needs recentring as it
+   fans; the 3D scene is built around its own middle and does not. */
+.anat-burger.is-photo-stack { transform: translateY(calc(var(--p) * -4%)); }
+/* ── The burger in three dimensions ──────────────────────────────────
+   A tilted scene holding five layers, each one a short stack of discs
+   with real thickness. Scroll lifts the layers apart along the scene's
+   own vertical axis (its Z) and turns the whole thing, so you look down
+   into the gaps rather than at a drawing pretending to have them.
+
+   Everything is sized in `u` — hundredths of the stage's short side, set
+   on .anat-art by main.js — so the burger keeps its proportions in any
+   box. Layer sizes come from JS as plain numbers and are multiplied here. */
+.anat-art { perspective: calc(126 * var(--u, 4px)); perspective-origin: 50% 44%; }
+
+.b3-scene {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
+  left: 50%;
+  top: 48%;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  will-change: transform;
+  /* tips further onto its side as it opens, so the gaps come into view,
+     and turns a little at the same time */
+  transform:
+    rotateX(calc(80deg - var(--p) * 13deg))
+    rotateZ(calc(-16deg + var(--p) * 34deg));
 }
 
-/* Each layer travels its own distance, so the stack fans out rather than
-   sliding as a block. Values are SVG user units. */
-.anat-burger .art-layer { transform-box: fill-box; transform-origin: center; }
-.anat-burger .art-bun-top { transform: translateY(calc(var(--p) * -86px)) rotate(calc(var(--p) * -3deg)); }
-.anat-burger .art-veg     { transform: translateY(calc(var(--p) * -44px)); }
-.anat-burger .art-cheese  { transform: translateY(calc(var(--p) * -14px)); }
-.anat-burger .art-patty   { transform: translateY(calc(var(--p) * 22px)); }
-.anat-burger .art-bun-btm { transform: translateY(calc(var(--p) * 72px)); }
-.anat-burger .art-cast    { opacity: calc(1 - var(--p) * .6); }
+.b3-layer {
+  position: absolute;
+  left: calc(var(--d) * var(--u) / -2);
+  top: calc(var(--d) * var(--u) / -2);
+  width: calc(var(--d) * var(--u));
+  height: calc(var(--d) * var(--u));
+  transform-style: preserve-3d;
+  /* the five layers are the only things that move; promoting them keeps
+     the discs inside from being re-rastered on every frame */
+  will-change: transform;
+  transform: translateZ(calc((var(--rest) + var(--p) * var(--lift)) * var(--u)));
+}
+
+.b3-slice {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--r) * 2 * var(--u));
+  height: calc(var(--r) * 2 * var(--u));
+  margin: calc(var(--r) * -1 * var(--u));
+  border-radius: 50%;
+  transform: translateZ(calc(var(--z) * var(--u))) rotate(var(--turn, 0deg));
+  transform-style: preserve-3d;
+
+  /* The lit and shaded sides are painted at the size of the whole layer
+     and centred, so they line up across every disc in the stack. Sized to
+     the slice instead, each disc would carry its own little highlight and
+     the layer would read as a set of rings. */
+  background-image:
+    radial-gradient(circle at 33% 25%, rgba(255, 250, 240, .5), rgba(255, 250, 240, 0) 48%),
+    radial-gradient(circle at 72% 84%, rgba(48, 26, 10, .34), rgba(48, 26, 10, 0) 54%);
+  background-size: calc(var(--d) * var(--u)) calc(var(--d) * var(--u));
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Grill marks, only ever seen once the bun has lifted off. */
+.b3-char { position: absolute; inset: 0; }
+.b3-char b {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--w) * var(--u));
+  height: calc(1.6 * var(--u));
+  margin-left: calc(var(--w) * -.5 * var(--u));
+  border-radius: 999px;
+  background: rgba(20, 10, 6, .5);
+  transform: translateY(calc(var(--y) * var(--u))) rotate(-14deg);
+}
+
+.b3-seed {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(3.1 * var(--u));
+  height: calc(1.9 * var(--u));
+  margin: calc(-.95 * var(--u)) 0 0 calc(-1.55 * var(--u));
+  border-radius: 50%;
+  background: linear-gradient(#fdf3dd, #e8cd9b);
+  transform: translate(calc(var(--x) * var(--u)), calc(var(--y) * var(--u))) rotate(var(--turn));
+}
+
+/* Nothing here needs a fallback beyond this: without real 3D the discs
+   would pile up in one place, so they are simply fanned out flat. */
+@supports not (transform-style: preserve-3d) {
+  .b3-scene { transform: none; }
+  .b3-layer { transform: translateY(calc((40 - var(--rest) - var(--p) * var(--lift)) * var(--u))); }
+  .b3-slice { transform: none; }
+}
 
 /* Photographed layers travel the same distances, restated as a share of the
    stage instead of SVG user units — an <img> has no viewBox to scale by, and
    a percentage keeps the fan-out proportional at any size. */
+.anat-burger.is-photo-stack .art-layer { transform-box: fill-box; transform-origin: center; }
 .anat-burger.is-photo-stack img {
   position: absolute;
   inset: 0;
@@ -686,7 +764,8 @@ h1 .line { display: block; }
   .anat-d { display: none; }
   .anat-tag { font-size: .68rem; padding: 4px 9px; }
   /* nudge the stack left so the leader lines have somewhere to land */
-  .anat-burger { transform: translate(-10%, calc(var(--p) * -4%)); }
+  .anat-burger { transform: translateX(-9%); }
+  .anat-burger.is-photo-stack { transform: translate(-9%, calc(var(--p) * -4%)); }
   .anat-copy > .btn { display: none; }
   .anat-stage { min-height: 0; }
 }

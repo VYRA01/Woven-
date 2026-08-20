@@ -18,6 +18,7 @@ const css = read('assets/css/styles.css');
 const i18n = read('assets/js/i18n.js');
 const menuI18n = read('assets/js/menu-i18n.js');
 const data = read('assets/js/data.js');
+const photos = read('assets/js/photos.js');
 const core = read('assets/js/booking-core.js');
 const main = read('assets/js/main.js');
 const booking = read('assets/js/booking.js');
@@ -36,6 +37,7 @@ const bundle = [
   '<script>', i18n.trim(), '</script>',
   '<script>', menuI18n.trim(), '</script>',
   '<script>', data.trim(), '</script>',
+  '<script>', photos.trim(), '</script>',
   '<script>', core.trim(), '</script>',
   '<script>', main.trim(), '</script>',
   '<script>', booking.trim(), '</script>',

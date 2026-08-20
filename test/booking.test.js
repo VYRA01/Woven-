@@ -385,3 +385,53 @@ test('course chips have a label in every language', () => {
     }
   }
 });
+
+/* ── Photography ──────────────────────────────────────────────────────
+   The manifest is edited by hand, so the ways it can go wrong are typing
+   ones: a dish id that no longer exists, a path to a file nobody added, a
+   layer key the animation does not move. All three fail silently in the
+   browser — the site just keeps drawing — so they are caught here instead. */
+
+test('every photograph named in photos.js exists and belongs to something', () => {
+  const PHOTOS = require('../assets/js/photos');
+  const MENU = (() => {
+    const sandbox = { window: {} };
+    new Function('window', fs.readFileSync(__dirname + '/../assets/js/data.js', 'utf8'))(sandbox.window);
+    return sandbox.window.MEATOLOGIA_MENU;
+  })();
+
+  const ids = MENU.dishes.map((d) => d.id);
+  const stack = ['art-bun-btm', 'art-patty', 'art-cheese', 'art-veg', 'art-bun-top'];
+  const problems = [];
+
+  const onDisk = (src, where) => {
+    if (!src) return problems.push(where + ' has no src');
+    if (!fs.existsSync(path.join(__dirname, '..', src))) problems.push(where + ' points at a missing file: ' + src);
+  };
+
+  for (const [id, photo] of Object.entries(PHOTOS.dishes || {})) {
+    if (!ids.includes(id)) problems.push('no dish has the id "' + id + '"');
+    onDisk(photo && photo.src, 'dishes.' + id);
+    if (photo && photo.src2x) onDisk(photo.src2x, 'dishes.' + id + ' @2x');
+  }
+
+  if (PHOTOS.hero) onDisk(PHOTOS.hero.src, 'hero');
+
+  const layers = (PHOTOS.anatomy || {}).layers || [];
+  for (const layer of layers) {
+    if (!layer) continue;
+    if (!stack.includes(layer.key)) problems.push('"' + layer.key + '" is not a layer the animation moves');
+    onDisk(layer.src, 'anatomy layer ' + layer.key);
+  }
+
+  // Half a stack is worse than none, and main.js falls back to the drawing
+  // rather than mixing the two — so say so here instead of leaving it a
+  // mystery why five supplied photographs are not showing up.
+  const named = layers.filter(Boolean).map((l) => l.key);
+  if (named.length) {
+    const gaps = stack.filter((key) => !named.includes(key));
+    if (gaps.length) problems.push('anatomy stack is incomplete, so it stays drawn — missing ' + gaps.join(', '));
+  }
+
+  assert.deepEqual(problems, []);
+});

@@ -13,6 +13,7 @@
   var MENU = window.MEATOLOGIA_MENU;
   var I = window.MEATOLOGIA_I18N;
   var MENU_T = window.MEATOLOGIA_MENU_I18N || {};
+  var PHOTOS = window.MEATOLOGIA_PHOTOS || {};
   var $  = function (s, c) { return (c || document).querySelector(s); };
   var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
 
@@ -47,6 +48,34 @@
     return value;
   }
 
+  /* ── Photography ─────────────────────────────────────────────────
+     A dish shows a photograph if photos.js names one and its illustration
+     otherwise, and nothing downstream has to know which it got: the card,
+     the takeover and the filmstrip all ask for "the media", and the
+     shared-element name is put on whichever element came back. */
+
+  function attr(value) { return String(value).replace(/"/g, '&quot;'); }
+
+  /** The photograph for a dish, or null while it still draws its symbol. */
+  function photoOf(dish) {
+    var p = (PHOTOS.dishes || {})[dish.id];
+    return p && p.src ? p : null;
+  }
+
+  function imgHTML(photo, cls, alt) {
+    return '<img class="' + cls + ' is-photo" src="' + attr(photo.src) + '"' +
+      (photo.src2x ? ' srcset="' + attr(photo.src) + ' 1x, ' + attr(photo.src2x) + ' 2x"' : '') +
+      ' alt="' + attr(alt || '') + '"' + (alt ? '' : ' aria-hidden="true"') +
+      ' loading="lazy" decoding="async">';
+  }
+
+  function media(dish, cls) {
+    var photo = photoOf(dish);
+    if (photo) return imgHTML(photo, cls, dish.name);
+    return '<svg class="' + cls + '" viewBox="0 0 320 280" aria-hidden="true">' +
+           '<use href="#' + dish.art + '"></use></svg>';
+  }
+
   function makeCard(dish, i) {
     var el = document.createElement('button');
     el.type = 'button';
@@ -58,7 +87,7 @@
 
     el.innerHTML =
       '<span class="dish-media" style="' + tint(dish) + '">' +
-        '<svg class="dish-pic" viewBox="0 0 320 280" aria-hidden="true"><use href="#' + dish.art + '"></use></svg>' +
+        media(dish, 'dish-pic') +
         '<span class="dish-flag">' + text(dish, 'flag') + '</span>' +
       '</span>' +
       '<span class="dish-body">' +
@@ -144,6 +173,7 @@
   var sheet     = $('.takeover-sheet', over);
   var stageDish = $('#dish-art');
   var stageUse  = $('#dish-art-use');
+  var stagePic  = $('#dish-photo');
   var strip     = $('#filmstrip');
   var current   = -1;
   var from      = null;      // card the takeover grew out of
@@ -168,8 +198,23 @@
     return MENU.dishes.filter(function (d) { return course === 'all' || d.course === course; });
   }
 
+  /** Whichever of the two stage elements is currently showing. */
+  function stageArt() { return stagePic.hidden ? stageDish : stagePic; }
+
   function fill(dish) {
-    stageUse.setAttribute('href', '#' + dish.art);
+    var photo = photoOf(dish);
+    if (photo) {
+      stagePic.src = photo.src;
+      if (photo.src2x) stagePic.srcset = photo.src + ' 1x, ' + photo.src2x + ' 2x';
+      else stagePic.removeAttribute('srcset');
+      stagePic.alt = dish.name;
+      stagePic.hidden = false;
+      stageDish.setAttribute('hidden', '');
+    } else {
+      stageUse.setAttribute('href', '#' + dish.art);
+      stagePic.hidden = true;
+      stageDish.removeAttribute('hidden');
+    }
     $('.takeover-stage').setAttribute('style', tint(dish));
 
     $('#dish-course').textContent = courseLabel(dish.course) + ' · ' + text(dish, 'flag');
@@ -209,7 +254,7 @@
       f.setAttribute('aria-selected', 'false');
       f.setAttribute('aria-label', dish.name);
       f.setAttribute('style', tint(dish));
-      f.innerHTML = '<svg viewBox="0 0 320 280" aria-hidden="true"><use href="#' + dish.art + '"></use></svg>';
+      f.innerHTML = media(dish, 'frame-pic');
       f.addEventListener('click', function () { goTo(dish.id); });
       strip.appendChild(f);
     });
@@ -226,7 +271,9 @@
   }
 
   function labelStage(on) {
-    stageDish.style.viewTransitionName = on ? 'dish-art' : '';
+    stageDish.style.viewTransitionName = '';
+    stagePic.style.viewTransitionName = '';
+    if (on) stageArt().style.viewTransitionName = 'dish-art';
     $('#dish-name').style.viewTransitionName = on ? 'dish-title' : '';
     $('.dish-price').style.viewTransitionName = on ? 'dish-cost' : '';
   }
@@ -244,7 +291,8 @@
 
   /* FLIP fallback: grow the artwork out of the card it came from */
   function flip(rect, reverse) {
-    var to = stageDish.getBoundingClientRect();
+    var art = stageArt();
+    var to = art.getBoundingClientRect();
     if (!to.width || !rect.width) return Promise.resolve();
 
     var scale = rect.width / to.width;
@@ -253,7 +301,7 @@
     var a = { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + scale + ')' };
     var b = { transform: 'none' };
 
-    var anim = stageDish.animate(reverse ? [b, a] : [a, b], {
+    var anim = art.animate(reverse ? [b, a] : [a, b], {
       duration: reverse ? 330 : 540,
       easing: 'cubic-bezier(.16,1,.3,1)',
       fill: 'both'
@@ -455,14 +503,96 @@
     return svg;
   }
 
+  /* The order the animation moves them in, bottom of the stack upward. */
+  var STACK = ['art-bun-btm', 'art-patty', 'art-cheese', 'art-veg', 'art-bun-top'];
+
+  /**
+   * Replace the drawn burger with five photographed layers.
+   *
+   * Returns null unless every layer in STACK has a shot, because half a
+   * stack is worse than none — a photographed crown floating over a drawn
+   * patty. The classes are the same ones the drawing uses, so the scroll
+   * transforms and the labels carry on working untouched.
+   */
+  function stackPhotos(host, layers) {
+    var by = {};
+    (layers || []).forEach(function (l) { if (l && l.key && l.src) by[l.key] = l; });
+    for (var i = 0; i < STACK.length; i++) if (!by[STACK[i]]) return null;
+
+    host.innerHTML = '';
+    host.classList.add('is-photo-stack');
+
+    return STACK.map(function (key) {
+      var spec = by[key];
+      var img = document.createElement('img');
+      img.className = 'art-layer ' + key;
+      img.alt = '';
+      img.decoding = 'async';
+      if (spec.src2x) img.srcset = spec.src + ' 1x, ' + spec.src2x + ' 2x';
+      img.src = spec.src;
+      if (typeof spec.anchor === 'number') img.dataset.anchor = spec.anchor;
+      host.appendChild(img);
+      return img;
+    });
+  }
+
+  /**
+   * Where a cut-out actually sits in its frame, 0 (top) to 1 (bottom).
+   *
+   * A transparent PNG is mostly nothing, and the element's box says nothing
+   * about where the food is inside it — so the alpha channel is weighed and
+   * its centre of mass taken. That is what lets a label find a crown shot
+   * high in frame without anyone measuring anything by hand.
+   */
+  function anchorOf(img) {
+    if (img.dataset.anchor) return Number(img.dataset.anchor);
+    if (img._anchor != null) return img._anchor;
+    if (!img.complete || !img.naturalWidth) return 0.5;
+
+    var value = 0.5;
+    try {
+      var h = 96;
+      var w = Math.max(1, Math.round(h * img.naturalWidth / img.naturalHeight));
+      var canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      var data = ctx.getImageData(0, 0, w, h).data;
+
+      var weighted = 0, total = 0;
+      for (var y = 0; y < h; y++) {
+        var row = 0;
+        for (var x = 0; x < w; x++) row += data[(y * w + x) * 4 + 3];
+        weighted += row * y;
+        total += row;
+      }
+      if (total) value = (weighted / total + 0.5) / h;
+    } catch (err) {
+      value = 0.5;                    // no 2d context, or the canvas is tainted
+    }
+    img._anchor = value;
+    return value;
+  }
+
+  /** The part of an <img> box the picture is really drawn in (object-fit: contain). */
+  function drawn(img, box) {
+    var nw = img.naturalWidth, nh = img.naturalHeight;
+    if (!nw || !nh) return { top: box.top, height: box.height };
+    var scale = Math.min(box.width / nw, box.height / nh);
+    var height = nh * scale;
+    return { top: box.top + (box.height - height) / 2, height: height };
+  }
+
   /* ── Anatomy: the burger comes apart on scroll ──────────────────── */
   function anatomy() {
     var section = $('#anatomy');
     if (!section) return;
 
-    inlineArt($('.anat-burger', section), $('.anat-burger', section).dataset.art, 120);
+    var host = $('.anat-burger', section);
+    var shots = stackPhotos(host, (PHOTOS.anatomy || {}).layers);
+    if (!shots) inlineArt(host, host.dataset.art, 120);
 
-    fillSvg($('.hero-dish'), 'art-burger');   // so the hero layers drift too
+    heroArt();
 
     var track = $('.anat-track', section);
     var steps = $$('.anat-list li', section);
@@ -480,9 +610,22 @@
       tags.forEach(function (tag) {
         if (!tag.layer) return;
         var box = tag.layer.getBoundingClientRect();
-        tag.el.style.top = (box.top + box.height / 2 - base.top) + 'px';
+        var middle;
+        if (tag.layer.tagName === 'IMG') {
+          var seen = drawn(tag.layer, box);
+          middle = seen.top + seen.height * anchorOf(tag.layer);
+        } else {
+          middle = box.top + box.height / 2;   // an <svg> group's box is already tight
+        }
+        tag.el.style.top = (middle - base.top) + 'px';
       });
     }
+
+    // a shot that arrives late has to be measured and the labels moved again
+    (shots || []).forEach(function (img) {
+      if (img.complete) return;
+      img.addEventListener('load', function () { requestAnimationFrame(placeTags); });
+    });
 
     if (still()) {
       section.style.setProperty('--p', '1');
@@ -517,17 +660,42 @@
     window.addEventListener('resize', update);
     update();
 
-    // "See the full dish" opens the Classic in the takeover
+    // "See the full dish" opens the burger this section takes apart. The id
+    // is read off the link's own href so the two cannot drift apart.
     var jump = $('[data-open-classic]', section);
     if (jump) {
       jump.addEventListener('click', function (e) {
-        var card = cards.filter(function (c) { return c.dataset.id === 'classic'; })[0];
+        var id = (jump.getAttribute('href') || '').replace('#dish-', '');
+        var card = cards.filter(function (c) { return c.dataset.id === id; })[0];
         if (!card) return;
         e.preventDefault();
         card.scrollIntoView({ block: 'center', behavior: 'auto' });
-        openDish('classic', card);
+        openDish(id, card);
       });
     }
+  }
+
+  /**
+   * The hero. A photograph replaces the drawing outright; without one the
+   * symbol is cloned into real nodes so its layers can drift independently
+   * (CSS cannot reach inside a <use> shadow tree).
+   */
+  function heroArt() {
+    var svg = $('.hero-dish');
+    if (!svg) return;
+
+    var photo = PHOTOS.hero;
+    if (photo && photo.src) {
+      var img = document.createElement('img');
+      img.className = 'hero-dish is-photo';
+      img.alt = '';
+      img.decoding = 'async';
+      if (photo.src2x) img.srcset = photo.src + ' 1x, ' + photo.src2x + ' 2x';
+      img.src = photo.src;
+      svg.parentNode.replaceChild(img, svg);
+      return;
+    }
+    fillSvg(svg, 'art-burger');
   }
 
   /* ── Opening hours ──────────────────────────────────────────────── */
@@ -677,8 +845,12 @@
       b.type = 'button';
       b.className = 'lang-pick';
       b.dataset.lang = lang.code;
-      b.textContent = lang.label;
+      // Both spellings ship; CSS shows the code instead of the name on a
+      // narrow masthead, where three full names do not fit beside the brand.
+      b.innerHTML = '<span class="lang-long">' + lang.label + '</span>' +
+                    '<span class="lang-short">' + lang.code.toUpperCase() + '</span>';
       b.lang = lang.code;
+      b.setAttribute('aria-label', lang.label);
       b.setAttribute('aria-pressed', String(lang.code === I.language()));
       b.addEventListener('click', function () { setLanguage(lang.code, true); });
       host.appendChild(b);

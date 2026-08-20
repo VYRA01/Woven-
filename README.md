@@ -6,7 +6,7 @@ the front end is plain HTML/CSS/JS, the server is plain Node.
 
 ```bash
 npm start        # site + booking API on http://localhost:3000
-npm test         # 24 tests: booking rules and the API end to end
+npm test         # 31 tests: booking rules, the API end to end, translations
 npm run build    # bundle everything into a single dist/index.html
 ```
 
@@ -20,6 +20,7 @@ says plainly that the table needs confirming by phone.
 index.html               markup + the inline SVG <symbol> artwork for every dish
 assets/css/styles.css    the whole stylesheet; design tokens live in :root
 assets/js/data.js        the menu — the only file to touch to change dishes
+assets/js/photos.js      photographs, if there are any; empty means "keep drawing"
 assets/js/booking-core.js booking rules, shared by the browser and the server
 assets/js/booking.js     the reservation flow
 assets/js/main.js        takeover, filtering, the anatomy scroll, opening hours
@@ -27,6 +28,7 @@ server/server.js         static file server + booking API
 server/store.js          the diary, persisted to server/data/bookings.json
 server/staff.html        the book, for whoever is working the floor
 test/booking.test.js     the suite
+PHOTOS.md                the shot list, for whoever photographs the food
 build.js                 inlines CSS + JS into a single-file dist/index.html
 ```
 
@@ -135,10 +137,33 @@ tinted per dish through CSS custom properties, with fixed highlight and shadow
 gradients layered on top for depth — which is why one burger symbol serves six
 burgers on a single set of paths.
 
-**Swap in real photography when you have it.** Replace the `<svg><use>` in
-`makeCard()` (`assets/js/main.js`) and in `.takeover-stage` (`index.html`) with
-an `<img>`. Nothing about the transitions changes: the shared-element name sits
-on the artwork element itself, so a photo morphs exactly the same way.
+## Photographs
+
+The site draws its food rather than photographing it, and is complete that way.
+Real photographs are a manifest entry, not a code change:
+
+```js
+// assets/js/photos.js
+dishes: { 'classic-burger': { src: 'assets/photos/dishes/classic-burger.jpg' } }
+```
+
+That dish now shows the photograph on its card, in the takeover, in the
+filmstrip, and through the morph between them; every dish without an entry
+keeps its drawing, so the board can be shot a few dishes at a time. `npm test`
+fails with the offending line if an id is wrong or a path points at nothing.
+
+`#anatomy` is the exception, and the reason there is a whole document about
+this: a single photograph cannot come apart, because there is nothing behind
+the bun. That section wants five shots of the same burger, one layer at a time,
+same camera and same background — see **[PHOTOS.md](PHOTOS.md)** for the shot
+list. Supply fewer than five and it stays drawn rather than mixing the two.
+
+Layer labels are not positioned by hand: each cut-out's alpha channel is
+weighed and its centre of mass taken, so a crown shot high in its frame still
+gets its label beside it. `anchor` on a layer overrides that if a shot fools it.
+
+No photographs are committed here, deliberately — the site is the deliverable,
+the food in it belongs to the restaurant.
 
 ## Reservations
 

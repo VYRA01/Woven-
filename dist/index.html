@@ -243,6 +243,7 @@ img, svg { max-width: 100%; }
   white-space: nowrap;
   transition: background .25s var(--ease), color .25s var(--ease);
 }
+.lang-pick .lang-short { display: none; }
 .lang-pick:hover { color: var(--ink); }
 .lang-pick[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 
@@ -333,6 +334,7 @@ h1 .line { display: block; }
   filter: drop-shadow(0 26px 30px rgba(60, 44, 28, .28));
   transform: translateY(var(--drift, 0px));
 }
+.hero-dish.is-photo { object-fit: contain; }
 .hero-dish .art-layer { transform-box: fill-box; transform-origin: center; }
 .hero-dish .art-bun-top { animation: hover-a 6s var(--ease) infinite; }
 .hero-dish .art-veg     { animation: hover-b 7s var(--ease) infinite; }
@@ -462,6 +464,15 @@ h1 .line { display: block; }
   transition: transform .55s var(--out);
 }
 .dish:hover .dish-pic { transform: scale(1.05) translateY(-4px); }
+
+/* A photographed dish fills the card's media panel instead of floating on
+   it — a cut-out drawing wants air around it, a photograph does not. */
+.dish-pic.is-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: none;
+}
 
 /* Note: the cards draw their dish with <use>, and CSS cannot reach inside a
    use shadow tree — so the whole artwork is what animates here. The layers
@@ -595,6 +606,23 @@ h1 .line { display: block; }
 .anat-burger .art-patty   { transform: translateY(calc(var(--p) * 22px)); }
 .anat-burger .art-bun-btm { transform: translateY(calc(var(--p) * 72px)); }
 .anat-burger .art-cast    { opacity: calc(1 - var(--p) * .6); }
+
+/* Photographed layers travel the same distances, restated as a share of the
+   stage instead of SVG user units — an <img> has no viewBox to scale by, and
+   a percentage keeps the fan-out proportional at any size. */
+.anat-burger.is-photo-stack img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 14px rgba(70, 52, 32, .2));
+}
+.anat-burger.is-photo-stack .art-bun-top { transform: translateY(calc(var(--p) * -17%)) rotate(calc(var(--p) * -3deg)); }
+.anat-burger.is-photo-stack .art-veg     { transform: translateY(calc(var(--p) * -9%)); }
+.anat-burger.is-photo-stack .art-cheese  { transform: translateY(calc(var(--p) * -3%)); }
+.anat-burger.is-photo-stack .art-patty   { transform: translateY(calc(var(--p) * 4.5%)); }
+.anat-burger.is-photo-stack .art-bun-btm { transform: translateY(calc(var(--p) * 14%)); }
 
 .anat-tag {
   position: absolute;
@@ -737,6 +765,11 @@ h1 .line { display: block; }
   filter: drop-shadow(0 28px 34px rgba(60, 44, 28, .3));
 }
 .stage-dish .art-layer { transform-box: fill-box; transform-origin: center; }
+.stage-photo {
+  max-height: min(58vh, 480px);
+  object-fit: contain;
+  border-radius: var(--r-sm);
+}
 .takeover.swapping .stage-dish { animation: dish-swap .5s var(--out); }
 @keyframes dish-swap {
   0%   { opacity: 1; transform: translateX(0) scale(1) rotate(0); }
@@ -817,7 +850,9 @@ h1 .line { display: block; }
   cursor: pointer;
   transition: transform .35s var(--back), border-color .25s var(--ease), background .25s var(--ease);
 }
-.frame svg { width: 100%; height: 100%; }
+.frame svg,
+.frame .frame-pic { width: 100%; height: 100%; }
+.frame .frame-pic.is-photo { object-fit: cover; border-radius: 3px; }
 .frame:hover { transform: translateY(-4px); border-color: var(--ink); }
 .frame[aria-selected="true"] {
   border-color: var(--ox);
@@ -1186,6 +1221,10 @@ h1 .line { display: block; }
   .masthead-act .btn-ink { display: none; }
   .status { display: none; }
   .lang-pick { padding: .3em .55em; font-size: .74rem; }
+  /* three language names plus the brand overflow a phone masthead */
+  .lang-pick .lang-long { display: none; }
+  .lang-pick .lang-short { display: inline; }
+  .brand-sub { display: none; }
   .dish-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
   .dish-price { font-size: 2.5rem; }
 }
@@ -1584,7 +1623,7 @@ h1 .line { display: block; }
             </li>
           </ol>
 
-          <a class="btn btn-red btn-big" href="#dish-classic" data-open-classic data-i18n="anat.cta">See the full dish</a>
+          <a class="btn btn-red btn-big" href="#dish-classic-burger" data-open-classic data-i18n="anat.cta">See the full dish</a>
         </div>
 
         <div class="anat-art">
@@ -1904,6 +1943,7 @@ h1 .line { display: block; }
       <div class="takeover-stage">
         <span class="stage-disc" aria-hidden="true"></span>
         <svg class="stage-dish" id="dish-art" viewBox="0 0 320 280" aria-hidden="true"><use id="dish-art-use" href="#art-burger"/></svg>
+        <img class="stage-dish stage-photo" id="dish-photo" alt="" hidden>
       </div>
 
       <div class="takeover-text">
@@ -3460,6 +3500,72 @@ window.MEATOLOGIA_MENU = {
 </script>
 <script>
 /**
+ * Photography manifest.
+ *
+ * Empty by default, and the site runs exactly as it does now — every dish
+ * draws its illustration. Add an entry and that dish switches to a photograph
+ * with no other change: the card, the full-screen takeover, the filmstrip and
+ * the morph between them all follow, because the shared-element name sits on
+ * whichever media element is on screen.
+ *
+ *   dishes['classic-burger'] = {
+ *     src:   'assets/photos/dishes/classic-burger.jpg',    // 1600×1280 or larger
+ *     src2x: 'assets/photos/dishes/classic-burger@2x.jpg'  // optional
+ *   }
+ *
+ * The key is the dish's `id` in data.js — `classic-burger`, `wagyu-smash`,
+ * `arg-ribeye`, `tatar-klasyk`. `npm test` names any that do not match, and
+ * any path pointing at a file nobody added.
+ *
+ * `anatomy.layers` is the scroll section, and it is the one that cannot be
+ * done with a single photograph: a flat image has nothing behind the bun.
+ * Each layer needs its own shot, on the same background, from the same
+ * camera position, saved as a transparent PNG or WebP. Order is bottom of
+ * the stack to top; `key` must match the layer the animation moves.
+ *
+ * Nothing else is required — the labels find each layer by reading where its
+ * opaque pixels actually are, so a crown shot slightly higher in frame than
+ * the base still gets its label in the right place. `anchor` (0 = top of the
+ * frame, 1 = bottom) overrides that measurement if a shot fools it.
+ *
+ * See PHOTOS.md for the shot list.
+ */
+(function (root, factory) {
+  var api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else root.MEATOLOGIA_PHOTOS = api;
+}(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  return {
+    /** dish id -> { src, src2x? }. Anything absent keeps its illustration. */
+    dishes: {
+      // 'classic-burger': { src: 'assets/photos/dishes/classic-burger.jpg' },
+    },
+
+    /** The hero, if you would rather show a photograph than the illustration. */
+    hero: null,
+    // hero: { src: 'assets/photos/hero.png', src2x: 'assets/photos/hero@2x.png' },
+
+    anatomy: {
+      /**
+       * Five transparent cut-outs, bottom of the stack first. Leave this
+       * empty and the section keeps using the layered illustration. All five
+       * or none — a half-filled stack falls back to the drawing.
+       */
+      layers: [
+        // { key: 'art-bun-btm', src: 'assets/photos/anatomy/1-base.png' },
+        // { key: 'art-patty',   src: 'assets/photos/anatomy/2-patty.png' },
+        // { key: 'art-cheese',  src: 'assets/photos/anatomy/3-cheese.png' },
+        // { key: 'art-veg',     src: 'assets/photos/anatomy/4-lettuce.png' },
+        // { key: 'art-bun-top', src: 'assets/photos/anatomy/5-crown.png' }
+      ]
+    }
+  };
+}));
+</script>
+<script>
+/**
  * Booking rules for Meatologia.
  *
  * One source of truth, loaded by both the browser and the Node server, so a
@@ -3743,6 +3849,7 @@ window.MEATOLOGIA_MENU = {
   var MENU = window.MEATOLOGIA_MENU;
   var I = window.MEATOLOGIA_I18N;
   var MENU_T = window.MEATOLOGIA_MENU_I18N || {};
+  var PHOTOS = window.MEATOLOGIA_PHOTOS || {};
   var $  = function (s, c) { return (c || document).querySelector(s); };
   var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
 
@@ -3777,6 +3884,34 @@ window.MEATOLOGIA_MENU = {
     return value;
   }
 
+  /* ── Photography ─────────────────────────────────────────────────
+     A dish shows a photograph if photos.js names one and its illustration
+     otherwise, and nothing downstream has to know which it got: the card,
+     the takeover and the filmstrip all ask for "the media", and the
+     shared-element name is put on whichever element came back. */
+
+  function attr(value) { return String(value).replace(/"/g, '&quot;'); }
+
+  /** The photograph for a dish, or null while it still draws its symbol. */
+  function photoOf(dish) {
+    var p = (PHOTOS.dishes || {})[dish.id];
+    return p && p.src ? p : null;
+  }
+
+  function imgHTML(photo, cls, alt) {
+    return '<img class="' + cls + ' is-photo" src="' + attr(photo.src) + '"' +
+      (photo.src2x ? ' srcset="' + attr(photo.src) + ' 1x, ' + attr(photo.src2x) + ' 2x"' : '') +
+      ' alt="' + attr(alt || '') + '"' + (alt ? '' : ' aria-hidden="true"') +
+      ' loading="lazy" decoding="async">';
+  }
+
+  function media(dish, cls) {
+    var photo = photoOf(dish);
+    if (photo) return imgHTML(photo, cls, dish.name);
+    return '<svg class="' + cls + '" viewBox="0 0 320 280" aria-hidden="true">' +
+           '<use href="#' + dish.art + '"></use></svg>';
+  }
+
   function makeCard(dish, i) {
     var el = document.createElement('button');
     el.type = 'button';
@@ -3788,7 +3923,7 @@ window.MEATOLOGIA_MENU = {
 
     el.innerHTML =
       '<span class="dish-media" style="' + tint(dish) + '">' +
-        '<svg class="dish-pic" viewBox="0 0 320 280" aria-hidden="true"><use href="#' + dish.art + '"></use></svg>' +
+        media(dish, 'dish-pic') +
         '<span class="dish-flag">' + text(dish, 'flag') + '</span>' +
       '</span>' +
       '<span class="dish-body">' +
@@ -3874,6 +4009,7 @@ window.MEATOLOGIA_MENU = {
   var sheet     = $('.takeover-sheet', over);
   var stageDish = $('#dish-art');
   var stageUse  = $('#dish-art-use');
+  var stagePic  = $('#dish-photo');
   var strip     = $('#filmstrip');
   var current   = -1;
   var from      = null;      // card the takeover grew out of
@@ -3898,8 +4034,23 @@ window.MEATOLOGIA_MENU = {
     return MENU.dishes.filter(function (d) { return course === 'all' || d.course === course; });
   }
 
+  /** Whichever of the two stage elements is currently showing. */
+  function stageArt() { return stagePic.hidden ? stageDish : stagePic; }
+
   function fill(dish) {
-    stageUse.setAttribute('href', '#' + dish.art);
+    var photo = photoOf(dish);
+    if (photo) {
+      stagePic.src = photo.src;
+      if (photo.src2x) stagePic.srcset = photo.src + ' 1x, ' + photo.src2x + ' 2x';
+      else stagePic.removeAttribute('srcset');
+      stagePic.alt = dish.name;
+      stagePic.hidden = false;
+      stageDish.setAttribute('hidden', '');
+    } else {
+      stageUse.setAttribute('href', '#' + dish.art);
+      stagePic.hidden = true;
+      stageDish.removeAttribute('hidden');
+    }
     $('.takeover-stage').setAttribute('style', tint(dish));
 
     $('#dish-course').textContent = courseLabel(dish.course) + ' · ' + text(dish, 'flag');
@@ -3939,7 +4090,7 @@ window.MEATOLOGIA_MENU = {
       f.setAttribute('aria-selected', 'false');
       f.setAttribute('aria-label', dish.name);
       f.setAttribute('style', tint(dish));
-      f.innerHTML = '<svg viewBox="0 0 320 280" aria-hidden="true"><use href="#' + dish.art + '"></use></svg>';
+      f.innerHTML = media(dish, 'frame-pic');
       f.addEventListener('click', function () { goTo(dish.id); });
       strip.appendChild(f);
     });
@@ -3956,7 +4107,9 @@ window.MEATOLOGIA_MENU = {
   }
 
   function labelStage(on) {
-    stageDish.style.viewTransitionName = on ? 'dish-art' : '';
+    stageDish.style.viewTransitionName = '';
+    stagePic.style.viewTransitionName = '';
+    if (on) stageArt().style.viewTransitionName = 'dish-art';
     $('#dish-name').style.viewTransitionName = on ? 'dish-title' : '';
     $('.dish-price').style.viewTransitionName = on ? 'dish-cost' : '';
   }
@@ -3974,7 +4127,8 @@ window.MEATOLOGIA_MENU = {
 
   /* FLIP fallback: grow the artwork out of the card it came from */
   function flip(rect, reverse) {
-    var to = stageDish.getBoundingClientRect();
+    var art = stageArt();
+    var to = art.getBoundingClientRect();
     if (!to.width || !rect.width) return Promise.resolve();
 
     var scale = rect.width / to.width;
@@ -3983,7 +4137,7 @@ window.MEATOLOGIA_MENU = {
     var a = { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + scale + ')' };
     var b = { transform: 'none' };
 
-    var anim = stageDish.animate(reverse ? [b, a] : [a, b], {
+    var anim = art.animate(reverse ? [b, a] : [a, b], {
       duration: reverse ? 330 : 540,
       easing: 'cubic-bezier(.16,1,.3,1)',
       fill: 'both'
@@ -4185,14 +4339,96 @@ window.MEATOLOGIA_MENU = {
     return svg;
   }
 
+  /* The order the animation moves them in, bottom of the stack upward. */
+  var STACK = ['art-bun-btm', 'art-patty', 'art-cheese', 'art-veg', 'art-bun-top'];
+
+  /**
+   * Replace the drawn burger with five photographed layers.
+   *
+   * Returns null unless every layer in STACK has a shot, because half a
+   * stack is worse than none — a photographed crown floating over a drawn
+   * patty. The classes are the same ones the drawing uses, so the scroll
+   * transforms and the labels carry on working untouched.
+   */
+  function stackPhotos(host, layers) {
+    var by = {};
+    (layers || []).forEach(function (l) { if (l && l.key && l.src) by[l.key] = l; });
+    for (var i = 0; i < STACK.length; i++) if (!by[STACK[i]]) return null;
+
+    host.innerHTML = '';
+    host.classList.add('is-photo-stack');
+
+    return STACK.map(function (key) {
+      var spec = by[key];
+      var img = document.createElement('img');
+      img.className = 'art-layer ' + key;
+      img.alt = '';
+      img.decoding = 'async';
+      if (spec.src2x) img.srcset = spec.src + ' 1x, ' + spec.src2x + ' 2x';
+      img.src = spec.src;
+      if (typeof spec.anchor === 'number') img.dataset.anchor = spec.anchor;
+      host.appendChild(img);
+      return img;
+    });
+  }
+
+  /**
+   * Where a cut-out actually sits in its frame, 0 (top) to 1 (bottom).
+   *
+   * A transparent PNG is mostly nothing, and the element's box says nothing
+   * about where the food is inside it — so the alpha channel is weighed and
+   * its centre of mass taken. That is what lets a label find a crown shot
+   * high in frame without anyone measuring anything by hand.
+   */
+  function anchorOf(img) {
+    if (img.dataset.anchor) return Number(img.dataset.anchor);
+    if (img._anchor != null) return img._anchor;
+    if (!img.complete || !img.naturalWidth) return 0.5;
+
+    var value = 0.5;
+    try {
+      var h = 96;
+      var w = Math.max(1, Math.round(h * img.naturalWidth / img.naturalHeight));
+      var canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      var data = ctx.getImageData(0, 0, w, h).data;
+
+      var weighted = 0, total = 0;
+      for (var y = 0; y < h; y++) {
+        var row = 0;
+        for (var x = 0; x < w; x++) row += data[(y * w + x) * 4 + 3];
+        weighted += row * y;
+        total += row;
+      }
+      if (total) value = (weighted / total + 0.5) / h;
+    } catch (err) {
+      value = 0.5;                    // no 2d context, or the canvas is tainted
+    }
+    img._anchor = value;
+    return value;
+  }
+
+  /** The part of an <img> box the picture is really drawn in (object-fit: contain). */
+  function drawn(img, box) {
+    var nw = img.naturalWidth, nh = img.naturalHeight;
+    if (!nw || !nh) return { top: box.top, height: box.height };
+    var scale = Math.min(box.width / nw, box.height / nh);
+    var height = nh * scale;
+    return { top: box.top + (box.height - height) / 2, height: height };
+  }
+
   /* ── Anatomy: the burger comes apart on scroll ──────────────────── */
   function anatomy() {
     var section = $('#anatomy');
     if (!section) return;
 
-    inlineArt($('.anat-burger', section), $('.anat-burger', section).dataset.art, 120);
+    var host = $('.anat-burger', section);
+    var shots = stackPhotos(host, (PHOTOS.anatomy || {}).layers);
+    if (!shots) inlineArt(host, host.dataset.art, 120);
 
-    fillSvg($('.hero-dish'), 'art-burger');   // so the hero layers drift too
+    heroArt();
 
     var track = $('.anat-track', section);
     var steps = $$('.anat-list li', section);
@@ -4210,9 +4446,22 @@ window.MEATOLOGIA_MENU = {
       tags.forEach(function (tag) {
         if (!tag.layer) return;
         var box = tag.layer.getBoundingClientRect();
-        tag.el.style.top = (box.top + box.height / 2 - base.top) + 'px';
+        var middle;
+        if (tag.layer.tagName === 'IMG') {
+          var seen = drawn(tag.layer, box);
+          middle = seen.top + seen.height * anchorOf(tag.layer);
+        } else {
+          middle = box.top + box.height / 2;   // an <svg> group's box is already tight
+        }
+        tag.el.style.top = (middle - base.top) + 'px';
       });
     }
+
+    // a shot that arrives late has to be measured and the labels moved again
+    (shots || []).forEach(function (img) {
+      if (img.complete) return;
+      img.addEventListener('load', function () { requestAnimationFrame(placeTags); });
+    });
 
     if (still()) {
       section.style.setProperty('--p', '1');
@@ -4247,17 +4496,42 @@ window.MEATOLOGIA_MENU = {
     window.addEventListener('resize', update);
     update();
 
-    // "See the full dish" opens the Classic in the takeover
+    // "See the full dish" opens the burger this section takes apart. The id
+    // is read off the link's own href so the two cannot drift apart.
     var jump = $('[data-open-classic]', section);
     if (jump) {
       jump.addEventListener('click', function (e) {
-        var card = cards.filter(function (c) { return c.dataset.id === 'classic'; })[0];
+        var id = (jump.getAttribute('href') || '').replace('#dish-', '');
+        var card = cards.filter(function (c) { return c.dataset.id === id; })[0];
         if (!card) return;
         e.preventDefault();
         card.scrollIntoView({ block: 'center', behavior: 'auto' });
-        openDish('classic', card);
+        openDish(id, card);
       });
     }
+  }
+
+  /**
+   * The hero. A photograph replaces the drawing outright; without one the
+   * symbol is cloned into real nodes so its layers can drift independently
+   * (CSS cannot reach inside a <use> shadow tree).
+   */
+  function heroArt() {
+    var svg = $('.hero-dish');
+    if (!svg) return;
+
+    var photo = PHOTOS.hero;
+    if (photo && photo.src) {
+      var img = document.createElement('img');
+      img.className = 'hero-dish is-photo';
+      img.alt = '';
+      img.decoding = 'async';
+      if (photo.src2x) img.srcset = photo.src + ' 1x, ' + photo.src2x + ' 2x';
+      img.src = photo.src;
+      svg.parentNode.replaceChild(img, svg);
+      return;
+    }
+    fillSvg(svg, 'art-burger');
   }
 
   /* ── Opening hours ──────────────────────────────────────────────── */
@@ -4407,8 +4681,12 @@ window.MEATOLOGIA_MENU = {
       b.type = 'button';
       b.className = 'lang-pick';
       b.dataset.lang = lang.code;
-      b.textContent = lang.label;
+      // Both spellings ship; CSS shows the code instead of the name on a
+      // narrow masthead, where three full names do not fit beside the brand.
+      b.innerHTML = '<span class="lang-long">' + lang.label + '</span>' +
+                    '<span class="lang-short">' + lang.code.toUpperCase() + '</span>';
       b.lang = lang.code;
+      b.setAttribute('aria-label', lang.label);
       b.setAttribute('aria-pressed', String(lang.code === I.language()));
       b.addEventListener('click', function () { setLanguage(lang.code, true); });
       host.appendChild(b);

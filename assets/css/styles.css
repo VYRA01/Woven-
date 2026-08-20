@@ -241,6 +241,7 @@ img, svg { max-width: 100%; }
   white-space: nowrap;
   transition: background .25s var(--ease), color .25s var(--ease);
 }
+.lang-pick .lang-short { display: none; }
 .lang-pick:hover { color: var(--ink); }
 .lang-pick[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 
@@ -331,6 +332,7 @@ h1 .line { display: block; }
   filter: drop-shadow(0 26px 30px rgba(60, 44, 28, .28));
   transform: translateY(var(--drift, 0px));
 }
+.hero-dish.is-photo { object-fit: contain; }
 .hero-dish .art-layer { transform-box: fill-box; transform-origin: center; }
 .hero-dish .art-bun-top { animation: hover-a 6s var(--ease) infinite; }
 .hero-dish .art-veg     { animation: hover-b 7s var(--ease) infinite; }
@@ -460,6 +462,15 @@ h1 .line { display: block; }
   transition: transform .55s var(--out);
 }
 .dish:hover .dish-pic { transform: scale(1.05) translateY(-4px); }
+
+/* A photographed dish fills the card's media panel instead of floating on
+   it — a cut-out drawing wants air around it, a photograph does not. */
+.dish-pic.is-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: none;
+}
 
 /* Note: the cards draw their dish with <use>, and CSS cannot reach inside a
    use shadow tree — so the whole artwork is what animates here. The layers
@@ -593,6 +604,23 @@ h1 .line { display: block; }
 .anat-burger .art-patty   { transform: translateY(calc(var(--p) * 22px)); }
 .anat-burger .art-bun-btm { transform: translateY(calc(var(--p) * 72px)); }
 .anat-burger .art-cast    { opacity: calc(1 - var(--p) * .6); }
+
+/* Photographed layers travel the same distances, restated as a share of the
+   stage instead of SVG user units — an <img> has no viewBox to scale by, and
+   a percentage keeps the fan-out proportional at any size. */
+.anat-burger.is-photo-stack img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 14px rgba(70, 52, 32, .2));
+}
+.anat-burger.is-photo-stack .art-bun-top { transform: translateY(calc(var(--p) * -17%)) rotate(calc(var(--p) * -3deg)); }
+.anat-burger.is-photo-stack .art-veg     { transform: translateY(calc(var(--p) * -9%)); }
+.anat-burger.is-photo-stack .art-cheese  { transform: translateY(calc(var(--p) * -3%)); }
+.anat-burger.is-photo-stack .art-patty   { transform: translateY(calc(var(--p) * 4.5%)); }
+.anat-burger.is-photo-stack .art-bun-btm { transform: translateY(calc(var(--p) * 14%)); }
 
 .anat-tag {
   position: absolute;
@@ -735,6 +763,11 @@ h1 .line { display: block; }
   filter: drop-shadow(0 28px 34px rgba(60, 44, 28, .3));
 }
 .stage-dish .art-layer { transform-box: fill-box; transform-origin: center; }
+.stage-photo {
+  max-height: min(58vh, 480px);
+  object-fit: contain;
+  border-radius: var(--r-sm);
+}
 .takeover.swapping .stage-dish { animation: dish-swap .5s var(--out); }
 @keyframes dish-swap {
   0%   { opacity: 1; transform: translateX(0) scale(1) rotate(0); }
@@ -815,7 +848,9 @@ h1 .line { display: block; }
   cursor: pointer;
   transition: transform .35s var(--back), border-color .25s var(--ease), background .25s var(--ease);
 }
-.frame svg { width: 100%; height: 100%; }
+.frame svg,
+.frame .frame-pic { width: 100%; height: 100%; }
+.frame .frame-pic.is-photo { object-fit: cover; border-radius: 3px; }
 .frame:hover { transform: translateY(-4px); border-color: var(--ink); }
 .frame[aria-selected="true"] {
   border-color: var(--ox);
@@ -1184,6 +1219,10 @@ h1 .line { display: block; }
   .masthead-act .btn-ink { display: none; }
   .status { display: none; }
   .lang-pick { padding: .3em .55em; font-size: .74rem; }
+  /* three language names plus the brand overflow a phone masthead */
+  .lang-pick .lang-long { display: none; }
+  .lang-pick .lang-short { display: inline; }
+  .brand-sub { display: none; }
   .dish-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
   .dish-price { font-size: 2.5rem; }
 }

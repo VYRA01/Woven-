@@ -3107,6 +3107,16 @@ h1 .line { display: block; }
     },
 
     /* ── Dodatki ──────────────────────────────────────────────────── */
+    'bataty': {
+      pl: { flag: 'Popularne', weight: 'Jedna porcja', cook: 'Smażone dwukrotnie', pair: '',
+        short: 'Frytki z batatów — po nie wraca się najczęściej.',
+        blurb: 'Krojone grubo i smażone dwa razy, żeby z zewnątrz trzymały, a w środku zostały miękkie. Słodsze niż zwykłe frytki i lepiej znoszą węgiel drzewny — dlatego schodzą lepiej niż cokolwiek innego z tej listy. Liczą się jako jeden z dwóch dodatków w cenie steku.',
+        parts: ['Bataty', 'Smażone dwukrotnie', 'Sól morska', 'Hot mayo do maczania'] },
+      ko: { flag: '인기 메뉴', weight: '1인분', cook: '두 번 튀김', pair: '',
+        short: '고구마튀김 — 다시 찾게 되는 사이드.',
+        blurb: '두툼하게 썰어 두 번 튀겨 겉은 바삭하고 속은 부드럽습니다. 일반 감자튀김보다 달아 숯불 향과 잘 어울려, 사이드 중 가장 많이 나갑니다. 스테이크에 포함되는 사이드 두 가지 중 하나로 고르실 수 있습니다.',
+        parts: ['고구마', '두 번 튀김', '천일염', '핫 마요 곁들임'] }
+    },
     'dodatek': {
       pl: { flag: 'Dowolny dodatek', weight: 'Jedna porcja', cook: '', pair: '',
         short: 'Frytki, bataty, purée, coleslaw, maślany szpinak, warzywa.',
@@ -3507,6 +3517,15 @@ window.MEATOLOGIA_MENU = {
     },
 
     /* ── Dodatki ──────────────────────────────────────────────────── */
+    {
+      id: 'bataty', course: 'sides', name: 'Bataty', flag: 'Popular',
+      price: 9, weight: 'One portion', cook: 'Fried twice', pair: '',
+      short: 'Sweet potato fries — the side people come back for.',
+      blurb: 'Cut thick and fried twice, so the outside holds and the middle stays soft. Sweeter than a chip and better against charcoal, which is why it outsells everything else on this list. Counts as one of the two sides that come with a steak.',
+      parts: ['Sweet potato', 'Fried twice', 'Sea salt', 'Hot mayo alongside'],
+      art: 'art-side',
+      paint: { '--art-veg': '#e07f2c', '--art-basket': '#9aa2ab' }
+    },
     {
       id: 'dodatek', course: 'sides', name: 'Dodatek', flag: 'Any side',
       price: 9, weight: 'One portion', cook: '', pair: '',
@@ -4057,7 +4076,17 @@ window.MEATOLOGIA_MENU = {
     });
 
     cards.forEach(function (c) {
-      c.classList.toggle('gone', !(id === 'all' || c.dataset.course === id));
+      var hidden = !(id === 'all' || c.dataset.course === id);
+      c.classList.toggle('gone', hidden);
+
+      // A card the filter has just put on screen is on screen, whatever the
+      // reveal observer thinks. Courses low down the card — sides, dessert,
+      // drinks — are never scrolled past before they are filtered to, so
+      // they still carry .rise at opacity 0. The appear animation below
+      // covers that only while it is filling, and the browser is free to
+      // drop a filling animation once it has been replaced — at which point
+      // the card silently reverts to invisible and the grid looks empty.
+      if (!hidden) c.classList.add('up');
     });
 
     buildFilmstrip();

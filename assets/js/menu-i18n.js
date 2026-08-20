@@ -341,6 +341,16 @@
     },
 
     /* ── Dodatki ──────────────────────────────────────────────────── */
+    'bataty': {
+      pl: { flag: 'Popularne', weight: 'Jedna porcja', cook: 'Smażone dwukrotnie', pair: '',
+        short: 'Frytki z batatów — po nie wraca się najczęściej.',
+        blurb: 'Krojone grubo i smażone dwa razy, żeby z zewnątrz trzymały, a w środku zostały miękkie. Słodsze niż zwykłe frytki i lepiej znoszą węgiel drzewny — dlatego schodzą lepiej niż cokolwiek innego z tej listy. Liczą się jako jeden z dwóch dodatków w cenie steku.',
+        parts: ['Bataty', 'Smażone dwukrotnie', 'Sól morska', 'Hot mayo do maczania'] },
+      ko: { flag: '인기 메뉴', weight: '1인분', cook: '두 번 튀김', pair: '',
+        short: '고구마튀김 — 다시 찾게 되는 사이드.',
+        blurb: '두툼하게 썰어 두 번 튀겨 겉은 바삭하고 속은 부드럽습니다. 일반 감자튀김보다 달아 숯불 향과 잘 어울려, 사이드 중 가장 많이 나갑니다. 스테이크에 포함되는 사이드 두 가지 중 하나로 고르실 수 있습니다.',
+        parts: ['고구마', '두 번 튀김', '천일염', '핫 마요 곁들임'] }
+    },
     'dodatek': {
       pl: { flag: 'Dowolny dodatek', weight: 'Jedna porcja', cook: '', pair: '',
         short: 'Frytki, bataty, purée, coleslaw, maślany szpinak, warzywa.',

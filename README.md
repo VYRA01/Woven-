@@ -295,8 +295,11 @@ Address, phone, hours and rating appear in three places: the JSON-LD block in
 `<head>`, the `#find` section, and the footer. Change all three together.
 
 > **On the content:** the menu is transcribed from Meatologia's own board,
-> photographed July 2026 — 38 dishes with their real prices, weights and
-> ingredient lists, and the restaurant's own words in the Craft section. The
+> photographed July 2026 — 39 dishes with their real prices, weights and
+> ingredient lists, and the restaurant's own words in the Craft section.
+> Bataty has its own card because it is one of the restaurant's most-ordered
+> items; on the board it is one of the eight choices under `Dodatek`, which
+> is where its 9 zł comes from. The
 > descriptive sentences under each dish are written for the site; the facts
 > around them are the restaurant's.
 >

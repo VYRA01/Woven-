@@ -321,6 +321,15 @@ window.MEATOLOGIA_MENU = {
 
     /* ── Dodatki ──────────────────────────────────────────────────── */
     {
+      id: 'bataty', course: 'sides', name: 'Bataty', flag: 'Popular',
+      price: 9, weight: 'One portion', cook: 'Fried twice', pair: '',
+      short: 'Sweet potato fries — the side people come back for.',
+      blurb: 'Cut thick and fried twice, so the outside holds and the middle stays soft. Sweeter than a chip and better against charcoal, which is why it outsells everything else on this list. Counts as one of the two sides that come with a steak.',
+      parts: ['Sweet potato', 'Fried twice', 'Sea salt', 'Hot mayo alongside'],
+      art: 'art-side',
+      paint: { '--art-veg': '#e07f2c', '--art-basket': '#9aa2ab' }
+    },
+    {
       id: 'dodatek', course: 'sides', name: 'Dodatek', flag: 'Any side',
       price: 9, weight: 'One portion', cook: '', pair: '',
       short: 'Fries, sweet potato, purée, coleslaw, buttered spinach, greens.',

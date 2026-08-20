@@ -140,7 +140,17 @@
     });
 
     cards.forEach(function (c) {
-      c.classList.toggle('gone', !(id === 'all' || c.dataset.course === id));
+      var hidden = !(id === 'all' || c.dataset.course === id);
+      c.classList.toggle('gone', hidden);
+
+      // A card the filter has just put on screen is on screen, whatever the
+      // reveal observer thinks. Courses low down the card — sides, dessert,
+      // drinks — are never scrolled past before they are filtered to, so
+      // they still carry .rise at opacity 0. The appear animation below
+      // covers that only while it is filling, and the browser is free to
+      // drop a filling animation once it has been replaced — at which point
+      // the card silently reverts to invisible and the grid looks empty.
+      if (!hidden) c.classList.add('up');
     });
 
     buildFilmstrip();

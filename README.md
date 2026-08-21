@@ -73,9 +73,18 @@ flat drawing pretending to have them.
 Cheddar melts over the sides of the patty and roast-garlic sauce runs off the
 heel — those are quads tipped upright rather than discs lying flat, one each,
 kept to the side of the bun you can actually see. Ringing the rim evenly reads
-as a skirt; leaving them where they squeezed out reads as sauce. Fries and a
-beer stand on the same table, built from the same stacked discs: the beer's
-pour, its head, and the glass under both are one stack coloured by depth.
+as a skirt; leaving them where they squeezed out reads as sauce.
+
+Fries and a lemonade stand on the same table, built from the same stacked
+discs — the glass base, the pour and the glass above it are one stack coloured
+by depth. The lemonade is the one on the restaurant's own card (*Domowa
+lemoniada*), and what makes it read as one rather than as a glass of yellow is
+the garnish: ice standing proud of the surface, a wheel of lemon on the near
+rim, a straw on the far side of it so neither is in front of the other. Three
+ice cubes, not four, and near enough opaque — stacked translucent quads stop
+reading as cubes and start reading as one milky slab. Each chip is graded down
+its own length, dark where it is buried and golden at the tip, because a chip
+lit flat is a lolly stick.
 
 Getting three objects to stand apart on one table is a layout problem, not an
 art one, and the stage's proportions are what solve it. Sizes are hundredths of

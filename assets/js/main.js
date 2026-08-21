@@ -526,22 +526,22 @@
      glass above it. */
   var PROPS = [
     {
-      kind: 'cup', r: 7.6, t: 13, x: -45, y: 24, turn: -12, slim: 1.9,
-      profile: function (u) { return 0.82 + 0.18 * u; },        // a carton, wider at the mouth
-      toneAt: function (u) { return u > 0.9 ? '#8e241d' : '#b8352c'; }
+      kind: 'cup', r: 9, t: 17, x: -46, y: 22, turn: -12, slim: 1.6,
+      // a carton, wider at the mouth, with the edge rolled over at the top
+      profile: function (u) { return u > 0.93 ? 1.05 : 0.8 + 0.2 * u; },
+      toneAt: function (u) {
+        if (u > 0.93) return '#8e241d';                          // the rolled rim
+        return mixHex('#a52d24', '#c33e33', u);
+      }
     },
     {
-      kind: 'glass', r: 7, t: 20, x: -44, y: -40, turn: 8, slim: 1.3,
-      // straight-sided, with the head standing a little over the rim
-      profile: function (u) {
-        if (u > 0.96) return 0.97;                               // the head rounds off
-        if (u > 0.80) return 1.03;                               // and stands over the rim
-        return 0.87 + 0.15 * u;
-      },
+      kind: 'glass', r: 7.6, t: 24, x: -48, y: -56, turn: 8, slim: 1.1,
+      // straight-sided, a touch heavier at the base
+      profile: function (u) { return u < 0.06 ? 0.9 : 0.88 + 0.14 * u; },
       toneAt: function (u) {
-        if (u < 0.05) return '#7d5c31';                          // the thick base
-        if (u < 0.80) return '#d98b1c';                          // the pour
-        return '#f6ead2';                                        // two fingers of head
+        if (u < 0.06) return '#cfd6d2';                          // the thick glass base
+        if (u < 0.9) return mixHex('#f2dd72', '#f8ec9e', u);     // cloudy homemade lemonade
+        return '#e6ece9';                                        // the glass above it
       }
     }
   ];
@@ -913,25 +913,76 @@
 
     slicesOf(spec).forEach(function (slice) { node.appendChild(slice); });
     if (spec.kind === 'cup') chips(node, spec);
+    if (spec.kind === 'glass') lemonade(node, spec);
     return node;
   }
 
-  /** Chips standing in the carton, leaning every which way. */
+  /**
+   * Chips standing in the carton, leaning every which way.
+   *
+   * Each one is graded down its own length — dark where it is buried,
+   * golden at the tip — because a chip lit flat is a lolly stick.
+   */
   function chips(node, spec) {
-    for (var i = 0; i < 7; i++) {
+    for (var i = 0; i < 11; i++) {
       var angle = jitter(i * 9 + 2) * Math.PI * 2;
-      var reach = spec.r * 0.4 * Math.sqrt(jitter(i * 4 + 5));
-      var tall = spec.t * (0.7 + jitter(i * 6) * 0.45);
+      var reach = spec.r * 0.66 * Math.sqrt(jitter(i * 4 + 5));
+      var tall = spec.t * (0.74 + jitter(i * 6) * 0.52);
+      var wide = 2.1 + jitter(i * 3 + 1) * 1.1;
+      var warm = 0.1 - jitter(i) * 0.2;
 
-      node.appendChild(upright('b3-chip', 2.4, tall, mix(TONE.chip, 0.08 - jitter(i) * 0.24), {
+      var skin = 'linear-gradient(to top, ' +
+        mix(TONE.chip, warm - 0.42) + ', ' +
+        mix(TONE.chip, warm) + ' 46%, ' +
+        mix(TONE.chip, warm + 0.2) + ')';
+
+      node.appendChild(upright('b3-chip', wide, tall, skin, {
         x: Math.cos(angle) * reach,
         y: Math.sin(angle) * reach,
         // buried to just under half its length, so every chip clears the
         // rim instead of the short ones disappearing into the carton
         z: spec.t * 0.05 + tall / 2,
-        lean: (jitter(i * 11) - 0.5) * 16
+        lean: (jitter(i * 11) - 0.5) * 18
       }));
     }
+  }
+
+  /**
+   * What turns a glass of yellow into a lemonade: ice standing proud of
+   * the surface, a wheel of lemon on the rim, and a straw.
+   */
+  function lemonade(node, spec) {
+    var top = spec.t / 2;
+
+    // Three, not four, and near enough opaque. Stacked translucent
+    // quads stop reading as cubes and start reading as one milky slab
+    // across the top of the glass.
+    var ICE = [
+      { x: -0.42, y:  0.30, z: -0.6, lean:  14, k: 1    },
+      { x:  0.34, y: -0.26, z:  1.1, lean: -22, k: 0.86 },
+      { x:  0.02, y:  0.46, z:  2.4, lean:  36, k: 0.74 }
+    ];
+    ICE.forEach(function (cube) {
+      node.appendChild(upright('b3-ice', 4 * cube.k, 3.6 * cube.k,
+        'linear-gradient(148deg, rgba(255,255,255,.94), rgba(222,241,246,.82) 58%, rgba(188,219,228,.86))', {
+          x: spec.r * cube.x,
+          y: spec.r * cube.y,
+          z: top + cube.z,
+          lean: cube.lean
+        }));
+    });
+
+    // the wheel on the near rim, the straw on the far side of it, so
+    // neither is standing in front of the other
+    node.appendChild(upright('b3-wheel', 7.4, 7.4,
+      'radial-gradient(circle at 50% 50%, #fffbe0 22%, #efcb35 26%, #f9ea90 66%, #d9ae24)', {
+        x: -spec.r * 0.82, y: spec.r * 0.5, z: top + 0.4, lean: -16
+      }));
+
+    node.appendChild(upright('b3-straw', 1.8, spec.t * 0.9,
+      'repeating-linear-gradient(-160deg, #b8352c 0 22%, #fdf6e8 22% 44%)', {
+        x: spec.r * 0.34, y: -spec.r * 0.1, z: top + spec.t * 0.24, lean: 12
+      }));
   }
 
   /**

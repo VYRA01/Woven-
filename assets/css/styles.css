@@ -568,7 +568,7 @@ h1 .line { display: block; }
 .anat-list li.lit .anat-d { max-height: 5.5em; opacity: 1; }
 
 /* Stage */
-.anat-art { position: relative; aspect-ratio: 1 / .85; max-height: 74vh; margin-inline: auto; width: 100%; }
+.anat-art { position: relative; aspect-ratio: 1 / .82; max-height: 74vh; margin-inline: auto; width: 100%; }
 .anat-plate {
   position: absolute;
   left: 50%;
@@ -692,6 +692,10 @@ h1 .line { display: block; }
 
 /* A chip is a stick with rounded ends, not a teardrop. */
 .b3-chip { --round: 40%; }
+/* Ice has corners; a lemon wheel and a straw do not. */
+.b3-ice { --round: 22%; }
+.b3-wheel { --round: 50%; }
+.b3-straw { --round: 45%; }
 
 /* One soft sheen per layer, standing in front of it. Per-slice it would
    ring like the highlight did; once per layer it cannot. */
@@ -848,7 +852,7 @@ h1 .line { display: block; }
      falling off the edge of the stage */
   .anat-burger { transform: translateX(-4%); }
   .anat-burger.is-photo-stack { transform: translate(-4%, calc(var(--p) * -4%)); }
-  .anat-art { --zoom: .84; }
+  .anat-art { --zoom: .78; }
   .anat-copy > .btn { display: none; }
   .anat-stage { min-height: 0; }
 }

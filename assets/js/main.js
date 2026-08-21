@@ -526,12 +526,12 @@
      glass above it. */
   var PROPS = [
     {
-      kind: 'cup', r: 10.5, t: 14, x: -34, y: 14, turn: -12, slim: 1,
+      kind: 'cup', r: 7.6, t: 13, x: -45, y: 24, turn: -12, slim: 1.1,
       profile: function (u) { return 0.82 + 0.18 * u; },        // a carton, wider at the mouth
       toneAt: function (u) { return u > 0.9 ? '#8e241d' : '#b8352c'; }
     },
     {
-      kind: 'glass', r: 8.2, t: 23, x: -42, y: -40, turn: 8, slim: 0.75,
+      kind: 'glass', r: 7, t: 20, x: -44, y: -40, turn: 8, slim: 0.85,
       // straight-sided, with the head standing a little over the rim
       profile: function (u) {
         if (u > 0.96) return 0.97;                               // the head rounds off
@@ -805,16 +805,16 @@
   function chips(node, spec) {
     for (var i = 0; i < 7; i++) {
       var angle = jitter(i * 9 + 2) * Math.PI * 2;
-      var reach = spec.r * 0.62 * Math.sqrt(jitter(i * 4 + 5));
-      var tall = spec.t * (0.9 + jitter(i * 6) * 0.6);
+      var reach = spec.r * 0.4 * Math.sqrt(jitter(i * 4 + 5));
+      var tall = spec.t * (0.7 + jitter(i * 6) * 0.45);
 
-      node.appendChild(upright('b3-chip', 3, tall, mix(TONE.chip, 0.08 - jitter(i) * 0.24), {
+      node.appendChild(upright('b3-chip', 2.4, tall, mix(TONE.chip, 0.08 - jitter(i) * 0.24), {
         x: Math.cos(angle) * reach,
         y: Math.sin(angle) * reach,
         // buried to just under half its length, so every chip clears the
         // rim instead of the short ones disappearing into the carton
         z: spec.t * 0.05 + tall / 2,
-        lean: (jitter(i * 11) - 0.5) * 26
+        lean: (jitter(i * 11) - 0.5) * 16
       }));
     }
   }

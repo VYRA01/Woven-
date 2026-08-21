@@ -60,8 +60,8 @@ way: open, close, cycle, restore focus, leave nothing stuck.
 `#anatomy` pins a burger to the viewport for three screens of scroll and pulls
 it apart layer by layer — sesame crown, lettuce, cheddar, patty, base — with a
 label pinned to each layer and a step list that lights up as its layer lifts
-away. Below 1000px the fries and the beer tuck in behind the burger rather than
-spreading beside it (`--spread`), because there is no room beside it.
+away. Below 1000px the whole table is scaled down together (`--zoom` on the
+scene) rather than rearranged, so the arrangement holds at any width.
 
 **The burger is built, not drawn.** It is a real 3D object: a tilted scene
 holding five layers, each one a short stack of discs whose radius follows a
@@ -76,6 +76,17 @@ kept to the side of the bun you can actually see. Ringing the rim evenly reads
 as a skirt; leaving them where they squeezed out reads as sauce. Fries and a
 beer stand on the same table, built from the same stacked discs: the beer's
 pour, its head, and the glass under both are one stack coloured by depth.
+
+Getting three objects to stand apart on one table is a layout problem, not an
+art one, and the stage's proportions are what solve it. Sizes are hundredths of
+the *short* side, so a tall narrow stage has no width to give — the stage is
+near-square (`aspect-ratio: 1 / .85`) and takes the larger grid column for
+exactly that reason. The props also hold station against the scene's turn: left
+to orbit with it they swing a third of the way in toward the burger at one end
+of the scroll and off the edge of the stage at the other, which is right for a
+turntable and useless for a layout. Clearances are measured from the boxes the
+browser projects, at both widths and across the whole scroll, rather than
+eyeballed.
 
 Three details make it hold together.
 

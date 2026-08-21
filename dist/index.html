@@ -521,7 +521,11 @@ h1 .line { display: block; }
 
 .anat-in {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  /* The stage gets the larger share. There has to be table either side of
+     the burger for the fries and the beer to stand on, and a square-ish
+     stage is what buys it — sizes are hundredths of the short side, so a
+     tall narrow stage is one that has no width to give. */
+  grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr);
   gap: clamp(20px, 4vw, 60px);
   align-items: center;
 }
@@ -566,7 +570,7 @@ h1 .line { display: block; }
 .anat-list li.lit .anat-d { max-height: 5.5em; opacity: 1; }
 
 /* Stage */
-.anat-art { position: relative; aspect-ratio: 1 / 1.3; max-height: 74vh; margin-inline: auto; width: 100%; }
+.anat-art { position: relative; aspect-ratio: 1 / .85; max-height: 74vh; margin-inline: auto; width: 100%; }
 .anat-plate {
   position: absolute;
   left: 50%;
@@ -610,6 +614,7 @@ h1 .line { display: block; }
   /* tips further onto its side as it opens, so the gaps come into view,
      and turns a little at the same time */
   transform:
+    scale3d(var(--zoom, 1), var(--zoom, 1), var(--zoom, 1))
     rotateX(calc(80deg - var(--p) * 13deg))
     rotateZ(calc(-16deg + var(--p) * 34deg));
 }
@@ -667,10 +672,16 @@ h1 .line { display: block; }
   width: calc(var(--d) * var(--u));
   height: calc(var(--d) * var(--u));
   transform-style: preserve-3d;
+  /* The leading turn undoes the scene's own. Without it the props orbit
+     the burger as it turns — swinging a third of the way in toward it at
+     one end of the scroll and out to the edge of the stage at the other,
+     which is correct for a turntable and useless for a layout. They keep
+     the tilt, so they still stand on the same surface. */
   transform:
+    rotateZ(calc(16deg - var(--p) * 34deg))
     translate3d(
-      calc(var(--x) * var(--spread, 1) * (1 + var(--p) * .07) * var(--u)),
-      calc(var(--y) * (1 + var(--p) * .07) * var(--u)),
+      calc(var(--x) * (1 + var(--p) * .02) * var(--u)),
+      calc(var(--y) * (1 + var(--p) * .02) * var(--u)),
       calc(var(--rest) * var(--u)))
     rotate(var(--turn));
 }
@@ -813,9 +824,9 @@ h1 .line { display: block; }
      bring the rest of the table in behind it — at this width there is no
      room beside the burger, so the fries and the beer tuck in rather than
      falling off the edge of the stage */
-  .anat-burger { transform: translateX(-6%); }
-  .anat-burger.is-photo-stack { transform: translate(-6%, calc(var(--p) * -4%)); }
-  .anat-art { --spread: .58; }
+  .anat-burger { transform: translateX(-4%); }
+  .anat-burger.is-photo-stack { transform: translate(-4%, calc(var(--p) * -4%)); }
+  .anat-art { --zoom: .84; }
   .anat-copy > .btn { display: none; }
   .anat-stage { min-height: 0; }
 }
@@ -4510,12 +4521,12 @@ window.MEATOLOGIA_MENU = {
      glass above it. */
   var PROPS = [
     {
-      kind: 'cup', r: 10.5, t: 14, x: -34, y: 14, turn: -12, slim: 1,
+      kind: 'cup', r: 7.6, t: 13, x: -45, y: 24, turn: -12, slim: 1.1,
       profile: function (u) { return 0.82 + 0.18 * u; },        // a carton, wider at the mouth
       toneAt: function (u) { return u > 0.9 ? '#8e241d' : '#b8352c'; }
     },
     {
-      kind: 'glass', r: 8.2, t: 23, x: -42, y: -40, turn: 8, slim: 0.75,
+      kind: 'glass', r: 7, t: 20, x: -44, y: -40, turn: 8, slim: 0.85,
       // straight-sided, with the head standing a little over the rim
       profile: function (u) {
         if (u > 0.96) return 0.97;                               // the head rounds off
@@ -4789,16 +4800,16 @@ window.MEATOLOGIA_MENU = {
   function chips(node, spec) {
     for (var i = 0; i < 7; i++) {
       var angle = jitter(i * 9 + 2) * Math.PI * 2;
-      var reach = spec.r * 0.62 * Math.sqrt(jitter(i * 4 + 5));
-      var tall = spec.t * (0.9 + jitter(i * 6) * 0.6);
+      var reach = spec.r * 0.4 * Math.sqrt(jitter(i * 4 + 5));
+      var tall = spec.t * (0.7 + jitter(i * 6) * 0.45);
 
-      node.appendChild(upright('b3-chip', 3, tall, mix(TONE.chip, 0.08 - jitter(i) * 0.24), {
+      node.appendChild(upright('b3-chip', 2.4, tall, mix(TONE.chip, 0.08 - jitter(i) * 0.24), {
         x: Math.cos(angle) * reach,
         y: Math.sin(angle) * reach,
         // buried to just under half its length, so every chip clears the
         // rim instead of the short ones disappearing into the carton
         z: spec.t * 0.05 + tall / 2,
-        lean: (jitter(i * 11) - 0.5) * 26
+        lean: (jitter(i * 11) - 0.5) * 16
       }));
     }
   }

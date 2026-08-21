@@ -519,7 +519,11 @@ h1 .line { display: block; }
 
 .anat-in {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  /* The stage gets the larger share. There has to be table either side of
+     the burger for the fries and the beer to stand on, and a square-ish
+     stage is what buys it — sizes are hundredths of the short side, so a
+     tall narrow stage is one that has no width to give. */
+  grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr);
   gap: clamp(20px, 4vw, 60px);
   align-items: center;
 }
@@ -564,7 +568,7 @@ h1 .line { display: block; }
 .anat-list li.lit .anat-d { max-height: 5.5em; opacity: 1; }
 
 /* Stage */
-.anat-art { position: relative; aspect-ratio: 1 / 1.3; max-height: 74vh; margin-inline: auto; width: 100%; }
+.anat-art { position: relative; aspect-ratio: 1 / .85; max-height: 74vh; margin-inline: auto; width: 100%; }
 .anat-plate {
   position: absolute;
   left: 50%;
@@ -608,6 +612,7 @@ h1 .line { display: block; }
   /* tips further onto its side as it opens, so the gaps come into view,
      and turns a little at the same time */
   transform:
+    scale3d(var(--zoom, 1), var(--zoom, 1), var(--zoom, 1))
     rotateX(calc(80deg - var(--p) * 13deg))
     rotateZ(calc(-16deg + var(--p) * 34deg));
 }
@@ -665,10 +670,16 @@ h1 .line { display: block; }
   width: calc(var(--d) * var(--u));
   height: calc(var(--d) * var(--u));
   transform-style: preserve-3d;
+  /* The leading turn undoes the scene's own. Without it the props orbit
+     the burger as it turns — swinging a third of the way in toward it at
+     one end of the scroll and out to the edge of the stage at the other,
+     which is correct for a turntable and useless for a layout. They keep
+     the tilt, so they still stand on the same surface. */
   transform:
+    rotateZ(calc(16deg - var(--p) * 34deg))
     translate3d(
-      calc(var(--x) * var(--spread, 1) * (1 + var(--p) * .07) * var(--u)),
-      calc(var(--y) * (1 + var(--p) * .07) * var(--u)),
+      calc(var(--x) * (1 + var(--p) * .02) * var(--u)),
+      calc(var(--y) * (1 + var(--p) * .02) * var(--u)),
       calc(var(--rest) * var(--u)))
     rotate(var(--turn));
 }
@@ -811,9 +822,9 @@ h1 .line { display: block; }
      bring the rest of the table in behind it — at this width there is no
      room beside the burger, so the fries and the beer tuck in rather than
      falling off the edge of the stage */
-  .anat-burger { transform: translateX(-6%); }
-  .anat-burger.is-photo-stack { transform: translate(-6%, calc(var(--p) * -4%)); }
-  .anat-art { --spread: .58; }
+  .anat-burger { transform: translateX(-4%); }
+  .anat-burger.is-photo-stack { transform: translate(-4%, calc(var(--p) * -4%)); }
+  .anat-art { --zoom: .84; }
   .anat-copy > .btn { display: none; }
   .anat-stage { min-height: 0; }
 }

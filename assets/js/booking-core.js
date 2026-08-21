@@ -145,6 +145,9 @@
     var guests = Math.round(Number(input.guests));
     var date = String(input.date || '').trim();
     var time = String(input.time || '').trim();
+    // Which language the guest was reading. It is not validated — an
+    // unknown code just means their confirmation comes in English.
+    var lang = String(input.lang || '').trim().slice(0, 8);
 
     // Errors are reported as codes, not prose: the same check has to speak
     // whatever language the guest is reading, and the server has no idea
@@ -196,7 +199,7 @@
       errors: errors,
       booking: {
         name: name, phone: phone, email: email, notes: notes,
-        guests: guests, date: date, time: time
+        guests: guests, date: date, time: time, lang: lang
       }
     };
   }
@@ -214,10 +217,11 @@
 
   /* ── Presentation helpers ───────────────────────────────────────── */
 
-  function prettyDate(dateStr) {
+  /** "Sunday 24 August", in whatever language is asked for. */
+  function prettyDate(dateStr, locale) {
     var d = toDate(dateStr, '12:00');
     if (!d) return dateStr;
-    return d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+    return d.toLocaleDateString(locale || 'en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
   }
 
   /** An .ics the guest can save to their calendar. */

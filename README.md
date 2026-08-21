@@ -6,7 +6,7 @@ the front end is plain HTML/CSS/JS, the server is plain Node.
 
 ```bash
 npm start        # site + booking API on http://localhost:3000
-npm test         # 31 tests: booking rules, the API end to end, translations
+npm test         # 38 tests: booking rules, the API and the mail end to end
 npm run build    # bundle everything into a single dist/index.html
 npm run photos   # rebuild the photo manifest from assets/photos/
 ```
@@ -27,6 +27,8 @@ assets/js/booking-core.js booking rules, shared by the browser and the server
 assets/js/booking.js     the reservation flow
 assets/js/main.js        takeover, filtering, the anatomy scroll, opening hours
 server/server.js         static file server + booking API
+server/notify.js         what the guest and the floor are told
+server/mail.js           a small SMTP client, no dependencies
 server/store.js          the diary, persisted to server/data/bookings.json
 server/staff.html        the book, for whoever is working the floor
 test/booking.test.js     the suite
@@ -290,9 +292,42 @@ there is nothing to POST to. The form detects this, keeps the booking in
 the guest the table needs confirming by phone. Nothing pretends to be booked
 when it isn't.
 
-**Not included:** no confirmation emails or SMS (that needs a mail provider and
-credentials), and no card holds or deposits. The email field is collected and
-stored for whoever picks up the diary.
+**Confirmations.** A booking nobody sees is a guest arriving to no table, so
+the server writes to two people: the guest, in whichever of the three languages
+they were reading when they booked, and whoever is working the floor. The floor
+is told even when the guest left no email address, and told again if the booking
+is cancelled.
+
+```bash
+SMTP_URL=smtps://bookings%40meatologia.pl:app-password@smtp.example.com:465 \
+MAIL_FROM=bookings@meatologia.pl \
+MAIL_TO=rezerwacje@meatologia.pl \
+npm start
+```
+
+Leave `SMTP_URL` unset and nothing is sent — the server says so at startup, and
+every booking has to be spotted by opening `/staff`.
+
+`server/mail.js` speaks SMTP directly, in about 150 lines and with no
+dependencies, because the restaurant already has a mailbox somewhere and this
+project has no package to install. `smtps://` is implicit TLS,
+`smtp+starttls://` upgrades on 587, and plain `smtp://` is allowed only to
+localhost — it refuses to hand credentials to a remote host over an
+unencrypted socket. Percent-encode anything exotic in the password.
+Outgrown it? Replace that one file; `notify.js` only calls `send()`.
+
+Three things this is careful about:
+
+- **Mail never costs a booking.** The table is in the diary before anything is
+  sent, and the guest gets their confirmation screen without waiting on a mail
+  server. A failure is logged, not surfaced.
+- **The guest's language travels with the booking.** `lang` is stored alongside
+  the rest of it, so the confirmation matches the site they booked on.
+- **Nothing is tested against a stub.** The suite stands up a real SMTP server,
+  points the API at it, and reads back what arrived — recipients, encoded
+  subject lines and all.
+
+**Still not included:** no SMS, and no card holds or deposits.
 
 ## Putting it online
 
@@ -328,8 +363,8 @@ domain at it.
   covers available at once and `turnMinutes` how long a table is held.
   `timeZone` is what "has that seating passed?" is measured against — change it
   only if the restaurant moves.
-- Decide who watches the diary. There are no notifications yet, so someone has
-  to open `/staff` — or wire the `POST /api/bookings` handler to a mail service.
+- Set `SMTP_URL` and `MAIL_TO`, or decide who is opening `/staff` and how often.
+  A booking that nobody sees is worse than no booking system.
 
 ## Business data
 

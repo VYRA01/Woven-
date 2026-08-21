@@ -12,6 +12,15 @@ services:
         value: /data/bookings.json
       - key: STAFF_TOKEN
         generateValue: true   # Render makes one; read it in the dashboard
+
+      # Confirmations. Without SMTP_URL nothing is sent and every booking
+      # has to be spotted by opening /staff — see the README.
+      - key: SMTP_URL
+        sync: false           # smtps://user:pass@host:465 — set it yourself
+      - key: MAIL_FROM
+        value: bookings@meatologia.pl
+      - key: MAIL_TO
+        sync: false           # the address the floor actually reads
     disk:
       name: bookings
       mountPath: /data

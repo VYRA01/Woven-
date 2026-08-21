@@ -435,3 +435,226 @@ test('every photograph named in photos.js exists and belongs to something', () =
 
   assert.deepEqual(problems, []);
 });
+
+/* ── Telling somebody ─────────────────────────────────────────────────
+   A booking nobody sees is a guest arriving to no table, so the mail is
+   worth testing against something that actually speaks SMTP rather than
+   against a stub of our own making. */
+
+/** A throwaway SMTP server that keeps what it is given. */
+function catcher() {
+  const net = require('node:net');
+  const inbox = [];
+
+  const server = net.createServer((socket) => {
+    let buffer = '';
+    let reading = false;
+    let mail = { rcpt: [], data: '' };
+
+    socket.setEncoding('utf8');
+    socket.write('220 catcher ESMTP\r\n');
+
+    socket.on('data', (chunk) => {
+      buffer += chunk;
+      let cut;
+      while ((cut = buffer.indexOf('\r\n')) >= 0) {
+        const line = buffer.slice(0, cut);
+        buffer = buffer.slice(cut + 2);
+
+        if (reading) {
+          if (line === '.') {
+            reading = false;
+            inbox.push(mail);
+            mail = { rcpt: [], data: '' };
+            socket.write('250 queued\r\n');
+          } else {
+            mail.data += line + '\n';
+          }
+          continue;
+        }
+
+        const verb = line.toUpperCase();
+        if (verb.startsWith('EHLO')) socket.write('250-catcher\r\n250-AUTH PLAIN LOGIN\r\n250 HELP\r\n');
+        else if (verb.startsWith('AUTH')) { mail.auth = line; socket.write('235 authenticated\r\n'); }
+        else if (verb.startsWith('MAIL FROM')) { mail.from = line; socket.write('250 ok\r\n'); }
+        else if (verb.startsWith('RCPT TO')) { mail.rcpt.push(line); socket.write('250 ok\r\n'); }
+        else if (verb === 'DATA') { reading = true; socket.write('354 go ahead\r\n'); }
+        else if (verb === 'QUIT') { socket.write('221 bye\r\n'); socket.end(); }
+        else socket.write('250 ok\r\n');
+      }
+    });
+    socket.on('error', () => {});
+  });
+
+  return { server, inbox };
+}
+
+/** Headers and decoded body of a captured message. */
+function opened(raw) {
+  const split = raw.indexOf('\n\n');
+  const head = raw.slice(0, split);
+  const encoded = raw.slice(split + 2).replace(/\n/g, '');
+  const subject = (head.match(/^Subject: (.*)$/m) || [, ''])[1];
+
+  return {
+    head,
+    to: (head.match(/^To: (.*)$/m) || [, ''])[1],
+    subject: /^=\?UTF-8\?B\?(.*)\?=$/.test(subject)
+      ? Buffer.from(subject.replace(/^=\?UTF-8\?B\?|\?=$/g, ''), 'base64').toString('utf8')
+      : subject,
+    text: Buffer.from(encoded, 'base64').toString('utf8')
+  };
+}
+
+test('a booking mails the guest and the floor', async (t) => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'meatologia-mail-'));
+  process.env.BOOKINGS_FILE = path.join(dir, 'bookings.json');
+
+  const post = catcher();
+  await new Promise((r) => post.server.listen(0, '127.0.0.1', r));
+  const smtp = 'smtp://127.0.0.1:' + post.server.address().port;
+
+  process.env.SMTP_URL = smtp;
+  process.env.MAIL_FROM = 'bookings@meatologia.pl';
+  process.env.MAIL_TO = 'floor@meatologia.pl';
+  // the throttle counts every booking this process has made, including
+  // the ones the API test above made from the same address
+  process.env.BOOKING_RATE = '500';
+
+  const server = require('../server/server');
+  await new Promise((r) => server.listen(0, r));
+  const base = 'http://127.0.0.1:' + server.address().port;
+
+  t.after(() => {
+    server.close();
+    post.server.close();
+    delete process.env.SMTP_URL;
+    delete process.env.MAIL_TO;
+    delete process.env.BOOKING_RATE;
+    fs.rmSync(dir, { recursive: true, force: true });
+  });
+
+  const soon = new Date();
+  soon.setDate(soon.getDate() + 4);
+  const date = R.toISODate(soon);
+
+  const send = (body) => fetch(base + '/api/bookings', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+
+  const settle = async (wanted) => {
+    for (let i = 0; i < 100 && post.inbox.length < wanted; i++) {
+      await new Promise((r) => setTimeout(r, 20));
+    }
+  };
+
+  await t.test('the guest is written to in the language they booked in', async () => {
+    const res = await send({
+      name: 'Anna Kowalska', phone: '600 000 000', email: 'anna@example.com',
+      guests: 3, date, time: '19:00', notes: 'Urodziny', lang: 'pl'
+    });
+    assert.equal(res.status, 201);
+    await settle(2);
+
+    const all = post.inbox.map((m) => opened(m.data));
+    const guest = all.find((m) => m.to === 'anna@example.com');
+    assert.ok(guest, 'the guest was written to');
+    assert.match(guest.subject, /Twój stolik w Meatologii/, 'subject in Polish');
+    assert.match(guest.text, /Dzień dobry, Anna Kowalska/);
+    assert.match(guest.text, /Urodziny/, 'their note is repeated back');
+    assert.match(guest.text, /MT-[A-Z0-9]{5}/, 'and the reference');
+
+    const floor = all.find((m) => m.to === 'floor@meatologia.pl');
+    assert.ok(floor, 'the floor was told');
+    assert.match(floor.subject, /NOWA REZERWACJA/);
+    assert.match(floor.text, /600 000 000/, 'with a phone number to ring back on');
+  });
+
+  await t.test('a Korean guest gets Korean', async () => {
+    post.inbox.length = 0;
+    await send({
+      name: '김민준', phone: '600 111 222', email: 'min@example.com',
+      guests: 2, date, time: '20:00', lang: 'ko'
+    });
+    await settle(2);
+
+    const guest = post.inbox.map((m) => opened(m.data)).find((m) => m.to === 'min@example.com');
+    assert.ok(guest);
+    assert.match(guest.subject, /예약 확인/);
+    assert.match(guest.text, /예약이 확정되었습니다/);
+  });
+
+  await t.test('no email address still tells the floor', async () => {
+    post.inbox.length = 0;
+    const res = await send({
+      name: 'Piotr Nowak', phone: '600 222 333',
+      guests: 2, date, time: '20:30', lang: 'pl'
+    });
+    assert.equal(res.status, 201);
+    await settle(1);
+
+    const all = post.inbox.map((m) => opened(m.data));
+    assert.equal(all.length, 1, 'one message, not two');
+    assert.equal(all[0].to, 'floor@meatologia.pl');
+  });
+
+  await t.test('cancelling tells the floor too, and does not mail the guest', async () => {
+    post.inbox.length = 0;
+    const made = await (await send({
+      name: 'Ewa Zielińska', phone: '600 333 444', email: 'ewa@example.com',
+      guests: 2, date, time: '21:00', lang: 'pl'
+    })).json();
+    await settle(2);
+    post.inbox.length = 0;
+
+    const off = await fetch(base + '/api/bookings/' + made.booking.ref + '/cancel', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: '600 333 444' })
+    });
+    assert.equal(off.status, 200);
+    await settle(1);
+
+    const all = post.inbox.map((m) => opened(m.data));
+    assert.equal(all.length, 1);
+    assert.equal(all[0].to, 'floor@meatologia.pl');
+    assert.match(all[0].subject, /ODWOŁANA/);
+  });
+
+  await t.test('a dead mail server does not cost the guest their table', async () => {
+    // a port with nothing behind it
+    const dead = require('node:net').createServer();
+    await new Promise((r) => dead.listen(0, '127.0.0.1', r));
+    const port = dead.address().port;
+    await new Promise((r) => dead.close(r));
+
+    process.env.SMTP_URL = 'smtp://127.0.0.1:' + port;
+    const res = await send({
+      name: 'Marek Wójcik', phone: '600 444 555', email: 'marek@example.com',
+      guests: 2, date, time: '18:00', lang: 'pl'
+    });
+    process.env.SMTP_URL = smtp;
+
+    assert.equal(res.status, 201, 'the booking is still made');
+    const kept = await (await fetch(base + '/api/bookings/' + (await res.json()).booking.ref)).json();
+    assert.equal(kept.booking.status, 'confirmed', 'and still in the diary');
+  });
+});
+
+test('SMTP credentials are never sent over a plain connection', () => {
+  const mail = require('../server/mail');
+
+  assert.throws(() => mail.parse('smtp://bob:hunter2@smtp.example.com'), /plain connection/);
+  assert.doesNotThrow(() => mail.parse('smtps://bob:hunter2@smtp.example.com'));
+  assert.doesNotThrow(() => mail.parse('smtp+starttls://bob:hunter2@smtp.example.com'));
+  assert.doesNotThrow(() => mail.parse('smtp://127.0.0.1:1025'), 'a local catcher is fine');
+
+  assert.equal(mail.parse('smtps://a:b@host').port, 465, 'implicit TLS defaults to 465');
+  assert.equal(mail.parse('smtp+starttls://a:b@host').port, 587, 'STARTTLS to 587');
+
+  // a subject that is not ASCII has to travel encoded
+  assert.equal(mail.header('Twój stolik'), '=?UTF-8?B?VHfDs2ogc3RvbGlr?=');
+  assert.equal(mail.header('Your table'), 'Your table', 'and one that is, does not');
+});

@@ -10,6 +10,8 @@ COPY . .
 ENV TZ=Europe/Warsaw
 ENV BOOKINGS_FILE=/data/bookings.json
 ENV PORT=3000
+# Confirmations are off until SMTP_URL is given; see the README.
+#   -e SMTP_URL=smtps://user:pass@host:465 -e MAIL_TO=rezerwacje@meatologia.pl
 VOLUME ["/data"]
 EXPOSE 3000
 

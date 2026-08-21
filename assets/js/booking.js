@@ -186,7 +186,9 @@
   function gather() {
     return {
       name: els.name.value, phone: els.phone.value, email: els.email.value,
-      notes: els.notes.value, guests: state.guests, date: state.date, time: state.time
+      notes: els.notes.value, guests: state.guests, date: state.date, time: state.time,
+      // so the confirmation arrives in the language they booked in
+      lang: I.language()
     };
   }
 

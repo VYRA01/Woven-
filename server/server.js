@@ -22,6 +22,7 @@ const crypto = require('crypto');
 
 const store = require('./store');
 const rules = require('../assets/js/booking-core');
+const notify = require('./notify');
 
 const ROOT = path.join(__dirname, '..');
 const PORT = Number(process.env.PORT) || 3000;
@@ -37,6 +38,19 @@ const TYPES = {
 };
 
 /* ── Helpers ──────────────────────────────────────────────────────── */
+
+/**
+ * Tell the guest and the floor, without making either of them wait and
+ * without letting a mail failure reach the guest. The booking is already
+ * saved; this is the part that can go wrong harmlessly.
+ */
+function announce(booking, event) {
+  notify.booked(booking, event).then((done) => {
+    if (done.skipped) return;
+    if (done.sent.length) console.log('[mail] %s -> %s', booking.ref, done.sent.join(', '));
+    for (const why of done.failed) console.error('[mail] %s FAILED %s', booking.ref, why);
+  });
+}
 
 function send(res, status, body, headers) {
   const payload = typeof body === 'string' ? body : JSON.stringify(body);
@@ -65,9 +79,14 @@ function readJson(req, limit = 16 * 1024) {
   });
 }
 
-/** Crude per-IP throttle so the diary cannot be spammed from one machine. */
+/**
+ * Crude per-IP throttle so the diary cannot be spammed from one machine.
+ * BOOKING_RATE is how many bookings one address may make in ten minutes;
+ * a busy room behind a single NAT may want it higher than the default.
+ */
 const hits = new Map();
-function tooMany(ip, max = 12, windowMs = 10 * 60 * 1000) {
+function tooMany(ip, max, windowMs = 10 * 60 * 1000) {
+  if (max == null) max = Number(process.env.BOOKING_RATE) || 12;
   const now = Date.now();
   const seen = (hits.get(ip) || []).filter((t) => now - t < windowMs);
   seen.push(now);
@@ -125,6 +144,10 @@ async function api(req, res, url) {
 
     console.log('[booking] %s  %s %s  %d guests  %s', ref, booking.date, booking.time,
       booking.guests, booking.name);
+
+    // After the reply, never before it. The table is already in the diary
+    // and the guest should not wait on a mail server to hear so.
+    announce(booking, 'booked');
     return send(res, 201, { booking });
   }
 
@@ -143,13 +166,16 @@ async function api(req, res, url) {
 
   // POST /api/bookings/:ref/cancel
   if (req.method === 'POST' && parts[1] === 'bookings' && parts[2] && parts[3] === 'cancel') {
-    if (tooMany(ip, 20)) return send(res, 429, { error: 'rate_limited' });
+    if (tooMany(ip, (Number(process.env.BOOKING_RATE) || 12) + 8)) {
+      return send(res, 429, { error: 'rate_limited' });
+    }
 
     let body;
     try { body = await readJson(req); }
     catch (err) { return send(res, 400, { error: err.message }); }
 
     const result = store.cancel(parts[2], body.phone);
+    if (result.booking) announce(result.booking, 'cancelled');
     if (!result.ok) return send(res, result.reason === 'not_found' ? 404 : 403, { error: result.reason });
     return send(res, 200, { booking: result.booking });
   }
@@ -217,6 +243,12 @@ if (require.main === module) {
     console.log(STAFF_TOKEN
       ? 'Staff list: http://localhost:' + PORT + '/staff'
       : 'Set STAFF_TOKEN to enable the staff list at /staff');
+
+    const mail = notify.config();
+    console.log(mail.on
+      ? 'Mailing confirmations via ' + mail.url.replace(/\/\/[^@]*@/, '//') +
+        (mail.to ? ', alerts to ' + mail.to : ' (set MAIL_TO to alert the floor)')
+      : 'Set SMTP_URL to mail confirmations; without it nothing is sent');
   });
 }
 

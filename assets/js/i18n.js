@@ -231,7 +231,20 @@
       'err.too_far': 'We take bookings up to {days} days ahead.',
       'err.seats_left': 'Only {n} seats are left at {time}.',
       'err.seats_left_1': 'Only 1 seat is left at {time}.',
-      'err.full': 'That seating is fully booked.'
+      'err.full': 'That seating is fully booked.',
+
+      /* The confirmation the guest is sent. Composed on the server, in
+         whichever language they were reading when they booked. */
+      'mail.subject': 'Your table at Meatologia — {date}, {time}',
+      'mail.greeting': 'Hello {name},',
+      'mail.body': 'Your table is booked. We look forward to seeing you.',
+      'mail.when': 'When',
+      'mail.guests': 'Guests',
+      'mail.ref': 'Reference',
+      'mail.where': 'Where',
+      'mail.notes': 'Your note',
+      'mail.change': 'Need to change or cancel it? Ring us on 666 854 218 and quote {ref}.',
+      'mail.signoff': 'Meatologia · Zwycięska 45/lok. 3, 53-033 Wrocław · 666 854 218'
     },
 
     /* ══ Polski ════════════════════════════════════════════════════ */
@@ -441,7 +454,18 @@
       'err.too_far': 'Przyjmujemy rezerwacje do {days} dni naprzód.',
       'err.seats_left': 'O {time} zostało tylko {n} miejsc.',
       'err.seats_left_1': 'O {time} zostało tylko 1 miejsce.',
-      'err.full': 'Ta godzina jest w całości zarezerwowana.'
+      'err.full': 'Ta godzina jest w całości zarezerwowana.',
+
+      'mail.subject': 'Twój stolik w Meatologii — {date}, {time}',
+      'mail.greeting': 'Dzień dobry, {name},',
+      'mail.body': 'Stolik jest zarezerwowany. Do zobaczenia.',
+      'mail.when': 'Kiedy',
+      'mail.guests': 'Liczba osób',
+      'mail.ref': 'Numer rezerwacji',
+      'mail.where': 'Gdzie',
+      'mail.notes': 'Twoja uwaga',
+      'mail.change': 'Chcesz coś zmienić albo odwołać? Zadzwoń pod 666 854 218 i podaj {ref}.',
+      'mail.signoff': 'Meatologia · Zwycięska 45/lok. 3, 53-033 Wrocław · 666 854 218'
     },
 
     /* ══ 한국어 ═════════════════════════════════════════════════════ */
@@ -651,7 +675,18 @@
       'err.too_far': '{days}일 뒤까지 예약을 받습니다.',
       'err.seats_left': '{time}에는 {n}자리만 남았습니다.',
       'err.seats_left_1': '{time}에는 1자리만 남았습니다.',
-      'err.full': '이 시간은 예약이 마감되었습니다.'
+      'err.full': '이 시간은 예약이 마감되었습니다.',
+
+      'mail.subject': 'Meatologia 예약 확인 — {date} {time}',
+      'mail.greeting': '{name}님, 안녕하세요.',
+      'mail.body': '예약이 확정되었습니다. 곧 뵙겠습니다.',
+      'mail.when': '일시',
+      'mail.guests': '인원',
+      'mail.ref': '예약 번호',
+      'mail.where': '장소',
+      'mail.notes': '남기신 메모',
+      'mail.change': '변경이나 취소는 666 854 218로 전화 주시고 {ref}을 알려주세요.',
+      'mail.signoff': 'Meatologia · Zwycięska 45/lok. 3, 53-033 Wrocław · 666 854 218'
     }
   };
 

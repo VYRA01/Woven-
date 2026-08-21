@@ -60,7 +60,8 @@ way: open, close, cycle, restore focus, leave nothing stuck.
 `#anatomy` pins a burger to the viewport for three screens of scroll and pulls
 it apart layer by layer — sesame crown, lettuce, cheddar, patty, base — with a
 label pinned to each layer and a step list that lights up as its layer lifts
-away.
+away. Below 1000px the fries and the beer tuck in behind the burger rather than
+spreading beside it (`--spread`), because there is no room beside it.
 
 **The burger is built, not drawn.** It is a real 3D object: a tilted scene
 holding five layers, each one a short stack of discs whose radius follows a
@@ -69,12 +70,23 @@ the heel. Scroll lifts the layers apart along the scene's own vertical axis and
 turns the whole thing as it goes, so you look *into* the gaps rather than at a
 flat drawing pretending to have them.
 
-Two details make it hold together. Each disc is a flat colour shaded by its
-depth, with the lit and shaded sides painted at the size of the whole *layer*
-and centred — give every disc its own highlight and the stack reads as a set of
-concentric rings instead of a solid. And only the five layer elements are
-promoted (`will-change: transform`), so the fifty-odd discs inside are never
-re-rastered mid-scroll; frame times sit on 16.7 ms through the whole section.
+Cheddar melts over the sides of the patty and roast-garlic sauce runs off the
+heel — those are quads tipped upright rather than discs lying flat, one each,
+kept to the side of the bun you can actually see. Ringing the rim evenly reads
+as a skirt; leaving them where they squeezed out reads as sauce. Fries and a
+beer stand on the same table, built from the same stacked discs: the beer's
+pour, its head, and the glass under both are one stack coloured by depth.
+
+Three details make it hold together.
+
+- Each disc is a flat colour shaded by its depth, with the lit and shaded sides
+  painted at the size of the whole *layer* and centred. Give every disc its own
+  highlight and the stack reads as a set of concentric rings, not a solid.
+- Only the five layer elements are promoted (`will-change: transform`), so the
+  eighty-odd discs inside them are never re-rastered mid-scroll.
+- The props take their form from depth shading alone. Painting the lit side
+  onto their discs as well cost about as much per frame as the entire burger,
+  for something barely visible at that size — measured, not assumed.
 
 Scroll position drives a single custom property, `--p` (0 = assembled,
 1 = fully apart), set on the section inside a `requestAnimationFrame`; every

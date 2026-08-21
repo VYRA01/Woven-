@@ -648,6 +648,49 @@ h1 .line { display: block; }
   background-repeat: no-repeat;
 }
 
+/* A prop sits at its own spot on the table and never lifts — it drifts
+   outward a little as the burger opens, so the two read as being on the
+   same surface rather than in the same diagram. */
+/* The props take their form from the depth shading alone. Painting the
+   lit and shaded sides onto their discs as well costs about as much per
+   frame as the entire burger and is barely visible on something this
+   small — measured, not guessed: it was the difference between 25 ms and
+   17 ms a frame across the section. */
+.b3-prop .b3-slice { background-image: none; }
+
+.b3-prop {
+  position: absolute;
+  left: calc(var(--d) * var(--u) / -2);
+  top: calc(var(--d) * var(--u) / -2);
+  width: calc(var(--d) * var(--u));
+  height: calc(var(--d) * var(--u));
+  transform-style: preserve-3d;
+  transform:
+    translate3d(
+      calc(var(--x) * var(--spread, 1) * (1 + var(--p) * .07) * var(--u)),
+      calc(var(--y) * (1 + var(--p) * .07) * var(--u)),
+      calc(var(--rest) * var(--u)))
+    rotate(var(--turn));
+}
+
+/* Anything standing up out of the plane: a chip, a run of sauce. Two
+   crossed faces, so it does not vanish as the scene turns past it. */
+.b3-up {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--w) * var(--u));
+  height: calc(var(--h) * var(--u));
+  margin: calc(var(--h) * -.5 * var(--u)) 0 0 calc(var(--w) * -.5 * var(--u));
+  border-radius: var(--round, 46% 46% 50% 50% / 22% 22% 78% 78%);
+  transform:
+    translate3d(calc(var(--x) * var(--u)), calc(var(--y) * var(--u)), calc(var(--z) * var(--u)))
+    rotateX(90deg) rotate(var(--lean, 0deg));
+}
+
+/* A chip is a stick with rounded ends, not a teardrop. */
+.b3-chip { --round: 40%; }
+
 /* Grill marks, only ever seen once the bun has lifted off. */
 .b3-char { position: absolute; inset: 0; }
 .b3-char b {
@@ -680,6 +723,7 @@ h1 .line { display: block; }
   .b3-scene { transform: none; }
   .b3-layer { transform: translateY(calc((40 - var(--rest) - var(--p) * var(--lift)) * var(--u))); }
   .b3-slice { transform: none; }
+  .b3-prop, .b3-up { display: none; }
 }
 
 /* Photographed layers travel the same distances, restated as a share of the
@@ -763,9 +807,13 @@ h1 .line { display: block; }
   .anat-list li { padding: 8px 12px; }
   .anat-d { display: none; }
   .anat-tag { font-size: .68rem; padding: 4px 9px; }
-  /* nudge the stack left so the leader lines have somewhere to land */
-  .anat-burger { transform: translateX(-9%); }
-  .anat-burger.is-photo-stack { transform: translate(-9%, calc(var(--p) * -4%)); }
+  /* nudge the stack left so the leader lines have somewhere to land, and
+     bring the rest of the table in behind it — at this width there is no
+     room beside the burger, so the fries and the beer tuck in rather than
+     falling off the edge of the stage */
+  .anat-burger { transform: translateX(-6%); }
+  .anat-burger.is-photo-stack { transform: translate(-6%, calc(var(--p) * -4%)); }
+  .anat-art { --spread: .58; }
   .anat-copy > .btn { display: none; }
   .anat-stage { min-height: 0; }
 }

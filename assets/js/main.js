@@ -505,16 +505,46 @@
      the burger is shut; `lift` is how far it travels by the time it is
      fully open. */
   var SOLIDS = [
-    { key: 'art-bun-btm', kind: 'heel',   r: 28, t: 9,    base: 0,    lift: -21 },
-    { key: 'art-patty',   kind: 'patty',  r: 30, t: 10,   base: 9,    lift: -8  },
-    { key: 'art-cheese',  kind: 'cheese', r: 31, t: 2.6,  base: 19,   lift: 4   },
-    { key: 'art-veg',     kind: 'veg',    r: 33, t: 3.6,  base: 21.6, lift: 14  },
-    { key: 'art-bun-top', kind: 'crown',  r: 29, t: 20,   base: 25.2, lift: 26  }
+    { key: 'art-bun-btm', kind: 'heel',   r: 24,   t: 7.6, base: 0,    lift: -18   },
+    { key: 'art-patty',   kind: 'patty',  r: 25.5, t: 8.5, base: 7.6,  lift: -6.5  },
+    { key: 'art-cheese',  kind: 'cheese', r: 26.5, t: 2.2, base: 16.1, lift: 3.5   },
+    { key: 'art-veg',     kind: 'veg',    r: 28,   t: 3,   base: 18.3, lift: 11.5  },
+    { key: 'art-bun-top', kind: 'crown',  r: 24.5, t: 17,  base: 21.3, lift: 21    }
   ];
 
   /* Half the shut burger, so the scene is built around its own middle and
      grows evenly in both directions instead of climbing out of the frame. */
-  var MIDDLE = 22.6;
+  var MIDDLE = 19.15;
+
+  /* What else is on the table. Both are built the same way as a layer —
+     a stack of discs following a profile — and both stand off to one side
+     at a fixed spot in the scene, drifting outward a little as the burger
+     opens so the table reads as a table rather than a diagram.
+
+     `toneAt` colours a stack by depth, which is the whole trick for the
+     beer: glass at the bottom, then the pour, then the head, then empty
+     glass above it. */
+  var PROPS = [
+    {
+      kind: 'cup', r: 10.5, t: 14, x: -34, y: 14, turn: -12, slim: 1,
+      profile: function (u) { return 0.82 + 0.18 * u; },        // a carton, wider at the mouth
+      toneAt: function (u) { return u > 0.9 ? '#8e241d' : '#b8352c'; }
+    },
+    {
+      kind: 'glass', r: 8.2, t: 23, x: -42, y: -40, turn: 8, slim: 0.75,
+      // straight-sided, with the head standing a little over the rim
+      profile: function (u) {
+        if (u > 0.96) return 0.97;                               // the head rounds off
+        if (u > 0.80) return 1.03;                               // and stands over the rim
+        return 0.87 + 0.15 * u;
+      },
+      toneAt: function (u) {
+        if (u < 0.05) return '#7d5c31';                          // the thick base
+        if (u < 0.80) return '#d98b1c';                          // the pour
+        return '#f6ead2';                                        // two fingers of head
+      }
+    }
+  ];
 
   /* Radius across a layer's thickness, 0 at the underside to 1 on top —
      this is what gives each one its shape rather than a plain cylinder. */
@@ -531,7 +561,9 @@
     patty:  '#54301c',
     cheese: '#f0ad2b',
     veg:    '#6d9b39',
-    crown:  '#e3a95b'
+    crown:  '#e3a95b',
+    sauce:  '#e8c98a',      // roast garlic
+    chip:   '#e8a83c'
   };
 
   /* ── Colour helpers ───────────────────────────────────────────── */
@@ -565,6 +597,58 @@
     return x - Math.floor(x);
   }
 
+  /* ── Things that stand up out of the plane ────────────────────────
+     Discs lie flat, which is right for a patty and useless for a chip or
+     a run of sauce down the side of a bun. Those are quads tipped
+     upright.
+
+     One quad each, not two crossed: tipping it up by 90° leaves it facing
+     the viewer, and the scene only turns 34° across the whole scroll, so
+     none of them ever comes close to edge-on. A second face would double
+     the element count to insure against something that cannot happen —
+     and so would a wrapper to hold the placement, which is why the
+     placement rides on the quad's own transform. */
+
+  function upright(cls, w, h, tone, at) {
+    var node = document.createElement('i');
+    node.className = 'b3-up ' + cls;
+    node.style.setProperty('--w', w);
+    node.style.setProperty('--h', h);
+    node.style.setProperty('--x', at.x.toFixed(2));
+    node.style.setProperty('--y', at.y.toFixed(2));
+    node.style.setProperty('--z', at.z.toFixed(2));
+    if (at.lean) node.style.setProperty('--lean', at.lean.toFixed(1) + 'deg');
+    node.style.background = tone;
+    return node;
+  }
+
+  /**
+   * Sauce and melted cheese running over an edge.
+   *
+   * Each run hangs from a point on the rim, and they are deliberately
+   * uneven — same length all the way round reads as a skirt, not as
+   * something that was poured on and went where it wanted.
+   */
+  function dripsOn(host, opts) {
+    // +y is toward the viewer, so half a turn is the front of the bun.
+    // Ringing it the whole way round reads as a skirt; keeping the runs
+    // to the side you can see reads as sauce that went where it wanted.
+    var arc = opts.arc || Math.PI * 2;
+    var span = opts.count > 1 ? arc / (opts.count - 1) : 0;
+
+    for (var i = 0; i < opts.count; i++) {
+      var angle = Math.PI / 2 - arc / 2 + i * span + (jitter(opts.seed + i) - 0.5) * span * 0.8;
+      var drop = opts.drop * (0.45 + jitter(opts.seed + i * 3) * 0.9);
+      var wide = opts.wide * (0.7 + jitter(opts.seed + i * 5) * 0.7);
+
+      host.appendChild(upright('b3-drip', wide, drop, opts.tone, {
+        x: Math.cos(angle) * opts.r,
+        y: Math.sin(angle) * opts.r,
+        z: opts.z - drop / 2
+      }));
+    }
+  }
+
   /* ── Building one layer ───────────────────────────────────────── */
 
   /**
@@ -575,13 +659,15 @@
   function slicesOf(spec) {
     // Enough discs that the profile reads as a curve, not so many that
     // the compositor has to raster a shelf of them every frame.
-    var n = Math.max(4, Math.round(spec.t * 0.85) + 3);
+    var n = Math.max(4, Math.round(spec.t * (spec.slim || 0.85)) + 3);
     var out = [];
+
+    var shape = spec.profile || PROFILE[spec.kind];
 
     for (var i = 0; i < n; i++) {
       var u = i / (n - 1);
-      var r = PROFILE[spec.kind](u) * spec.r;
-      var tone = TONE[spec.kind];
+      var r = shape(u) * spec.r;
+      var tone = spec.toneAt ? spec.toneAt(u) : TONE[spec.kind];
 
       var slice = document.createElement('i');
       slice.className = 'b3-slice';
@@ -592,7 +678,7 @@
       // separate layer sized to the whole layer rather than to the slice
       // (see .b3-slice in the stylesheet) — give each disc its own and
       // the stack reads as a set of concentric rings, not as a solid.
-      slice.style.backgroundColor = mix(tone, -0.34 * (1 - u));
+      slice.style.backgroundColor = mix(tone, (spec.slim ? -0.5 : -0.34) * (1 - u));
 
       // the lettuce and the cheese are not discs
       if (spec.kind === 'veg') {
@@ -606,8 +692,16 @@
       // the grill marks only show once the bun lifts off the patty
       if (spec.kind === 'patty' && i === n - 1) slice.appendChild(charMarks(r));
 
+      if (spec.kind === 'glass' && u > 0.80) slice.style.borderRadius = RUFFLE[i % RUFFLE.length];
+
+      // roast-garlic sauce, spread on the heel and gone over the sides
+      if (spec.kind === 'heel' && i === n - 1) {
+        slice.style.backgroundColor = mix(TONE.sauce, -0.04);
+        slice.style.borderRadius = RUFFLE[1];
+      }
+
       // seeds sit on the dome, each on the disc whose rim it belongs to
-      if (spec.kind === 'crown' && u > 0.22 && i < n - 1) seedsOn(slice, r, i);
+      if (spec.kind === 'crown' && u > 0.22 && i % 2 === 0 && i < n - 1) seedsOn(slice, r, i);
 
       out.push(slice);
     }
@@ -617,10 +711,13 @@
   function charMarks(r) {
     var g = document.createElement('span');
     g.className = 'b3-char';
-    for (var i = 0; i < 3; i++) {
+    for (var i = 0; i < 5; i++) {
+      var across = (i - 2) * r * 0.32;
       var bar = document.createElement('b');
-      bar.style.setProperty('--w', (r * 1.25).toFixed(1));
-      bar.style.setProperty('--y', ((i - 1) * r * 0.42).toFixed(1));
+      // the bars are chords of the disc, so they stop at its edge instead
+      // of running out past a patty that is round
+      bar.style.setProperty('--w', (Math.sqrt(Math.max(0, r * r - across * across)) * 1.7).toFixed(1));
+      bar.style.setProperty('--y', across.toFixed(1));
       g.appendChild(bar);
     }
     return g;
@@ -659,11 +756,67 @@
       layer.style.setProperty('--rest', (spec.base + spec.t / 2 - MIDDLE).toFixed(2));
       layer.style.setProperty('--lift', spec.lift);
       slicesOf(spec).forEach(function (slice) { layer.appendChild(slice); });
+      trim(layer, spec);
       scene.appendChild(layer);
     });
 
+    PROPS.forEach(function (spec) { scene.appendChild(prop(spec)); });
+
     host.appendChild(scene);
     return scene;
+  }
+
+  /** What runs over the edge of a layer once it is built. */
+  function trim(layer, spec) {
+    if (spec.kind === 'cheese') {
+      // cheddar laid on straight off the grill goes over the sides
+      dripsOn(layer, { count: 7, r: spec.r * 0.94, z: -spec.t / 2, arc: 4.2,
+        drop: 5.5, wide: 3.4, tone: mix(TONE.cheese, -0.06), seed: 31 });
+    }
+    if (spec.kind === 'heel') {
+      // and so does the sauce, from under the patty rather than over it
+      dripsOn(layer, { count: 4, r: spec.r * 0.97, z: spec.t / 2, arc: 2.4,
+        drop: 3.2, wide: 2.6, tone: mix(TONE.sauce, -0.16), seed: 77 });
+    }
+  }
+
+  /* ── The rest of the table ────────────────────────────────────── */
+
+  /**
+   * A prop is a layer that does not lift: same stack of discs, parked at
+   * its own spot on the table. The fries carton gets chips standing in
+   * it; the glass gets nothing, because the pour is in the stack itself.
+   */
+  function prop(spec) {
+    var node = document.createElement('div');
+    node.className = 'b3-prop b3-' + spec.kind;
+    node.style.setProperty('--d', spec.r * 2);
+    node.style.setProperty('--x', spec.x);
+    node.style.setProperty('--y', spec.y);
+    node.style.setProperty('--rest', (spec.t / 2 - MIDDLE).toFixed(2));
+    node.style.setProperty('--turn', (spec.turn || 0) + 'deg');
+
+    slicesOf(spec).forEach(function (slice) { node.appendChild(slice); });
+    if (spec.kind === 'cup') chips(node, spec);
+    return node;
+  }
+
+  /** Chips standing in the carton, leaning every which way. */
+  function chips(node, spec) {
+    for (var i = 0; i < 7; i++) {
+      var angle = jitter(i * 9 + 2) * Math.PI * 2;
+      var reach = spec.r * 0.62 * Math.sqrt(jitter(i * 4 + 5));
+      var tall = spec.t * (0.9 + jitter(i * 6) * 0.6);
+
+      node.appendChild(upright('b3-chip', 3, tall, mix(TONE.chip, 0.08 - jitter(i) * 0.24), {
+        x: Math.cos(angle) * reach,
+        y: Math.sin(angle) * reach,
+        // buried to just under half its length, so every chip clears the
+        // rim instead of the short ones disappearing into the carton
+        z: spec.t * 0.05 + tall / 2,
+        lean: (jitter(i * 11) - 0.5) * 26
+      }));
+    }
   }
 
   /**

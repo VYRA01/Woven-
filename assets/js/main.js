@@ -508,8 +508,8 @@
     { key: 'art-bun-btm', kind: 'heel',   r: 24,   t: 7.6, base: 0,    lift: -18   },
     { key: 'art-patty',   kind: 'patty',  r: 25.5, t: 8.5, base: 7.6,  lift: -6.5  },
     { key: 'art-cheese',  kind: 'cheese', r: 26.5, t: 2.2, base: 16.1, lift: 3.5   },
-    { key: 'art-veg',     kind: 'veg',    r: 28,   t: 3,   base: 18.3, lift: 11.5  },
-    { key: 'art-bun-top', kind: 'crown',  r: 24.5, t: 17,  base: 21.3, lift: 21    }
+    { key: 'art-veg',     kind: 'veg',    r: 28,   t: 3,   base: 18.3, lift: 11.5, dense: 3 },
+    { key: 'art-bun-top', kind: 'crown',  r: 24.5, t: 17,  base: 21.3, lift: 21, dense: 1.25 }
   ];
 
   /* Half the shut burger, so the scene is built around its own middle and
@@ -526,12 +526,12 @@
      glass above it. */
   var PROPS = [
     {
-      kind: 'cup', r: 7.6, t: 13, x: -45, y: 24, turn: -12, slim: 1.1,
+      kind: 'cup', r: 7.6, t: 13, x: -45, y: 24, turn: -12, slim: 1.9,
       profile: function (u) { return 0.82 + 0.18 * u; },        // a carton, wider at the mouth
       toneAt: function (u) { return u > 0.9 ? '#8e241d' : '#b8352c'; }
     },
     {
-      kind: 'glass', r: 7, t: 20, x: -44, y: -40, turn: 8, slim: 0.85,
+      kind: 'glass', r: 7, t: 20, x: -44, y: -40, turn: 8, slim: 1.3,
       // straight-sided, with the head standing a little over the rim
       profile: function (u) {
         if (u > 0.96) return 0.97;                               // the head rounds off
@@ -566,28 +566,89 @@
     chip:   '#e8a83c'
   };
 
-  /* ── Colour helpers ───────────────────────────────────────────── */
+  /**
+   * How each layer's colour moves through its own thickness.
+   *
+   * A bun is not one brown. It is pale where it was cut, gold up the
+   * sides, and darker across the top where it caught the oven; a patty is
+   * near-black on the faces that met the plancha and redder in between.
+   * Shading alone cannot say any of that — it only makes one colour
+   * lighter and darker.
+   */
+  /* How hard the depth shading is driven, per layer. This is what gives
+     each one its form now: it runs one way through the stack, so it
+     ramps smoothly instead of repeating. */
+  var DEPTH = { crown: 0.34, heel: 0.3, cheese: 0.26, veg: 0.28 };
 
-  function rgb(hex) {
-    var n = parseInt(hex.slice(1), 16);
-    return [n >> 16 & 255, n >> 8 & 255, n & 255];
+  var GRADE = {
+    heel:   function (u) { return u > 0.88 ? '#e9c692' : mixHex('#c78a41', '#d3994f', u); },
+    patty:  function (u) {
+      if (u > 0.9 || u < 0.09) return '#33190c';                 // seared, both faces
+      return mixHex('#63381e', '#4c2b18', Math.abs(u - 0.5) * 1.6);
+    },
+    cheese: function (u) { return u > 0.7 ? '#f6bb3c' : '#e0a022'; },
+    veg:    function (u) { return mixHex('#85b44b', '#6a983b', Math.abs(u - 0.6) * 1.5); },
+    // Light comes from above, so the crown is *lighter* toward the top.
+    // Toasting shows as warmth, not as shadow — and the range is kept
+    // short: every slice's rim is visible edge-on, and a ramp that moves
+    // faster than a level or two a slice reads as ribbing up the dome.
+    crown:  function (u) { return mixHex('#dda257', '#e3ac63', Math.pow(u, 1.2)); }
+  };
+
+  /** Blend two hex colours, 0 = first, 1 = second. */
+  function mixHex(a, b, t) {
+    var x = rgb(a), y = rgb(b);
+    var k = Math.min(1, Math.max(0, t));
+    return 'rgb(' + x.map(function (c, i) {
+      return Math.round(c + (y[i] - c) * k);
+    }).join(',') + ')';
   }
 
-  /** Mix a colour toward black (amount < 0) or white (amount > 0). */
+  /* ── Colour helpers ───────────────────────────────────────────── */
+
+  /** Channels of a colour, hex or rgb() — the two get passed around here. */
+  function rgb(colour) {
+    if (colour.charAt(0) === '#') {
+      var n = parseInt(colour.slice(1), 16);
+      return [n >> 16 & 255, n >> 8 & 255, n & 255];
+    }
+    return colour.replace(/[^0-9,]/g, '').split(',').map(Number);
+  }
+
+  /**
+   * Mix a colour toward shadow (amount < 0) or light (amount > 0).
+   *
+   * Toward warm dark and warm light rather than pure black and white.
+   * Food shaded to black goes grey and dead at the bottom of the stack;
+   * a bun's shadow is still bun-coloured, only darker and a little redder.
+   */
+  var SHADOW = [38, 20, 10];
+  var LIGHT  = [255, 246, 228];
+
   function mix(hex, amount) {
-    var target = amount < 0 ? 0 : 255;
+    var target = amount < 0 ? SHADOW : LIGHT;
     var k = Math.abs(amount);
-    return 'rgb(' + rgb(hex).map(function (c) {
-      return Math.round(c + (target - c) * k);
+    return 'rgb(' + rgb(hex).map(function (c, i) {
+      return Math.round(c + (target[i] - c) * k);
     }).join(',') + ')';
   }
 
   /* Lettuce is not a disc. Cycling a few irregular radii up the stack
      gives it an edge that ripples instead of one that is turned. */
   var RUFFLE = [
-    '46% 54% 49% 51% / 53% 47% 53% 47%',
-    '52% 48% 55% 45% / 47% 54% 46% 54%',
-    '49% 51% 46% 54% / 55% 45% 52% 48%'
+    '42% 58% 47% 53% / 57% 43% 57% 43%',
+    '56% 44% 59% 41% / 43% 58% 42% 58%',
+    '47% 53% 41% 59% / 59% 41% 56% 44%'
+  ];
+
+  /* Nothing that came out of an oven is a perfect circle. A percent or
+     two of wobble, cycled up the stack, is the difference between bread
+     and a turned wooden disc — enough to read, not enough to notice. */
+  var WOBBLE = [
+    '50% 50% 50% 50% / 50% 50% 50% 50%',
+    '49% 51% 50% 50% / 51% 49% 50% 50%',
+    '51% 49% 49% 51% / 50% 51% 49% 50%',
+    '50% 50% 51% 49% / 49% 50% 51% 50%'
   ];
 
   /* Deterministic scatter, so seeds and char marks stay where they were
@@ -659,7 +720,7 @@
   function slicesOf(spec) {
     // Enough discs that the profile reads as a curve, not so many that
     // the compositor has to raster a shelf of them every frame.
-    var n = Math.max(4, Math.round(spec.t * (spec.slim || 0.85)) + 3);
+    var n = Math.max(4, Math.round(spec.t * (spec.slim || spec.dense || 0.85)) + 3);
     var out = [];
 
     var shape = spec.profile || PROFILE[spec.kind];
@@ -667,7 +728,9 @@
     for (var i = 0; i < n; i++) {
       var u = i / (n - 1);
       var r = shape(u) * spec.r;
-      var tone = spec.toneAt ? spec.toneAt(u) : TONE[spec.kind];
+      var tone = spec.toneAt ? spec.toneAt(u)
+               : GRADE[spec.kind] ? GRADE[spec.kind](u)
+               : TONE[spec.kind];
 
       var slice = document.createElement('i');
       slice.className = 'b3-slice';
@@ -678,15 +741,26 @@
       // separate layer sized to the whole layer rather than to the slice
       // (see .b3-slice in the stylesheet) — give each disc its own and
       // the stack reads as a set of concentric rings, not as a solid.
-      slice.style.backgroundColor = mix(tone, (spec.slim ? -0.5 : -0.34) * (1 - u));
+      var shade = mix(tone, -(DEPTH[spec.kind] || 0.34) * (1 - u));
+      slice.style.backgroundColor = shade;
+      // Each disc covers all but a sliver of the one beneath it, and that
+      // sliver is a slightly different colour — twenty-five of them up a
+      // dome is a corduroy. A soft glow in the disc's own colour feathers
+      // the edge so the steps blend instead of banding.
+      slice.style.setProperty('--tone', shade);
 
-      // the lettuce and the cheese are not discs
+      // the lettuce and the cheese are not discs, and the bread is not
+      // quite one either
       if (spec.kind === 'veg') {
         slice.style.borderRadius = RUFFLE[i % RUFFLE.length];
         slice.style.setProperty('--turn', (i * 31) + 'deg');
       } else if (spec.kind === 'cheese') {
         slice.style.borderRadius = '19%';
         slice.style.setProperty('--turn', '14deg');
+      } else {
+        // no turn here: rotating a not-quite-circle a little further on
+        // every slice makes the stack's rims read as ribs up the dome
+        slice.style.borderRadius = WOBBLE[Math.floor(i / 3) % WOBBLE.length];
       }
 
       // the grill marks only show once the bun lifts off the patty
@@ -701,7 +775,7 @@
       }
 
       // seeds sit on the dome, each on the disc whose rim it belongs to
-      if (spec.kind === 'crown' && u > 0.22 && i % 2 === 0 && i < n - 1) seedsOn(slice, r, i);
+      if (spec.kind === 'crown' && u > 0.25 && i % 4 === 0 && i < n - 1) seedsOn(slice, r, i);
 
       out.push(slice);
     }
@@ -726,12 +800,15 @@
   function seedsOn(slice, r, i) {
     for (var k = 0; k < 3; k++) {
       var angle = jitter(i * 7 + k) * Math.PI * 2;
-      var reach = r * (0.62 + jitter(i * 13 + k) * 0.26);
+      // out near the rim, or the next disc up simply covers it
+      var reach = r * (0.9 + jitter(i * 13 + k) * 0.12);
       var seed = document.createElement('u');
       seed.className = 'b3-seed';
       seed.style.setProperty('--x', (Math.cos(angle) * reach).toFixed(1));
-      seed.style.setProperty('--y', (Math.sin(angle) * reach * 0.9).toFixed(1));
-      seed.style.setProperty('--turn', (angle * 57.3).toFixed(0) + 'deg');
+      seed.style.setProperty('--y', (Math.sin(angle) * reach * 0.92).toFixed(1));
+      // lying along the surface, not all pointing the same way
+      seed.style.setProperty('--turn', ((angle * 57.3) + 90).toFixed(0) + 'deg');
+      seed.style.setProperty('--k', (0.82 + jitter(i * 5 + k) * 0.36).toFixed(2));
       slice.appendChild(seed);
     }
   }
@@ -749,7 +826,7 @@
     var scene = document.createElement('div');
     scene.className = 'b3-scene';
 
-    SOLIDS.forEach(function (spec) {
+    SOLIDS.forEach(function (spec, i) {
       var layer = document.createElement('div');
       layer.className = 'b3-layer art-layer ' + spec.key + ' b3-' + spec.kind;
       layer.style.setProperty('--d', spec.r * 2);
@@ -757,6 +834,7 @@
       layer.style.setProperty('--lift', spec.lift);
       slicesOf(spec).forEach(function (slice) { layer.appendChild(slice); });
       trim(layer, spec);
+      if (SOLIDS[i + 1]) contact(layer, spec, SOLIDS[i + 1].r);
       scene.appendChild(layer);
     });
 
@@ -766,8 +844,45 @@
     return scene;
   }
 
+  /**
+   * The shadow a layer casts on the one under it.
+   *
+   * Without it every layer looks like it is hovering a millimetre clear
+   * of the next, which is what makes a stack of discs read as a stack of
+   * discs. It lives on the lower layer's top face and is gone by the time
+   * the burger is a fifth open, because by then there is daylight between
+   * them and nothing to catch a contact shadow.
+   */
+  function contact(layer, spec, above) {
+    // Only the sliver of this layer's face that the one above does not
+    // cover can show a contact shadow at all. So it is a ring sitting on
+    // the upper layer's footprint, not a disc over the whole face —
+    // which is just a dark lid.
+    var mark = document.createElement('u');
+    mark.className = 'b3-ao';
+    mark.style.setProperty('--r', (above * 1.3).toFixed(1));
+    mark.style.setProperty('--z', (spec.t / 2 + 0.05).toFixed(2));
+    layer.appendChild(mark);
+  }
+
+  /** A single soft sheen standing in front of a layer. */
+  function gloss(layer, spec, size) {
+    var g = document.createElement('u');
+    g.className = 'b3-gloss';
+    g.style.setProperty('--w', (spec.r * 1.7).toFixed(1));
+    g.style.setProperty('--h', (spec.t * (size || 1.5)).toFixed(1));
+    g.style.setProperty('--x', (-spec.r * 0.1).toFixed(1));
+    g.style.setProperty('--y', (spec.r * 0.8).toFixed(1));
+    g.style.setProperty('--z', (spec.t * 0.14).toFixed(1));
+    layer.appendChild(g);
+  }
+
   /** What runs over the edge of a layer once it is built. */
   function trim(layer, spec) {
+    // Only the cheese gets a sheen. On the dome a translucent panel in
+    // front of twenty-five disc edges brings every one of them back as
+    // moiré — the depth shading already does that job there.
+    if (spec.kind === 'cheese') gloss(layer, spec, 5);
     if (spec.kind === 'cheese') {
       // cheddar laid on straight off the grill goes over the sides
       dripsOn(layer, { count: 7, r: spec.r * 0.94, z: -spec.t / 2, arc: 4.2,

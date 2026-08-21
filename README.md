@@ -88,16 +88,26 @@ turntable and useless for a layout. Clearances are measured from the boxes the
 browser projects, at both widths and across the whole scroll, rather than
 eyeballed.
 
-Three details make it hold together.
+**No disc paints a highlight, and that is the single most important thing
+here.** A disc can only paint a gradient in its own flat plane, and the discs
+sit at different heights — so each one repeats the same highlight a little
+further up the screen, and twenty-five of them up a dome is a set of concentric
+rings. Form comes from the depth shading instead: it runs one way through the
+stack, so it ramps smoothly and cannot repeat. Where a sheen is wanted it is a
+single element per layer (`.b3-gloss`), never one per disc. On the dome even
+that rings — a translucent panel in front of twenty-five disc edges brings
+every one of them back as moiré — so the crown goes without.
 
-- Each disc is a flat colour shaded by its depth, with the lit and shaded sides
-  painted at the size of the whole *layer* and centred. Give every disc its own
-  highlight and the stack reads as a set of concentric rings, not a solid.
+Three more things make it hold together.
+
+- Colour is graded through each layer's thickness, not picked per layer. A bun
+  is not one brown: pale where it was cut, gold up the sides, warmer across the
+  top. A patty is near-black on the two faces that met the plancha and redder in
+  between. Shading alone cannot say any of that.
+- Shadows mix toward warm dark rather than black, which keeps the bottom of the
+  stack bun-coloured instead of grey.
 - Only the five layer elements are promoted (`will-change: transform`), so the
-  eighty-odd discs inside them are never re-rastered mid-scroll.
-- The props take their form from depth shading alone. Painting the lit side
-  onto their discs as well cost about as much per frame as the entire burger,
-  for something barely visible at that size — measured, not assumed.
+  hundred-odd discs inside them are never re-rastered mid-scroll.
 
 Scroll position drives a single custom property, `--p` (0 = assembled,
 1 = fully apart), set on the section inside a `requestAnimationFrame`; every

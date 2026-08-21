@@ -641,28 +641,19 @@ h1 .line { display: block; }
   transform: translateZ(calc(var(--z) * var(--u))) rotate(var(--turn, 0deg));
   transform-style: preserve-3d;
 
-  /* The lit and shaded sides are painted at the size of the whole layer
-     and centred, so they line up across every disc in the stack. Sized to
-     the slice instead, each disc would carry its own little highlight and
-     the layer would read as a set of rings. */
-  background-image:
-    radial-gradient(circle at 33% 25%, rgba(255, 250, 240, .5), rgba(255, 250, 240, 0) 48%),
-    radial-gradient(circle at 72% 84%, rgba(48, 26, 10, .34), rgba(48, 26, 10, 0) 54%);
-  background-size: calc(var(--d) * var(--u)) calc(var(--d) * var(--u));
-  background-position: center;
-  background-repeat: no-repeat;
+  /* No highlight is painted here, and that is the whole point.
+     A disc can only paint a gradient in its own flat plane, and the discs
+     sit at different heights — so every one of them repeats the same
+     highlight a little further up the screen, and twenty-five of them up
+     a dome is a set of concentric rings. Form comes from the depth
+     shading instead, which runs one way through the stack and so cannot
+     repeat; the sheen is a single element per layer (.b3-gloss). */
+  box-shadow: 0 0 calc(1.1 * var(--u)) var(--tone, transparent);
 }
 
 /* A prop sits at its own spot on the table and never lifts — it drifts
    outward a little as the burger opens, so the two read as being on the
    same surface rather than in the same diagram. */
-/* The props take their form from the depth shading alone. Painting the
-   lit and shaded sides onto their discs as well costs about as much per
-   frame as the entire burger and is barely visible on something this
-   small — measured, not guessed: it was the difference between 25 ms and
-   17 ms a frame across the section. */
-.b3-prop .b3-slice { background-image: none; }
-
 .b3-prop {
   position: absolute;
   left: calc(var(--d) * var(--u) / -2);
@@ -702,6 +693,38 @@ h1 .line { display: block; }
 /* A chip is a stick with rounded ends, not a teardrop. */
 .b3-chip { --round: 40%; }
 
+/* One soft sheen per layer, standing in front of it. Per-slice it would
+   ring like the highlight did; once per layer it cannot. */
+.b3-gloss {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--w) * var(--u));
+  height: calc(var(--h) * var(--u));
+  margin: calc(var(--h) * -.5 * var(--u)) 0 0 calc(var(--w) * -.5 * var(--u));
+  background: radial-gradient(ellipse 42% 38% at 36% 26%,
+    rgba(255, 250, 236, .5), rgba(255, 250, 236, .16) 46%, rgba(255, 250, 236, 0) 72%);
+  transform:
+    translate3d(calc(var(--x) * var(--u)), calc(var(--y) * var(--u)), calc(var(--z) * var(--u)))
+    rotateX(90deg);
+}
+
+/* The shadow the next layer up casts on this one, gone as soon as they
+   part company. */
+.b3-ao {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--r) * 2 * var(--u));
+  height: calc(var(--r) * 2 * var(--u));
+  margin: calc(var(--r) * -1 * var(--u));
+  border-radius: 50%;
+  background: radial-gradient(closest-side,
+    rgba(30, 15, 6, 0) 58%, rgba(30, 15, 6, .3) 74%, rgba(30, 15, 6, 0) 96%);
+  opacity: clamp(0, 1 - var(--p) * 6, 1);
+  transform: translateZ(calc(var(--z) * var(--u)));
+}
+
 /* Grill marks, only ever seen once the bun has lifted off. */
 .b3-char { position: absolute; inset: 0; }
 .b3-char b {
@@ -720,11 +743,12 @@ h1 .line { display: block; }
   position: absolute;
   left: 50%;
   top: 50%;
-  width: calc(3.1 * var(--u));
-  height: calc(1.9 * var(--u));
-  margin: calc(-.95 * var(--u)) 0 0 calc(-1.55 * var(--u));
+  width: calc(2.4 * var(--k, 1) * var(--u));
+  height: calc(1.5 * var(--k, 1) * var(--u));
+  margin: calc(-.75 * var(--k, 1) * var(--u)) 0 0 calc(-1.2 * var(--k, 1) * var(--u));
   border-radius: 50%;
-  background: linear-gradient(#fdf3dd, #e8cd9b);
+  /* lit on the shoulder nearest the light, like everything else here */
+  background: radial-gradient(circle at 34% 28%, #fff6e0, #edd7a6 62%, #cdae76);
   transform: translate(calc(var(--x) * var(--u)), calc(var(--y) * var(--u))) rotate(var(--turn));
 }
 
